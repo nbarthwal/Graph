@@ -21,6 +21,7 @@ endif()
 
 add_library(graph_plot SHARED
     graph_plot.cpp
+    histogram_plot.cpp
 )
 
 target_compile_definitions(graph_plot PRIVATE GRAPH_PLOT_BUILD_DLL)
@@ -53,6 +54,8 @@ install(
     FILES
         graph.h
         graph_plot.h
+        histogram.h
+        histogram_plot.h
         graph_export.h
     DESTINATION include
 )
@@ -63,8 +66,14 @@ install(EXPORT GraphPlotTargets
     DESTINATION lib/cmake/GraphPlot
 )
 
-option(GRAPH_PLOT_BUILD_EXAMPLE "Build the example executable" ON)
-if(GRAPH_PLOT_BUILD_EXAMPLE)
+option(GRAPH_PLOT_BUILD_EXAMPLES "Build example executables" ON)
+if(GRAPH_PLOT_BUILD_EXAMPLES)
     add_executable(graph_plot_example examples/sine_graph.cpp)
     target_link_libraries(graph_plot_example PRIVATE graph_plot)
+
+    add_executable(histogram_grouped_example examples/histogram_grouped_example.cpp)
+    target_link_libraries(histogram_grouped_example PRIVATE graph_plot)
+
+    add_executable(histogram_slider_example examples/histogram_slider_example.cpp)
+    target_link_libraries(histogram_slider_example PRIVATE graph_plot)
 endif()

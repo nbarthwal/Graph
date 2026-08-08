@@ -1,16 +1,16 @@
-#include "graph_plot.h"
+#include "histogram_plot.h"
 
 #include "plot_detail.h"
 
 #include <QApplication>
 #include <QLabel>
 #include <QPainter>
-#include <QPainterPath>
 #include <QPen>
 #include <QSlider>
 #include <QVBoxLayout>
 #include <QWidget>
 
+#include <algorithm>
 #include <cmath>
 #include <memory>
 #include <vector>
@@ -25,31 +25,11 @@ using plot_detail::kSliderSteps;
 using plot_detail::ParseColor;
 using plot_detail::SliderToParameter;
 
-constexpr std::size_t kSampleCount = 500;
-
-std::vector<float> Linspace(float min_x, float max_x, std::size_t count)
-{
-    std::vector<float> values(count);
-    if (count == 0) {
-        return values;
-    }
-    if (count == 1) {
-        values[0] = min_x;
-        return values;
-    }
-
-    const float step = (max_x - min_x) / static_cast<float>(count - 1);
-    for (std::size_t i = 0; i < count; ++i) {
-        values[i] = min_x + step * static_cast<float>(i);
-    }
-    return values;
-}
-
-class PlotCanvas final : public QWidget
+class HistogramCanvas final : public QWidget
 {
 public:
-    PlotCanvas(Graph& graph, QWidget* parent = nullptr)
-        : QWidget(parent), graph_(graph)
+    HistogramCanvas(Histogram& histogram, QWidget* parent = nullptr)
+        : QWidget(parent), histogram_(histogram)
     {
         setMinimumSize(640, 480);
         setAutoFillBackground(true);
@@ -74,12 +54,7 @@ protected:
         DrawBackground(painter);
         DrawGrid(painter, plot_area);
         DrawAxes(painter, plot_area);
-
-        for (const Curve* curve : graph_.Curves()) {
-            if (curve != nullptr) {
-                DrawCurve(painter, plot_area, *curve);
-            }
-        }
+        DrawHistograms(painter, plot_area);
     }
 
 private:
@@ -89,17 +64,18 @@ private:
             kPlotMarginLeft, kPlotMarginTop, -kPlotMarginRight, -kPlotMarginBottom);
     }
 
-    QPointF ToPixel(const QRect& plot_area, float x, float y) const
+    float ToPixelX(const QRect& plot_area, float x) const
     {
-        const float x_range = graph_.MaxX() - graph_.MinX();
-        const float y_range = graph_.MaxY() - graph_.MinY();
+        const float x_range = histogram_.MaxX() - histogram_.MinX();
+        const float x_ratio = x_range == 0.0f ? 0.0f : (x - histogram_.MinX()) / x_range;
+        return plot_area.left() + x_ratio * plot_area.width();
+    }
 
-        const float x_ratio = x_range == 0.0f ? 0.0f : (x - graph_.MinX()) / x_range;
-        const float y_ratio = y_range == 0.0f ? 0.0f : (y - graph_.MinY()) / y_range;
-
-        return QPointF(
-            plot_area.left() + x_ratio * plot_area.width(),
-            plot_area.bottom() - y_ratio * plot_area.height());
+    float ToPixelY(const QRect& plot_area, float y) const
+    {
+        const float y_range = histogram_.MaxY() - histogram_.MinY();
+        const float y_ratio = y_range == 0.0f ? 0.0f : (y - histogram_.MinY()) / y_range;
+        return plot_area.bottom() - y_ratio * plot_area.height();
     }
 
     void DrawBackground(QPainter& painter) const
@@ -129,72 +105,68 @@ private:
         painter.drawRect(plot_area);
 
         painter.setPen(Qt::black);
-        painter.drawText(
-            plot_area.center().x() - 10,
-            rect().bottom() - 12,
-            "x");
+        painter.drawText(plot_area.center().x() - 10, rect().bottom() - 12, "bin");
         painter.save();
         painter.translate(18, plot_area.center().y());
         painter.rotate(-90);
-        painter.drawText(0, 0, "y");
+        painter.drawText(0, 0, "count");
         painter.restore();
     }
 
-    void DrawCurve(QPainter& painter, const QRect& plot_area, const Curve& curve) const
+    void DrawHistograms(QPainter& painter, const QRect& plot_area) const
     {
-        const std::vector<float> x_values = Linspace(curve.MinX(), curve.MaxX(), kSampleCount);
-        if (x_values.empty()) {
+        const std::vector<const HistogramData*> data_sets = histogram_.DataSets();
+        if (data_sets.empty()) {
             return;
         }
 
-        const QColor color = ParseColor(curve.Color());
+        const std::size_t data_set_count = data_sets.size();
+        const float baseline_y = ToPixelY(plot_area, histogram_.MinY());
 
-        if (curve.Point()) {
-            QPen pen(color, 1.5);
-            painter.setPen(pen);
+        for (std::size_t data_index = 0; data_index < data_set_count; ++data_index) {
+            const HistogramData* data = data_sets[data_index];
+            if (data == nullptr || data->BinCount() == 0) {
+                continue;
+            }
+
+            const QColor color = ParseColor(data->Color());
+            const float group_width = data->BinWidth() * 0.9f;
+            const float bar_width = group_width / static_cast<float>(data_set_count);
+            const float group_offset =
+                (static_cast<float>(data_index) - (static_cast<float>(data_set_count) - 1.0f) / 2.0f) *
+                bar_width;
+
+            painter.setPen(QPen(color.darker(120), 1.0));
             painter.setBrush(color);
 
-            constexpr double kPointRadius = 1;
-            for (const float x : x_values) {
-                const float y = curve.Value(parameter_, x);
-                const QPointF point = ToPixel(plot_area, x, y);
-                painter.drawEllipse(point, kPointRadius, kPointRadius);
-            }
-            return;
-        }
+            for (std::size_t bin = 0; bin < data->BinCount(); ++bin) {
+                const float center = data->BinCenter(bin);
+                const float count = data->Count(parameter_, bin);
+                const float left = ToPixelX(plot_area, center + group_offset - bar_width / 2.0f);
+                const float right = ToPixelX(plot_area, center + group_offset + bar_width / 2.0f);
+                const float top = ToPixelY(plot_area, count);
 
-        QPen pen(color, 2.0);
-        pen.setCapStyle(Qt::RoundCap);
-        pen.setJoinStyle(Qt::RoundJoin);
-        painter.setPen(pen);
-        painter.setBrush(Qt::NoBrush);
-
-        QPainterPath path;
-        bool started = false;
-        for (const float x : x_values) {
-            const float y = curve.Value(parameter_, x);
-            const QPointF point = ToPixel(plot_area, x, y);
-            if (!started) {
-                path.moveTo(point);
-                started = true;
-            } else {
-                path.lineTo(point);
+                const QRectF bar(
+                    std::min(left, right),
+                    std::min(top, baseline_y),
+                    std::abs(right - left),
+                    std::abs(baseline_y - top));
+                painter.drawRect(bar);
             }
         }
-        painter.drawPath(path);
     }
 
-    Graph& graph_;
+    Histogram& histogram_;
     float parameter_ = 0.0f;
 };
 
-class PlotWindow final : public QWidget
+class HistogramWindow final : public QWidget
 {
 public:
-    explicit PlotWindow(Graph& graph)
-        : graph_(graph)
+    explicit HistogramWindow(Histogram& histogram)
+        : histogram_(histogram)
     {
-        setWindowTitle("Graph Plot");
+        setWindowTitle("Histogram Plot");
         resize(900, 700);
 
         auto* layout = new QVBoxLayout(this);
@@ -202,8 +174,8 @@ public:
         parameter_label_ = new QLabel(this);
         layout->addWidget(parameter_label_);
 
-        plot_canvas_ = new PlotCanvas(graph_, this);
-        layout->addWidget(plot_canvas_, 1);
+        histogram_canvas_ = new HistogramCanvas(histogram_, this);
+        layout->addWidget(histogram_canvas_, 1);
 
         slider_ = new QSlider(Qt::Horizontal, this);
         slider_->setRange(0, kSliderSteps);
@@ -212,28 +184,28 @@ public:
 
         connect(slider_, &QSlider::valueChanged, this, [this](int value) {
             const float parameter =
-                SliderToParameter(value, graph_.MinP(), graph_.MaxP());
+                SliderToParameter(value, histogram_.MinP(), histogram_.MaxP());
             parameter_label_->setText(
                 QString("Parameter p = %1").arg(static_cast<double>(parameter), 0, 'g', 4));
-            plot_canvas_->SetParameter(parameter);
+            histogram_canvas_->SetParameter(parameter);
         });
 
-        const float initial_parameter = graph_.MinP();
+        const float initial_parameter = histogram_.MinP();
         parameter_label_->setText(
             QString("Parameter p = %1").arg(static_cast<double>(initial_parameter), 0, 'g', 4));
-        plot_canvas_->SetParameter(initial_parameter);
+        histogram_canvas_->SetParameter(initial_parameter);
     }
 
 private:
-    Graph& graph_;
+    Histogram& histogram_;
     QLabel* parameter_label_ = nullptr;
-    PlotCanvas* plot_canvas_ = nullptr;
+    HistogramCanvas* histogram_canvas_ = nullptr;
     QSlider* slider_ = nullptr;
 };
 
 }  // namespace
 
-void Plot(Graph& graph)
+void PlotHistogram(Histogram& histogram)
 {
     const bool owns_application = QApplication::instance() == nullptr;
     std::unique_ptr<QApplication> owned_application;
@@ -243,7 +215,7 @@ void Plot(Graph& graph)
         owned_application = std::make_unique<QApplication>(argc, nullptr);
     }
 
-    PlotWindow window(graph);
+    HistogramWindow window(histogram);
     window.show();
 
     if (owns_application) {
