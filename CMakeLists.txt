@@ -19,20 +19,6 @@ else()
     set(QT_WIDGETS_LIB Qt5::Widgets)
 endif()
 
-find_package(Matplot++ QUIET)
-if(NOT Matplot++_FOUND)
-    include(FetchContent)
-    FetchContent_Declare(
-        matplotplusplus
-        GIT_REPOSITORY https://github.com/alandefreitas/matplotplusplus.git
-        GIT_TAG master
-    )
-    set(MATPLOTPP_BUILD_EXAMPLES OFF CACHE BOOL "" FORCE)
-    set(MATPLOTPP_BUILD_SHARED_LIBS ON CACHE BOOL "" FORCE)
-    set(MATPLOTPP_BUILD_TESTS OFF CACHE BOOL "" FORCE)
-    FetchContent_MakeAvailable(matplotplusplus)
-endif()
-
 add_library(graph_plot SHARED
     graph_plot.cpp
 )
@@ -47,7 +33,6 @@ target_include_directories(graph_plot
 
 target_link_libraries(graph_plot
     PUBLIC
-        Matplot++::matplot
         ${QT_WIDGETS_LIB}
 )
 
