@@ -181,11 +181,12 @@ private:
         }
 
         const QColor color = ParseColor(curve.Color());
-        QPen pen(color, 2.0);
-        painter.setPen(pen);
-        painter.setBrush(color);
 
         if (curve.Point()) {
+            QPen pen(color, 1.5);
+            painter.setPen(pen);
+            painter.setBrush(color);
+
             constexpr double kPointRadius = 3.5;
             for (const float x : x_values) {
                 const float y = curve.Value(parameter_, x);
@@ -194,6 +195,12 @@ private:
             }
             return;
         }
+
+        QPen pen(color, 2.0);
+        pen.setCapStyle(Qt::RoundCap);
+        pen.setJoinStyle(Qt::RoundJoin);
+        painter.setPen(pen);
+        painter.setBrush(Qt::NoBrush);
 
         QPainterPath path;
         bool started = false;
