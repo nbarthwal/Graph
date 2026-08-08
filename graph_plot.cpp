@@ -187,7 +187,7 @@ private:
             painter.setPen(pen);
             painter.setBrush(color);
 
-            constexpr double kPointRadius = 3.5;
+            constexpr double kPointRadius = 1.75;
             for (const float x : x_values) {
                 const float y = curve.Value(parameter_, x);
                 const QPointF point = ToPixel(plot_area, x, y);
