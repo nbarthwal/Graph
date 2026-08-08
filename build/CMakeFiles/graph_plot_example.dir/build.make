@@ -118,7 +118,6 @@ graph_plot_example: CMakeFiles/graph_plot_example.dir/graph_plot_example_autogen
 graph_plot_example: CMakeFiles/graph_plot_example.dir/examples/sine_graph.cpp.o
 graph_plot_example: CMakeFiles/graph_plot_example.dir/build.make
 graph_plot_example: libgraph_plot.1.0.0.dylib
-graph_plot_example: /opt/homebrew/lib/libmatplot.1.2.0.dylib
 graph_plot_example: /opt/homebrew/lib/QtWidgets.framework/Versions/A/QtWidgets
 graph_plot_example: /opt/homebrew/lib/QtGui.framework/Versions/A/QtGui
 graph_plot_example: /opt/homebrew/lib/QtCore.framework/Versions/A/QtCore

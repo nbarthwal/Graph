@@ -1,6 +1,4 @@
 #define ARCHITECTURE_ID "arm64"
-#define MATPLOT_BUILD_HIGH_RESOLUTION_WORLD_MAP 1
-#define NOMINMAX 1
 #define QT_CORE_LIB 1
 #define QT_GUI_LIB 1
 #define QT_NO_DEBUG 1

@@ -1,0 +1,4 @@
+set(__QT_DEPLOY_TARGET_graph_plot_FILE /Users/nikhilbarthwal/Nikhil/Graph/libgraph_plot.1.0.0.dylib)
+set(__QT_DEPLOY_TARGET_graph_plot_TYPE SHARED_LIBRARY)
+set(__QT_DEPLOY_TARGET_graph_plot_example_FILE /Users/nikhilbarthwal/Nikhil/Graph/graph_plot_example)
+set(__QT_DEPLOY_TARGET_graph_plot_example_TYPE EXECUTABLE)

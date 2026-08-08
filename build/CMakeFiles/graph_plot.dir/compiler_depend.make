@@ -7,10 +7,6 @@ graph_plot_autogen/timestamp: /Users/nikhilbarthwal/Nikhil/Graph/CMakeLists.txt 
   /Users/nikhilbarthwal/Nikhil/Graph/graph_plot.cpp \
   /Users/nikhilbarthwal/Nikhil/Graph/graph_plot.h \
   /opt/homebrew/bin/cmake \
-  /opt/homebrew/lib/cmake/Matplot++/Matplot++Config.cmake \
-  /opt/homebrew/lib/cmake/Matplot++/Matplot++ConfigVersion.cmake \
-  /opt/homebrew/lib/cmake/Matplot++/Matplot++Targets-release.cmake \
-  /opt/homebrew/lib/cmake/Matplot++/Matplot++Targets.cmake \
   /opt/homebrew/lib/cmake/Qt6/FindWrapAtomic.cmake \
   /opt/homebrew/lib/cmake/Qt6/FindWrapOpenGL.cmake \
   /opt/homebrew/lib/cmake/Qt6/FindWrapVulkanHeaders.cmake \
@@ -2132,13 +2128,9 @@ CMakeFiles/graph_plot.dir/graph_plot_autogen/mocs_compilation.cpp.o: graph_plot_
 
 /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__type_traits/add_cv_quals.h:
 
-/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__tuple/tuple_types.h:
-
 /opt/homebrew/include/matplot/detail/config.h:
 
 /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__tuple/tuple_like_no_subrange.h:
-
-/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__tuple/tuple_like_ext.h:
 
 /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__tuple/sfinae_helpers.h:
 
@@ -2240,11 +2232,11 @@ CMakeFiles/graph_plot.dir/graph_plot_autogen/mocs_compilation.cpp.o: graph_plot_
 
 /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__numeric/transform_reduce.h:
 
-/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__tuple/tuple_size.h:
-
 /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__ostream/put_character_sequence.h:
 
 /opt/homebrew/lib/cmake/Qt6Core/Qt6QDarwinContactsPermissionPluginConfig.cmake:
+
+/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__tuple/tuple_size.h:
 
 /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__numeric/transform_exclusive_scan.h:
 
@@ -2528,8 +2520,6 @@ graph_plot_autogen/mocs_compilation.cpp:
 
 /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__filesystem/path_iterator.h:
 
-/opt/homebrew/lib/cmake/Matplot++/Matplot++Targets-release.cmake:
-
 /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__string/extern_template_lists.h:
 
 /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__filesystem/path.h:
@@ -2702,8 +2692,6 @@ graph_plot_autogen/mocs_compilation.cpp:
 
 /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/sys/_types/_seek_set.h:
 
-/opt/homebrew/lib/cmake/Matplot++/Matplot++ConfigVersion.cmake:
-
 /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__iterator/access.h:
 
 /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__chrono/system_clock.h:
@@ -2827,6 +2815,8 @@ graph_plot_autogen/mocs_compilation.cpp:
 /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__algorithm/three_way_comp_ref_type.h:
 
 /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__algorithm/stable_partition.h:
+
+/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__tuple/tuple_like_ext.h:
 
 /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__type_traits/has_virtual_destructor.h:
 
@@ -2977,8 +2967,6 @@ graph_plot_autogen/mocs_compilation.cpp:
 /opt/homebrew/lib/QtCore.framework/Headers/q23type_traits.h:
 
 /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__algorithm/is_sorted_until.h:
-
-/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__algorithm/is_partitioned.h:
 
 /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/sys/_pthread/_pthread_attr_t.h:
 
@@ -3330,8 +3318,6 @@ CMakeFiles/4.4.1/CMakeCXXCompiler.cmake:
 
 /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__concepts/semiregular.h:
 
-/opt/homebrew/lib/cmake/Matplot++/Matplot++Targets.cmake:
-
 /opt/homebrew/lib/cmake/Qt6/QtPublicWindowsHelpers.cmake:
 
 /opt/homebrew/lib/QtWidgets.framework/Headers/qlayout.h:
@@ -3682,6 +3668,8 @@ CMakeFiles/4.4.1/CMakeCXXCompiler.cmake:
 
 /opt/homebrew/lib/cmake/Qt6/Qt6Targets.cmake:
 
+/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__tuple/tuple_types.h:
+
 /opt/homebrew/lib/cmake/Qt6Gui/Qt6QJpegPluginTargets-release.cmake:
 
 /opt/homebrew/share/cmake/Modules/CMakeCXXInformation.cmake:
@@ -3701,6 +3689,14 @@ CMakeFiles/4.4.1/CMakeCXXCompiler.cmake:
 /opt/homebrew/lib/cmake/Qt6/QtPublicAndroidHelpers.cmake:
 
 /opt/homebrew/lib/cmake/Qt6Gui/Qt6QJp2PluginAdditionalTargetInfo.cmake:
+
+/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__memory/destruct_n.h:
+
+/opt/homebrew/lib/cmake/Qt6CoreTools/Qt6CoreToolsDependencies.cmake:
+
+/opt/homebrew/lib/cmake/Qt6CoreTools/Qt6CoreToolsTargets-release.cmake:
+
+/opt/homebrew/lib/cmake/Qt6Gui/Qt6QICOPluginTargetsPrecheck.cmake:
 
 /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/sys/_types/_pid_t.h:
 
@@ -3797,6 +3793,18 @@ CMakeFiles/4.4.1/CMakeCXXCompiler.cmake:
 /opt/homebrew/lib/cmake/Qt6CoreTools/Qt6CoreToolsAdditionalTargetInfo.cmake:
 
 /opt/homebrew/lib/cmake/Qt6Core/Qt6QDarwinCalendarPermissionPluginTargets.cmake:
+
+/opt/homebrew/lib/QtCore.framework/Headers/qurl.h:
+
+/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/machine/types.h:
+
+/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/vector:
+
+/opt/homebrew/lib/cmake/Qt6Gui/Qt6QSvgPluginTargets.cmake:
+
+/opt/homebrew/lib/cmake/Qt6/QtPublicCMakeVersionHelpers.cmake:
+
+/opt/homebrew/lib/cmake/Qt6DBusTools/Qt6DBusToolsDependencies.cmake:
 
 /opt/homebrew/lib/cmake/Qt6DBusTools/Qt6DBusToolsConfigVersionImpl.cmake:
 
@@ -3938,13 +3946,9 @@ CMakeFiles/4.4.1/CMakeCXXCompiler.cmake:
 
 /opt/homebrew/lib/cmake/Qt6Core/Qt6QDarwinMicrophonePermissionPluginConfig.cmake:
 
-/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/arm/types.h:
+/opt/homebrew/lib/cmake/Qt6GuiTools/Qt6GuiToolsConfigVersion.cmake:
 
-/opt/homebrew/include/matplot/core/axes_type.h:
-
-/opt/homebrew/lib/cmake/Qt6Gui/Qt6QJp2PluginTargets.cmake:
-
-/opt/homebrew/lib/cmake/Qt6Core/Qt6QDarwinLocationPermissionPluginTargets.cmake:
+/opt/homebrew/lib/cmake/Qt6Core/Qt6CoreConfig.cmake:
 
 /opt/homebrew/lib/cmake/Qt6Widgets/Qt6QMacStylePluginTargetsPrecheck.cmake:
 
@@ -3968,17 +3972,17 @@ CMakeFiles/4.4.1/CMakeCXXCompiler.cmake:
 
 /opt/homebrew/lib/cmake/Qt6Core/Qt6QDarwinContactsPermissionPluginAdditionalTargetInfo.cmake:
 
+/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/arm/types.h:
+
+/opt/homebrew/include/matplot/core/axes_type.h:
+
+/opt/homebrew/lib/cmake/Qt6Gui/Qt6QJp2PluginTargets.cmake:
+
+/opt/homebrew/lib/cmake/Qt6Core/Qt6QDarwinLocationPermissionPluginTargets.cmake:
+
 /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__tuple/make_tuple_types.h:
 
 /opt/homebrew/lib/cmake/Qt6Core/Qt6QDarwinCameraPermissionPluginTargets-release.cmake:
-
-/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__memory/destruct_n.h:
-
-/opt/homebrew/lib/cmake/Qt6CoreTools/Qt6CoreToolsDependencies.cmake:
-
-/opt/homebrew/lib/cmake/Qt6CoreTools/Qt6CoreToolsTargets-release.cmake:
-
-/opt/homebrew/lib/cmake/Qt6Gui/Qt6QICOPluginTargetsPrecheck.cmake:
 
 /opt/homebrew/lib/cmake/Qt6Core/Qt6QDarwinCameraPermissionPluginDependencies.cmake:
 
@@ -4056,10 +4060,6 @@ CMakeFiles/4.4.1/CMakeCXXCompiler.cmake:
 
 /opt/homebrew/lib/cmake/Qt6Core/Qt6QDarwinCalendarPermissionPluginConfig.cmake:
 
-/opt/homebrew/lib/cmake/Qt6Core/Qt6CoreConfig.cmake:
-
-/opt/homebrew/lib/cmake/Qt6GuiTools/Qt6GuiToolsConfigVersion.cmake:
-
 /opt/homebrew/lib/QtCore.framework/Headers/qtformat_impl.h:
 
 /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/sys/__endian.h:
@@ -4104,27 +4104,11 @@ CMakeFiles/4.4.1/CMakeCXXCompiler.cmake:
 
 /opt/homebrew/lib/cmake/Qt6Core/Qt6QDarwinBluetoothPermissionPluginAdditionalTargetInfo.cmake:
 
-/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/sys/_types/_ino_t.h:
-
-/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/iomanip:
-
-/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__algorithm/copy.h:
-
-/opt/homebrew/include/matplot/axes_objects/network.h:
-
-/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__string/constexpr_c_functions.h:
-
-/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/fstream:
-
-/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__fwd/ostream.h:
-
 /opt/homebrew/share/cmake/Modules/Internal/CheckCommon.cmake:
 
 /opt/homebrew/lib/cmake/Qt6Core/Qt6QDarwinContactsPermissionPluginDependencies.cmake:
 
 /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/_types/_locale_t.h:
-
-/opt/homebrew/lib/cmake/Matplot++/Matplot++Config.cmake:
 
 /opt/homebrew/lib/QtCore.framework/Headers/qtdeprecationdefinitions.h:
 
@@ -4192,15 +4176,13 @@ CMakeFiles/4.4.1/CMakeSystem.cmake:
 
 /opt/homebrew/lib/cmake/Qt6/QtPublicExternalProjectHelpers.cmake:
 
+/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__algorithm/is_partitioned.h:
+
 /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__hash_table:
 
 /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__type_traits/make_const_lvalue_ref.h:
 
 /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__functional/perfect_forward.h:
-
-/opt/homebrew/lib/cmake/Qt6DBusTools/Qt6DBusToolsDependencies.cmake:
-
-/opt/homebrew/lib/cmake/Qt6/QtPublicCMakeVersionHelpers.cmake:
 
 /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/sys/_pthread/_pthread_rwlock_t.h:
 
@@ -4208,27 +4190,17 @@ CMakeFiles/4.4.1/CMakeSystem.cmake:
 
 /opt/homebrew/lib/cmake/Qt6Gui/Qt6GuiConfigVersion.cmake:
 
-/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__fwd/string.h:
-
-/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__chrono/duration.h:
-
-/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/sys/_types/_time_t.h:
-
-/opt/homebrew/lib/cmake/Qt6Gui/Qt6QWebpPluginAdditionalTargetInfo.cmake:
-
-/opt/homebrew/lib/QtCore.framework/Headers/qurl.h:
-
-/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/machine/types.h:
-
-/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/vector:
-
-/opt/homebrew/lib/cmake/Qt6Gui/Qt6QSvgPluginTargets.cmake:
-
-/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/_xlocale.h:
-
 /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__concepts/class_or_enum.h:
 
 /opt/homebrew/share/cmake/Modules/CheckCXXCompilerFlag.cmake:
+
+/opt/homebrew/include/matplot/axes_objects/network.h:
+
+/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__string/constexpr_c_functions.h:
+
+/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/fstream:
+
+/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__fwd/ostream.h:
 
 /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__atomic/support.h:
 
@@ -4250,6 +4222,10 @@ CMakeFiles/4.4.1/CMakeSystem.cmake:
 
 /opt/homebrew/lib/cmake/Qt6Core/Qt6QDarwinCalendarPermissionPluginAdditionalTargetInfo.cmake:
 
+/Library/Developer/CommandLineTools/usr/lib/clang/21/include/__stddef_ptrdiff_t.h:
+
+/opt/homebrew/lib/cmake/Qt6/QtPublicSbomDocumentNamespaceHelpers.cmake:
+
 /Library/Developer/CommandLineTools/usr/lib/clang/21/include/ptrcheck.h:
 
 /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__debug_utils/strict_weak_ordering_check.h:
@@ -4260,13 +4236,23 @@ CMakeFiles/4.4.1/CMakeSystem.cmake:
 
 /opt/homebrew/lib/cmake/Qt6Core/Qt6QDarwinBluetoothPermissionPluginTargets-release.cmake:
 
-/Library/Developer/CommandLineTools/usr/lib/clang/21/include/__stddef_ptrdiff_t.h:
-
-/opt/homebrew/lib/cmake/Qt6/QtPublicSbomDocumentNamespaceHelpers.cmake:
-
 /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__type_traits/is_allocator.h:
 
 /opt/homebrew/lib/cmake/Qt6/QtPublicGitHelpers.cmake:
+
+/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__chrono/duration.h:
+
+/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/sys/_types/_time_t.h:
+
+/opt/homebrew/lib/cmake/Qt6Gui/Qt6QWebpPluginAdditionalTargetInfo.cmake:
+
+/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/_xlocale.h:
+
+/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/sys/_types/_ino_t.h:
+
+/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/iomanip:
+
+/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__algorithm/copy.h:
 
 /opt/homebrew/lib/cmake/Qt6Gui/Qt6QSvgPluginAdditionalTargetInfo.cmake:
 
@@ -4275,3 +4261,5 @@ CMakeFiles/4.4.1/CMakeSystem.cmake:
 /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/_types/_uintmax_t.h:
 
 /Users/nikhilbarthwal/Nikhil/Graph/CMakeLists.txt:
+
+/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__fwd/string.h:

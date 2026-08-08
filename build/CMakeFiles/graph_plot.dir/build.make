@@ -117,7 +117,6 @@ graph_plot_EXTERNAL_OBJECTS =
 libgraph_plot.1.0.0.dylib: CMakeFiles/graph_plot.dir/graph_plot_autogen/mocs_compilation.cpp.o
 libgraph_plot.1.0.0.dylib: CMakeFiles/graph_plot.dir/graph_plot.cpp.o
 libgraph_plot.1.0.0.dylib: CMakeFiles/graph_plot.dir/build.make
-libgraph_plot.1.0.0.dylib: /opt/homebrew/lib/libmatplot.1.2.0.dylib
 libgraph_plot.1.0.0.dylib: /opt/homebrew/lib/QtWidgets.framework/Versions/A/QtWidgets
 libgraph_plot.1.0.0.dylib: /opt/homebrew/lib/QtGui.framework/Versions/A/QtGui
 libgraph_plot.1.0.0.dylib: /opt/homebrew/lib/QtCore.framework/Versions/A/QtCore

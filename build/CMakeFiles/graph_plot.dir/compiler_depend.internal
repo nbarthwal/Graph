@@ -8,10 +8,6 @@
  /Users/nikhilbarthwal/Nikhil/Graph/graph_plot.cpp
  /Users/nikhilbarthwal/Nikhil/Graph/graph_plot.h
  /opt/homebrew/bin/cmake
- /opt/homebrew/lib/cmake/Matplot++/Matplot++Config.cmake
- /opt/homebrew/lib/cmake/Matplot++/Matplot++ConfigVersion.cmake
- /opt/homebrew/lib/cmake/Matplot++/Matplot++Targets-release.cmake
- /opt/homebrew/lib/cmake/Matplot++/Matplot++Targets.cmake
  /opt/homebrew/lib/cmake/Qt6/FindWrapAtomic.cmake
  /opt/homebrew/lib/cmake/Qt6/FindWrapOpenGL.cmake
  /opt/homebrew/lib/cmake/Qt6/FindWrapVulkanHeaders.cmake
