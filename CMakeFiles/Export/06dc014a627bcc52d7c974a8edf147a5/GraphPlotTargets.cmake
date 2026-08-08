@@ -60,7 +60,7 @@ add_library(GraphPlot::graph_plot SHARED IMPORTED)
 
 set_target_properties(GraphPlot::graph_plot PROPERTIES
   INTERFACE_INCLUDE_DIRECTORIES "${_IMPORT_PREFIX}/include"
-  INTERFACE_LINK_LIBRARIES "Matplot++::matplot;Qt6::Widgets"
+  INTERFACE_LINK_LIBRARIES "Qt6::Widgets"
 )
 
 # Load information for each installed configuration.
