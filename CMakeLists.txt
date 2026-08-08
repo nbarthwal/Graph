@@ -20,7 +20,12 @@ else()
 endif()
 
 add_library(graph_plot SHARED
+    plot_app.cpp
+    graph_canvas.cpp
+    graph_view.cpp
     graph_plot.cpp
+    histogram_canvas.cpp
+    histogram_view.cpp
     histogram_plot.cpp
 )
 
@@ -53,8 +58,10 @@ install(TARGETS graph_plot
 install(
     FILES
         graph.h
+        graph_view.h
         graph_plot.h
         histogram.h
+        histogram_view.h
         histogram_plot.h
         graph_export.h
     DESTINATION include
@@ -71,9 +78,18 @@ if(GRAPH_PLOT_BUILD_EXAMPLES)
     add_executable(graph_plot_example examples/sine_graph.cpp)
     target_link_libraries(graph_plot_example PRIVATE graph_plot)
 
+    add_executable(graph_view_example examples/sine_graph_view.cpp)
+    target_link_libraries(graph_view_example PRIVATE graph_plot)
+
     add_executable(histogram_grouped_example examples/histogram_grouped_example.cpp)
     target_link_libraries(histogram_grouped_example PRIVATE graph_plot)
 
     add_executable(histogram_slider_example examples/histogram_slider_example.cpp)
     target_link_libraries(histogram_slider_example PRIVATE graph_plot)
+
+    add_executable(histogram_view_example examples/histogram_view_example.cpp)
+    target_link_libraries(histogram_view_example PRIVATE graph_plot)
+
+    add_executable(trigonometry examples/trigonometry.cpp)
+    target_link_libraries(trigonometry PRIVATE graph_plot)
 endif()
