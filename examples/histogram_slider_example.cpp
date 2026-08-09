@@ -22,6 +22,10 @@ public:
     {
         return color_;
     }
+    std::string Label() const override
+    {
+        return "N(" + std::to_string(mean_) + ", " + std::to_string(sigma_) + ")";
+    }
     std::size_t BinCount() const override
     {
         return kBinCount;

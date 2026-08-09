@@ -25,6 +25,14 @@ public:
     {
         return color_;
     }
+    std::string Label() const override
+    {
+        if (frequency_ == 1.0f)
+        {
+            return "sin(x)";
+        }
+        return "sin(" + std::to_string(frequency_) + "x)";
+    }
     float Value(float p, float x) const override
     {
         return p * std::sin(frequency_ * x);

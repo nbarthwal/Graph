@@ -15,6 +15,8 @@ namespace
     using plot_detail::kPlotMarginLeft;
     using plot_detail::kPlotMarginRight;
     using plot_detail::kPlotMarginTop;
+    using plot_detail::LegendItem;
+    using plot_detail::LegendSwatch;
     using plot_detail::ParseColor;
 
     std::vector<float> Linspace(float min_x, float max_x, std::size_t count)
@@ -73,6 +75,7 @@ void GraphCanvas::paintEvent(QPaintEvent* /*event*/)
             DrawCurve(painter, plot_area, *curve);
         }
     }
+    DrawLegend(painter, plot_area);
 }
 
 QRect GraphCanvas::PlotArea() const
@@ -182,4 +185,23 @@ void GraphCanvas::DrawCurve(QPainter &painter, const QRect &plot_area,
         }
     }
     painter.drawPath(path);
+}
+
+void GraphCanvas::DrawLegend(QPainter &painter, const QRect &plot_area) const
+{
+    std::vector<LegendItem> items;
+    for (const Graph::Data *curve : graph_.Curves())
+    {
+        if (curve == nullptr)
+        {
+            continue;
+        }
+
+        items.push_back(
+                { curve->Label(), ParseColor(curve->Color()),
+                        curve->Point() ? LegendSwatch::Point
+                                       : LegendSwatch::Line });
+    }
+
+    plot_detail::DrawLegend(painter, plot_area, items);
 }

@@ -17,6 +17,10 @@ namespace
         {
             return "blue";
         }
+        std::string Label() const override
+        {
+            return "cos(x)";
+        }
         float MaxX() const override
         {
             return kTwoPi;
@@ -41,6 +45,10 @@ namespace
         std::string Color() const override
         {
             return "red";
+        }
+        std::string Label() const override
+        {
+            return "sin(x)";
         }
         float MaxX() const override
         {

@@ -8,15 +8,20 @@ class StaticHistogramData final : public Histogram::Data
 {
 public:
     StaticHistogramData(std::vector<float> centers, float bin_width,
-            std::vector<float> counts, std::string color) :
+            std::vector<float> counts, std::string color, std::string label) :
             centers_(std::move(centers)), bin_width_(bin_width), counts_(
-                    std::move(counts)), color_(std::move(color))
+                    std::move(counts)), color_(std::move(color)), label_(
+                    std::move(label))
     {
     }
 
     std::string Color() const override
     {
         return color_;
+    }
+    std::string Label() const override
+    {
+        return label_;
     }
     std::size_t BinCount() const override
     {
@@ -40,6 +45,7 @@ private:
     float bin_width_;
     std::vector<float> counts_;
     std::string color_;
+    std::string label_;
 };
 
 class GroupedHistogram final : public Histogram
@@ -50,12 +56,12 @@ public:
         data_sets_.push_back(
                 std::make_unique < StaticHistogramData
                         > (std::vector<float> { 1.0f, 2.0f, 3.0f, 4.0f, 5.0f }, 1.0f, std::vector<
-                                float> { 2.0f, 5.0f, 8.0f, 4.0f, 1.0f }, "blue"));
+                                float> { 2.0f, 5.0f, 8.0f, 4.0f, 1.0f }, "blue", "Series A"));
 
         data_sets_.push_back(
                 std::make_unique < StaticHistogramData
                         > (std::vector<float> { 1.0f, 2.0f, 3.0f, 4.0f, 5.0f }, 1.0f, std::vector<
-                                float> { 1.0f, 3.0f, 6.0f, 7.0f, 2.0f }, "orange"));
+                                float> { 1.0f, 3.0f, 6.0f, 7.0f, 2.0f }, "orange", "Series B"));
     }
 
     float MaxX() const override

@@ -10,6 +10,8 @@ using plot_detail::kPlotMarginBottom;
 using plot_detail::kPlotMarginLeft;
 using plot_detail::kPlotMarginRight;
 using plot_detail::kPlotMarginTop;
+using plot_detail::LegendItem;
+using plot_detail::LegendSwatch;
 using plot_detail::ParseColor;
 
 HistogramCanvas::HistogramCanvas(const Histogram &histogram, QWidget *parent) :
@@ -38,6 +40,7 @@ void HistogramCanvas::paintEvent(QPaintEvent* /*event*/)
     DrawGrid(painter, plot_area);
     DrawAxes(painter, plot_area);
     DrawHistograms(painter, plot_area);
+    DrawLegend(painter, plot_area);
 }
 
 QRect HistogramCanvas::PlotArea() const
@@ -144,4 +147,22 @@ void HistogramCanvas::DrawHistograms(QPainter &painter,
             painter.drawRect(bar);
         }
     }
+}
+
+void HistogramCanvas::DrawLegend(QPainter &painter,
+        const QRect &plot_area) const
+{
+    std::vector<LegendItem> items;
+    for (const Histogram::Data *data : histogram_.DataSets())
+    {
+        if (data == nullptr)
+        {
+            continue;
+        }
+
+        items.push_back(
+                { data->Label(), ParseColor(data->Color()), LegendSwatch::Bar });
+    }
+
+    plot_detail::DrawLegend(painter, plot_area, items);
 }

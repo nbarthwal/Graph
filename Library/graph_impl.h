@@ -4,15 +4,19 @@
 
 #include <QColor>
 #include <QFont>
+#include <QFontMetrics>
 #include <QLabel>
+#include <QPainter>
 #include <QPointF>
 #include <QRect>
 #include <QWidget>
 
+#include <algorithm>
 #include <functional>
 #include <memory>
 #include <string>
 #include <unordered_map>
+#include <vector>
 
 class QPainter;
 class QPaintEvent;
@@ -66,6 +70,101 @@ namespace plot_detail
         label.setText(QString::fromStdString(title));
     }
 
+    enum class LegendSwatch
+    {
+        Line,
+        Point,
+        Bar,
+    };
+
+    struct LegendItem
+    {
+        std::string label;
+        QColor color;
+        LegendSwatch swatch = LegendSwatch::Line;
+    };
+
+    inline void DrawLegend(QPainter &painter, const QRect &plot_area,
+            const std::vector<LegendItem> &items)
+    {
+        if (items.empty())
+        {
+            return;
+        }
+
+        constexpr int kPadding = 8;
+        constexpr int kSwatchWidth = 20;
+        constexpr int kSwatchHeight = 12;
+        constexpr int kRowSpacing = 6;
+        constexpr int kTextOffset = 8;
+        constexpr int kLegendInset = 8;
+
+        QFont font = painter.font();
+        font.setPointSize(10);
+        painter.setFont(font);
+        const QFontMetrics metrics(font);
+
+        int max_text_width = 0;
+        for (const LegendItem &item : items)
+        {
+            max_text_width = std::max(max_text_width,
+                    metrics.horizontalAdvance(
+                            QString::fromStdString(item.label)));
+        }
+
+        const int legend_width =
+                kPadding * 2 + kSwatchWidth + kTextOffset + max_text_width;
+        const int row_height = std::max(kSwatchHeight, metrics.height());
+        const int legend_height = kPadding * 2
+                + static_cast<int>(items.size()) * row_height
+                + static_cast<int>(items.size() - 1) * kRowSpacing;
+
+        const QRect legend_rect(plot_area.right() - legend_width - kLegendInset,
+                plot_area.top() + kLegendInset, legend_width, legend_height);
+
+        painter.save();
+        painter.setPen(Qt::NoPen);
+        painter.setBrush(Qt::white);
+        painter.drawRect(legend_rect);
+        painter.setPen(QPen(Qt::black, 1.0));
+        painter.setBrush(Qt::NoBrush);
+        painter.drawRect(legend_rect);
+
+        int y = legend_rect.top() + kPadding;
+        for (const LegendItem &item : items)
+        {
+            const int swatch_y = y + (row_height - kSwatchHeight) / 2;
+            const QRect swatch_rect(legend_rect.left() + kPadding, swatch_y,
+                    kSwatchWidth, kSwatchHeight);
+
+            if (item.swatch == LegendSwatch::Point)
+            {
+                painter.setPen(QPen(item.color, 1.5));
+                painter.setBrush(item.color);
+                painter.drawEllipse(swatch_rect.center(), 4, 4);
+            }
+            else if (item.swatch == LegendSwatch::Bar)
+            {
+                painter.setPen(QPen(item.color.darker(120), 1.0));
+                painter.setBrush(item.color);
+                painter.drawRect(swatch_rect);
+            }
+            else
+            {
+                painter.setPen(QPen(item.color, 2.0));
+                painter.drawLine(swatch_rect.left(), swatch_rect.center().y(),
+                        swatch_rect.right(), swatch_rect.center().y());
+            }
+
+            painter.setPen(Qt::black);
+            painter.drawText(
+                    legend_rect.left() + kPadding + kSwatchWidth + kTextOffset,
+                    y + metrics.ascent(), QString::fromStdString(item.label));
+            y += row_height + kRowSpacing;
+        }
+        painter.restore();
+    }
+
     void RunQtApp(
             const std::function<std::unique_ptr<QWidget>()> &create_window);
 
@@ -87,6 +186,7 @@ private:
     void DrawBackground(QPainter &painter) const;
     void DrawGrid(QPainter &painter, const QRect &plot_area) const;
     void DrawAxes(QPainter &painter, const QRect &plot_area) const;
+    void DrawLegend(QPainter &painter, const QRect &plot_area) const;
     void DrawCurve(QPainter &painter, const QRect &plot_area,
             const Graph::Data &curve) const;
 
@@ -112,6 +212,7 @@ private:
     void DrawGrid(QPainter &painter, const QRect &plot_area) const;
     void DrawAxes(QPainter &painter, const QRect &plot_area) const;
     void DrawHistograms(QPainter &painter, const QRect &plot_area) const;
+    void DrawLegend(QPainter &painter, const QRect &plot_area) const;
 
     const Histogram &histogram_;
     float parameter_ = 0.0f;
