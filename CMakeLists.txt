@@ -20,20 +20,20 @@ else()
 endif()
 
 add_library(graph_plot SHARED
-    plot_app.cpp
-    graph_canvas.cpp
-    graph_view.cpp
-    graph_plot.cpp
-    histogram_canvas.cpp
-    histogram_view.cpp
-    histogram_plot.cpp
+    Library/plot_app.cpp
+    Library/graph_canvas.cpp
+    Library/graph_view.cpp
+    Library/graph_plot.cpp
+    Library/histogram_canvas.cpp
+    Library/histogram_view.cpp
+    Library/histogram_plot.cpp
 )
 
 target_compile_definitions(graph_plot PRIVATE GRAPH_PLOT_BUILD_DLL)
 
 target_include_directories(graph_plot
     PUBLIC
-        $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>
+        $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/Library>
         $<INSTALL_INTERFACE:include>
 )
 
@@ -57,13 +57,13 @@ install(TARGETS graph_plot
 
 install(
     FILES
-        graph.h
-        graph_view.h
-        graph_plot.h
-        histogram.h
-        histogram_view.h
-        histogram_plot.h
-        graph_export.h
+        Library/graph.h
+        Library/graph_view.h
+        Library/graph_plot.h
+        Library/histogram.h
+        Library/histogram_view.h
+        Library/histogram_plot.h
+        Library/graph_export.h
     DESTINATION include
 )
 
