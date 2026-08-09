@@ -18,6 +18,7 @@
 *.cmake
 *.class
 *.exe
+*.bin
 
 # Qt autogen / MOC
 *_autogen/

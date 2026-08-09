@@ -20,6 +20,7 @@ endif()
 
 function(add_graph_plot_example target_name source_file)
     add_executable(${target_name} ${source_file})
+    set_target_properties(${target_name} PROPERTIES OUTPUT_NAME "${target_name}.bin")
     target_include_directories(${target_name} PRIVATE "${INCLUDE_DIR}")
     target_link_libraries(${target_name} PRIVATE "${GRAPH_PLOT_LIB}" ${QT_WIDGETS_LIB})
 endfunction()
