@@ -35,14 +35,20 @@ namespace
             slider_->setValue(0);
             layout->addWidget(slider_);
 
-            connect(slider_, &QSlider::valueChanged, this,
-                    [this](
-                            int value)
-                            {
-                                UpdateDisplay(
-                                        SliderToParameter(value, histogram_.MinP(),
-                                                histogram_.MaxP()));
-                            });
+            const bool show_slider = histogram_.MaxP() != histogram_.MinP();
+            slider_->setVisible(show_slider);
+
+            if (show_slider)
+            {
+                connect(slider_, &QSlider::valueChanged, this,
+                        [this](
+                                int value)
+                                {
+                                    UpdateDisplay(
+                                            SliderToParameter(value, histogram_.MinP(),
+                                                    histogram_.MaxP()));
+                                });
+            }
 
             UpdateDisplay(histogram_.MinP());
         }

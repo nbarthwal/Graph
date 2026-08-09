@@ -35,14 +35,20 @@ namespace
             slider_->setValue(0);
             layout->addWidget(slider_);
 
-            connect(slider_, &QSlider::valueChanged, this,
-                    [this](
-                            int value)
-                            {
-                                UpdateDisplay(
-                                        SliderToParameter(value, graph_.MinP(),
-                                                graph_.MaxP()));
-                            });
+            const bool show_slider = graph_.MaxP() != graph_.MinP();
+            slider_->setVisible(show_slider);
+
+            if (show_slider)
+            {
+                connect(slider_, &QSlider::valueChanged, this,
+                        [this](
+                                int value)
+                                {
+                                    UpdateDisplay(
+                                            SliderToParameter(value, graph_.MinP(),
+                                                    graph_.MaxP()));
+                                });
+            }
 
             UpdateDisplay(graph_.MinP());
         }
