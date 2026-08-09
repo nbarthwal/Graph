@@ -8,8 +8,7 @@ set(CMAKE_CXX_EXTENSIONS OFF)
 set(CMAKE_POSITION_INDEPENDENT_CODE ON)
 set(CMAKE_AUTOMOC ON)
 
-set(INCLUDE_DIR "$ENV{HOME}/.local/include")
-set(LIBRARY_DIR "$ENV{HOME}/.local/lib")
+set(PREFIX "$ENV{HOME}/.local")
 
 find_package(Qt6 REQUIRED COMPONENTS Widgets)
 set(QT_WIDGETS_LIB Qt6::Widgets)
@@ -46,9 +45,9 @@ endif()
 
 add_custom_command(
     TARGET graph_plot POST_BUILD
-    COMMAND ${CMAKE_COMMAND} -E make_directory "${INCLUDE_DIR}"
-    COMMAND ${CMAKE_COMMAND} -E make_directory "${LIBRARY_DIR}"
-    COMMAND ${CMAKE_COMMAND} -E copy "${CMAKE_CURRENT_SOURCE_DIR}/graph.h" "${INCLUDE_DIR}/graph.h"
-    COMMAND ${CMAKE_COMMAND} -E copy "$<TARGET_FILE:graph_plot>" "${LIBRARY_DIR}/${GRAPH_PLOT_LIB_FILENAME}"
-    COMMENT "Installing graph.h to ${INCLUDE_DIR} and ${GRAPH_PLOT_LIB_FILENAME} to ${LIBRARY_DIR}"
+    COMMAND ${CMAKE_COMMAND} -E make_directory "${PREFIX}/include"
+    COMMAND ${CMAKE_COMMAND} -E make_directory "${PREFIX}/lib"
+    COMMAND ${CMAKE_COMMAND} -E copy "${CMAKE_CURRENT_SOURCE_DIR}/graph.h" "${PREFIX}/include/graph.h"
+    COMMAND ${CMAKE_COMMAND} -E copy "$<TARGET_FILE:graph_plot>" "${PREFIX}/lib/${GRAPH_PLOT_LIB_FILENAME}"
+    COMMENT "Installing graph.h to ${PREFIX}/include and ${GRAPH_PLOT_LIB_FILENAME} to ${PREFIX}/lib"
 )

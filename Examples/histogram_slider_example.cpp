@@ -1,6 +1,5 @@
-#include "graph.h"
-
 #include <cmath>
+#include <graph.h>
 #include <memory>
 #include <string>
 #include <vector>
