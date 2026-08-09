@@ -4,17 +4,20 @@
 /out/
 
 # CMake generated files (in-source builds)
-/CMakeFiles/
-/CMakeCache.txt
+*/CMakeFiles/
+*/CMakeCache.txt
 /cmake_install.cmake
-/install_manifest.txt
-/CTestTestfile.cmake
-/Testing/
-/Makefile
-/*.ninja
-/.ninja_deps
-/.ninja_log
-/build.ninja
+*/install_manifest.txt
+*/CTestTestfile.cmake
+*/Testing/
+*/Makefile
+*/*.ninja
+*/.ninja_deps
+*/.ninja_log
+*/build.ninja
+*.cmake
+*.class
+*.exe
 
 # Qt autogen / MOC
 *_autogen/
@@ -53,3 +56,5 @@
 *.swo
 *~
 .DS_Store
+.project
+.cproject
