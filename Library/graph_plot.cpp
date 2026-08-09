@@ -19,7 +19,7 @@ namespace
         explicit PlotWindow(const Graph &graph) :
                 graph_(graph)
         {
-            setWindowTitle("Graph Plot");
+            setWindowTitle(QString::fromStdString(graph.Title()));
             resize(900, 700);
 
             auto *layout = new QVBoxLayout(this);

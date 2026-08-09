@@ -105,6 +105,11 @@ namespace
             return curves;
         }
 
+        std::string Title() const override
+        {
+            return "Trigonometry";
+        }
+
         std::string Title(const float parameter) const override
         {
             return "Trigonometry (frequency = " + std::to_string(parameter) + ")";

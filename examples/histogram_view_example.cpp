@@ -94,6 +94,11 @@ public:
         return data_sets;
     }
 
+    std::string Title() const override
+    {
+        return "Grouped Histogram";
+    }
+
     std::string Title(const float /*parameter*/) const override
     {
         return "Grouped Histogram";

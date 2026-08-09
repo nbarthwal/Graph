@@ -19,7 +19,7 @@ namespace
         explicit HistogramWindow(const Histogram &histogram) :
                 histogram_(histogram)
         {
-            setWindowTitle("Histogram Plot");
+            setWindowTitle(QString::fromStdString(histogram.Title()));
             resize(900, 700);
 
             auto *layout = new QVBoxLayout(this);

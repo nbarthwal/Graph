@@ -16,7 +16,7 @@ namespace
         GraphViewWindow(Graph &graph, float parameter) :
                 graph_(graph)
         {
-            setWindowTitle("Graph View");
+            setWindowTitle(QString::fromStdString(graph_.Title()));
             resize(900, 700);
 
             auto *layout = new QVBoxLayout(this);

@@ -85,6 +85,11 @@ public:
         return curves;
     }
 
+    std::string Title() const override
+    {
+        return "Sine Graph";
+    }
+
     std::string Title(const float parameter) const override
     {
         return "Sine Waves (p = " + std::to_string(parameter) + ")";

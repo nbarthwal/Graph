@@ -16,7 +16,7 @@ namespace
         HistogramViewWindow(Histogram &histogram, float parameter) :
                 histogram_(histogram)
         {
-            setWindowTitle("Histogram View");
+            setWindowTitle(QString::fromStdString(histogram_.Title()));
             resize(900, 700);
 
             auto *layout = new QVBoxLayout(this);
