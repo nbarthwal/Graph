@@ -15,7 +15,7 @@ namespace
     class HistogramWindow final : public QWidget
     {
     public:
-        explicit HistogramWindow(Histogram &histogram) :
+        explicit HistogramWindow(const Histogram &histogram) :
                 histogram_(histogram)
         {
             setWindowTitle("Histogram Plot");
@@ -53,7 +53,7 @@ namespace
         }
 
     private:
-        Histogram &histogram_;
+        const Histogram &histogram_;
         QLabel *parameter_label_ = nullptr;
         HistogramCanvas *histogram_canvas_ = nullptr;
         QSlider *slider_ = nullptr;
@@ -61,7 +61,7 @@ namespace
 
 }  // namespace
 
-void PlotHistogram(Histogram &histogram)
+void Plot(const Histogram& histogram)
 {
     plot_detail::RunQtApp([&histogram]()
     {   return std::make_unique<HistogramWindow>(histogram);});

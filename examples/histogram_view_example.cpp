@@ -101,6 +101,6 @@ private:
 int main()
 {
     GroupedHistogram histogram;
-    ShowHistogram(histogram, 1.0f);
+    histogram.Show(1.0f);
     return 0;
 }

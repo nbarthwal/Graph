@@ -92,6 +92,6 @@ private:
 int main()
 {
     SineGraph graph;
-    ShowGraph(graph, 1.0f);
+    graph.Show(1.0f);
     return 0;
 }

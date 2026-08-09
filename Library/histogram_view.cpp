@@ -29,10 +29,10 @@ namespace
 
 }  // namespace
 
-void ShowHistogram(Histogram &histogram, float parameter)
+void Histogram::Show(const float parameter)
 {
-    plot_detail::RunQtApp([&histogram, parameter]()
+    plot_detail::RunQtApp([this, parameter]()
     {
-        return std::make_unique<HistogramViewWindow>(histogram, parameter);
+        return std::make_unique<HistogramViewWindow>(*this, parameter);
     });
 }

@@ -40,7 +40,7 @@ namespace
 
 }  // namespace
 
-GraphCanvas::GraphCanvas(Graph &graph, QWidget *parent) :
+GraphCanvas::GraphCanvas(const Graph &graph, QWidget *parent) :
         QWidget(parent), graph_(graph)
 {
     setMinimumSize(640, 480);

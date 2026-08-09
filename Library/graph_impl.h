@@ -62,7 +62,7 @@ namespace plot_detail
 class GraphCanvas final : public QWidget
 {
 public:
-    explicit GraphCanvas(Graph &graph, QWidget *parent = nullptr);
+    explicit GraphCanvas(const Graph &graph, QWidget *parent = nullptr);
 
     void SetParameter(float parameter);
 
@@ -78,14 +78,14 @@ private:
     void DrawCurve(QPainter &painter, const QRect &plot_area,
             const Graph::Data &curve) const;
 
-    Graph &graph_;
+    const Graph &graph_;
     float parameter_ = 0.0f;
 };
 
 class HistogramCanvas final : public QWidget
 {
 public:
-    explicit HistogramCanvas(Histogram &histogram, QWidget *parent = nullptr);
+    explicit HistogramCanvas(const Histogram &histogram, QWidget *parent = nullptr);
 
     void SetParameter(float parameter);
 
@@ -101,6 +101,6 @@ private:
     void DrawAxes(QPainter &painter, const QRect &plot_area) const;
     void DrawHistograms(QPainter &painter, const QRect &plot_area) const;
 
-    Histogram &histogram_;
+    const Histogram &histogram_;
     float parameter_ = 0.0f;
 };

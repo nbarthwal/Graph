@@ -104,6 +104,6 @@ private:
 int main()
 {
     GroupedHistogram histogram;
-    PlotHistogram(histogram);
+    Plot(histogram);
     return 0;
 }

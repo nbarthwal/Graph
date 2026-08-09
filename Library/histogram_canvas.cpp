@@ -12,7 +12,7 @@ using plot_detail::kPlotMarginRight;
 using plot_detail::kPlotMarginTop;
 using plot_detail::ParseColor;
 
-HistogramCanvas::HistogramCanvas(Histogram &histogram, QWidget *parent) :
+HistogramCanvas::HistogramCanvas(const Histogram &histogram, QWidget *parent) :
         QWidget(parent), histogram_(histogram)
 {
     setMinimumSize(640, 480);

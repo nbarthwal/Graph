@@ -15,7 +15,7 @@ namespace
     class PlotWindow final : public QWidget
     {
     public:
-        explicit PlotWindow(Graph &graph) :
+        explicit PlotWindow(const Graph &graph) :
                 graph_(graph)
         {
             setWindowTitle("Graph Plot");
@@ -53,7 +53,7 @@ namespace
         }
 
     private:
-        Graph &graph_;
+        const Graph &graph_;
         QLabel *parameter_label_ = nullptr;
         GraphCanvas *plot_canvas_ = nullptr;
         QSlider *slider_ = nullptr;
@@ -61,7 +61,7 @@ namespace
 
 }  // namespace
 
-void Plot(Graph &graph)
+void Plot(const Graph& graph)
 {
     plot_detail::RunQtApp([&graph]()
     {   return std::make_unique<PlotWindow>(graph);});

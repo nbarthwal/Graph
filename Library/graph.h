@@ -35,6 +35,7 @@ public:
     virtual float MaxP() const = 0; // MaxP defines the max of slider parameter.
     virtual float MinP() const = 0; // MinP defines the min of slider parameter.
     virtual std::vector<const Data*> Curves() const = 0; // Curves defines the curves for this graph.
+    GRAPH_API void Show(const float parameter);
     virtual ~Graph() = default;
 };
 
@@ -59,10 +60,9 @@ public:
     virtual float MaxP() const = 0; // MaxP defines the max of slider parameter.
     virtual float MinP() const = 0; // MinP defines the min of slider parameter.
     virtual std::vector<const Data*> DataSets() const = 0; // Histogram data to display.
+    GRAPH_API void Show(const float parameter);
     virtual ~Histogram() = default;
 };
 
-GRAPH_API void Plot(Graph &graph);
-GRAPH_API void ShowGraph(Graph &graph, float parameter);
-GRAPH_API void PlotHistogram(Histogram &histogram);
-GRAPH_API void ShowHistogram(Histogram &histogram, float parameter);
+GRAPH_API void Plot(const Graph& graph);
+GRAPH_API void Plot(const Histogram& histogram);

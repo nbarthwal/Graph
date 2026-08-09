@@ -29,10 +29,10 @@ namespace
 
 }  // namespace
 
-void ShowGraph(Graph &graph, float parameter)
+void Graph::Show(const float parameter)
 {
-    plot_detail::RunQtApp([&graph, parameter]()
+    plot_detail::RunQtApp([this, parameter]()
     {
-        return std::make_unique<GraphViewWindow>(graph, parameter);
+        return std::make_unique<GraphViewWindow>(*this, parameter);
     });
 }

@@ -112,6 +112,6 @@ private:
 int main()
 {
     SliderHistogram histogram;
-    PlotHistogram(histogram);
+    Plot(histogram);
     return 0;
 }
