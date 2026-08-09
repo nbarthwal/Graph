@@ -8,10 +8,10 @@
 #  ifdef GRAPH_PLOT_BUILD_DLL
 #    define GRAPH_API __declspec(dllexport)
 #  else
-#    define GRAPH_API __declspec(dllimport)
+#    define GRAPH_API
 #  endif
 #else
-#  define GRAPH_API __attribute__((visibility("default")))
+#  define GRAPH_API
 #endif
 
 class Curve
