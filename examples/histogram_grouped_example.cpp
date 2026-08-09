@@ -5,6 +5,8 @@
 #include <string>
 #include <vector>
 
+// NOTE: THE SLIDER DOES NOT WORK!!
+
 class StaticHistogramData final : public HistogramData
 {
 public:

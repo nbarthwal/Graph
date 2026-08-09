@@ -11,15 +11,8 @@ set(CMAKE_AUTOMOC ON)
 set(INCLUDE_DIR "$ENV{HOME}/.local/include")
 set(LIBRARY_DIR "$ENV{HOME}/.local/lib")
 
-option(GRAPH_PLOT_USE_QT6 "Use Qt6 instead of Qt5" ON)
-
-if(GRAPH_PLOT_USE_QT6)
-    find_package(Qt6 REQUIRED COMPONENTS Widgets)
-    set(QT_WIDGETS_LIB Qt6::Widgets)
-else()
-    find_package(Qt5 REQUIRED COMPONENTS Widgets)
-    set(QT_WIDGETS_LIB Qt5::Widgets)
-endif()
+find_package(Qt6 REQUIRED COMPONENTS Widgets)
+set(QT_WIDGETS_LIB Qt6::Widgets)
 
 add_library(graph_plot STATIC
     plot_app.cpp
