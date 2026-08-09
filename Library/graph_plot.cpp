@@ -30,9 +30,6 @@ namespace
             plot_canvas_ = new GraphCanvas(graph_, this);
             layout->addWidget(plot_canvas_, 1);
 
-            parameter_label_ = new QLabel(this);
-            layout->addWidget(parameter_label_);
-
             slider_ = new QSlider(Qt::Horizontal, this);
             slider_->setRange(0, kSliderSteps);
             slider_->setValue(0);
@@ -54,15 +51,11 @@ namespace
         void UpdateDisplay(float parameter)
         {
             SetTitleLabel(*title_label_, graph_.Title(parameter));
-            parameter_label_->setText(
-                    QString("Parameter p = %1").arg(
-                            static_cast<double>(parameter), 0, 'g', 4));
             plot_canvas_->SetParameter(parameter);
         }
 
         const Graph &graph_;
         QLabel *title_label_ = nullptr;
-        QLabel *parameter_label_ = nullptr;
         GraphCanvas *plot_canvas_ = nullptr;
         QSlider *slider_ = nullptr;
     };

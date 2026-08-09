@@ -30,9 +30,6 @@ namespace
             histogram_canvas_ = new HistogramCanvas(histogram_, this);
             layout->addWidget(histogram_canvas_, 1);
 
-            parameter_label_ = new QLabel(this);
-            layout->addWidget(parameter_label_);
-
             slider_ = new QSlider(Qt::Horizontal, this);
             slider_->setRange(0, kSliderSteps);
             slider_->setValue(0);
@@ -54,15 +51,11 @@ namespace
         void UpdateDisplay(float parameter)
         {
             SetTitleLabel(*title_label_, histogram_.Title(parameter));
-            parameter_label_->setText(
-                    QString("Parameter p = %1").arg(
-                            static_cast<double>(parameter), 0, 'g', 4));
             histogram_canvas_->SetParameter(parameter);
         }
 
         const Histogram &histogram_;
         QLabel *title_label_ = nullptr;
-        QLabel *parameter_label_ = nullptr;
         HistogramCanvas *histogram_canvas_ = nullptr;
         QSlider *slider_ = nullptr;
     };
