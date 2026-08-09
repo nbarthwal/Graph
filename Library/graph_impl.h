@@ -76,7 +76,7 @@ private:
     void DrawGrid(QPainter &painter, const QRect &plot_area) const;
     void DrawAxes(QPainter &painter, const QRect &plot_area) const;
     void DrawCurve(QPainter &painter, const QRect &plot_area,
-            const Curve &curve) const;
+            const Graph::Data &curve) const;
 
     Graph &graph_;
     float parameter_ = 0.0f;

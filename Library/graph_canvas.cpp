@@ -66,7 +66,7 @@ void GraphCanvas::paintEvent(QPaintEvent* /*event*/)
     DrawGrid(painter, plot_area);
     DrawAxes(painter, plot_area);
 
-    for (const Curve *curve : graph_.Curves())
+    for (const Graph::Data *curve : graph_.Curves())
     {
         if (curve != nullptr)
         {
@@ -132,7 +132,7 @@ void GraphCanvas::DrawAxes(QPainter &painter, const QRect &plot_area) const
 }
 
 void GraphCanvas::DrawCurve(QPainter &painter, const QRect &plot_area,
-        const Curve &curve) const
+        const Graph::Data &curve) const
 {
     const std::vector<float> x_values = Linspace(curve.MinX(), curve.MaxX(),
             kSampleCount);

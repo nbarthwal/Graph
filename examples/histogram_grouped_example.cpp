@@ -7,7 +7,7 @@
 
 // NOTE: THE SLIDER DOES NOT WORK!!
 
-class StaticHistogramData final : public HistogramData
+class StaticHistogramData final : public Histogram::Data
 {
 public:
     StaticHistogramData(std::vector<float> centers, float bin_width,
@@ -86,9 +86,9 @@ public:
         return 1.0f;
     }
 
-    std::vector<const HistogramData*> DataSets() const override
+    std::vector<const Histogram::Data*> DataSets() const override
     {
-        std::vector<const HistogramData*> data_sets;
+        std::vector<const Histogram::Data*> data_sets;
         data_sets.reserve(data_sets_.size());
         for (const auto &data_set : data_sets_)
         {
@@ -98,7 +98,7 @@ public:
     }
 
 private:
-    std::vector<std::unique_ptr<HistogramData>> data_sets_;
+    std::vector<std::unique_ptr<Histogram::Data>> data_sets_;
 };
 
 int main()

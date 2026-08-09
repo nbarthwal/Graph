@@ -101,7 +101,7 @@ void HistogramCanvas::DrawAxes(QPainter &painter, const QRect &plot_area) const
 void HistogramCanvas::DrawHistograms(QPainter &painter,
         const QRect &plot_area) const
 {
-    const std::vector<const HistogramData*> data_sets = histogram_.DataSets();
+    const std::vector<const Histogram::Data*> data_sets = histogram_.DataSets();
     if (data_sets.empty())
     {
         return;
@@ -112,7 +112,7 @@ void HistogramCanvas::DrawHistograms(QPainter &painter,
 
     for (std::size_t data_index = 0; data_index < data_set_count; ++data_index)
     {
-        const HistogramData *data = data_sets[data_index];
+        const Histogram::Data *data = data_sets[data_index];
         if (data == nullptr || data->BinCount() == 0)
         {
             continue;

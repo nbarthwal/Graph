@@ -5,7 +5,7 @@
 #include <string>
 #include <vector>
 
-class SineCurve final : public Curve
+class SineCurve final : public Graph::Data
 {
 public:
     SineCurve(float frequency, std::string color, bool point) :
@@ -74,9 +74,9 @@ public:
         return 0.5f;
     }
 
-    std::vector<const Curve*> Curves() const override
+    std::vector<const Graph::Data*> Curves() const override
     {
-        std::vector<const Curve*> curves;
+        std::vector<const Graph::Data*> curves;
         curves.reserve(curves_.size());
         for (const auto &curve : curves_)
         {
@@ -86,7 +86,7 @@ public:
     }
 
 private:
-    std::vector<std::unique_ptr<Curve>> curves_;
+    std::vector<std::unique_ptr<Graph::Data>> curves_;
 };
 
 int main()
