@@ -1,11 +1,14 @@
 #include "graph.h"
 #include "graph_impl.h"
 
+#include <QLabel>
 #include <QVBoxLayout>
 #include <QWidget>
 
 namespace
 {
+
+    using plot_detail::SetTitleLabel;
 
     class HistogramViewWindow final : public QWidget
     {
@@ -17,6 +20,11 @@ namespace
             resize(900, 700);
 
             auto *layout = new QVBoxLayout(this);
+
+            title_label_ = new QLabel(this);
+            SetTitleLabel(*title_label_, histogram_.Title(parameter));
+            layout->addWidget(title_label_);
+
             canvas_ = new HistogramCanvas(histogram_, this);
             layout->addWidget(canvas_, 1);
             canvas_->SetParameter(parameter);
@@ -24,6 +32,7 @@ namespace
 
     private:
         Histogram &histogram_;
+        QLabel *title_label_ = nullptr;
         HistogramCanvas *canvas_ = nullptr;
     };
 

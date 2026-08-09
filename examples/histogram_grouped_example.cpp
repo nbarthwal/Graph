@@ -97,6 +97,11 @@ public:
         return data_sets;
     }
 
+    std::string Title(const float /*parameter*/) const override
+    {
+        return "Grouped Histogram";
+    }
+
 private:
     std::vector<std::unique_ptr<Histogram::Data>> data_sets_;
 };

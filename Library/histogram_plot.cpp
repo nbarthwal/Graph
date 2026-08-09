@@ -10,6 +10,7 @@ namespace
 {
 
     using plot_detail::kSliderSteps;
+    using plot_detail::SetTitleLabel;
     using plot_detail::SliderToParameter;
 
     class HistogramWindow final : public QWidget
@@ -23,11 +24,14 @@ namespace
 
             auto *layout = new QVBoxLayout(this);
 
-            parameter_label_ = new QLabel(this);
-            layout->addWidget(parameter_label_);
+            title_label_ = new QLabel(this);
+            layout->addWidget(title_label_);
 
             histogram_canvas_ = new HistogramCanvas(histogram_, this);
             layout->addWidget(histogram_canvas_, 1);
+
+            parameter_label_ = new QLabel(this);
+            layout->addWidget(parameter_label_);
 
             slider_ = new QSlider(Qt::Horizontal, this);
             slider_->setRange(0, kSliderSteps);
@@ -38,22 +42,26 @@ namespace
                     [this](
                             int value)
                             {
-                                const float parameter =
-                                SliderToParameter(value, histogram_.MinP(), histogram_.MaxP());
-                                parameter_label_->setText(
-                                        QString("Parameter p = %1").arg(static_cast<double>(parameter), 0, 'g', 4));
-                                histogram_canvas_->SetParameter(parameter);
+                                UpdateDisplay(
+                                        SliderToParameter(value, histogram_.MinP(),
+                                                histogram_.MaxP()));
                             });
 
-            const float initial_parameter = histogram_.MinP();
-            parameter_label_->setText(
-                    QString("Parameter p = %1").arg(
-                            static_cast<double>(initial_parameter), 0, 'g', 4));
-            histogram_canvas_->SetParameter(initial_parameter);
+            UpdateDisplay(histogram_.MinP());
         }
 
     private:
+        void UpdateDisplay(float parameter)
+        {
+            SetTitleLabel(*title_label_, histogram_.Title(parameter));
+            parameter_label_->setText(
+                    QString("Parameter p = %1").arg(
+                            static_cast<double>(parameter), 0, 'g', 4));
+            histogram_canvas_->SetParameter(parameter);
+        }
+
         const Histogram &histogram_;
+        QLabel *title_label_ = nullptr;
         QLabel *parameter_label_ = nullptr;
         HistogramCanvas *histogram_canvas_ = nullptr;
         QSlider *slider_ = nullptr;

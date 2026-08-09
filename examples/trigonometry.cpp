@@ -105,6 +105,11 @@ namespace
             return curves;
         }
 
+        std::string Title(const float parameter) const override
+        {
+            return "Trigonometry (frequency = " + std::to_string(parameter) + ")";
+        }
+
     private:
         std::vector<std::unique_ptr<Graph::Data>> curves_;
     };

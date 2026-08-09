@@ -105,6 +105,11 @@ public:
         return data_sets;
     }
 
+    std::string Title(const float parameter) const override
+    {
+        return "Gaussian Mixture (p = " + std::to_string(parameter) + ")";
+    }
+
 private:
     std::vector<std::unique_ptr<Histogram::Data>> data_sets_;
 };

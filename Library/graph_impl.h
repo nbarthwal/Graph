@@ -3,6 +3,8 @@
 #include "graph.h"
 
 #include <QColor>
+#include <QFont>
+#include <QLabel>
 #include <QPointF>
 #include <QRect>
 #include <QWidget>
@@ -52,6 +54,16 @@ namespace plot_detail
 
         const QColor parsed(QString::fromStdString(color));
         return parsed.isValid() ? parsed : QColor(38, 139, 210);
+    }
+
+    inline void SetTitleLabel(QLabel &label, const std::string &title)
+    {
+        QFont title_font = label.font();
+        title_font.setPointSize(20);
+        title_font.setBold(true);
+        label.setFont(title_font);
+        label.setAlignment(Qt::AlignCenter);
+        label.setText(QString::fromStdString(title));
     }
 
     void RunQtApp(
