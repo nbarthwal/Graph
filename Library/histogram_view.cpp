@@ -1,7 +1,5 @@
-#include "histogram_view.h"
-
-#include "histogram_canvas.h"
-#include "plot_app.h"
+#include "graph.h"
+#include "graph_impl.h"
 
 #include <QVBoxLayout>
 #include <QWidget>

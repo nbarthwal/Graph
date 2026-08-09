@@ -1,6 +1,4 @@
-#include "histogram_canvas.h"
-
-#include "plot_detail.h"
+#include "graph_impl.h"
 
 #include <QPainter>
 #include <QPen>

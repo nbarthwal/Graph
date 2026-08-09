@@ -1,5 +1,4 @@
 #include "graph.h"
-#include "graph_view.h"
 
 #include <cmath>
 #include <memory>

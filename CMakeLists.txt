@@ -58,12 +58,6 @@ install(TARGETS graph_plot
 install(
     FILES
         Library/graph.h
-        Library/graph_view.h
-        Library/graph_plot.h
-        Library/histogram.h
-        Library/histogram_view.h
-        Library/histogram_plot.h
-        Library/graph_export.h
     DESTINATION include
 )
 

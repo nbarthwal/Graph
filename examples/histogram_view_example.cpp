@@ -1,5 +1,4 @@
-#include "histogram.h"
-#include "histogram_view.h"
+#include "graph.h"
 
 #include <memory>
 #include <string>

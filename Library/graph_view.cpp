@@ -1,7 +1,5 @@
-#include "graph_view.h"
-
-#include "graph_canvas.h"
-#include "plot_app.h"
+#include "graph.h"
+#include "graph_impl.h"
 
 #include <QVBoxLayout>
 #include <QWidget>

@@ -1,8 +1,5 @@
-#include "graph_plot.h"
-
-#include "graph_canvas.h"
-#include "plot_app.h"
-#include "plot_detail.h"
+#include "graph.h"
+#include "graph_impl.h"
 
 #include <QLabel>
 #include <QSlider>
