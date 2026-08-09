@@ -1,0 +1,55 @@
+# CMake build directories
+/build/
+/cmake-build-*/
+/out/
+
+# CMake generated files (in-source builds)
+/CMakeFiles/
+/CMakeCache.txt
+/cmake_install.cmake
+/install_manifest.txt
+/CTestTestfile.cmake
+/Testing/
+/Makefile
+/*.ninja
+/.ninja_deps
+/.ninja_log
+/build.ninja
+
+# Qt autogen / MOC
+*_autogen/
+/.qt/
+
+# Compiled libraries
+*.a
+*.lib
+*.so
+*.so.*
+*.dylib
+/libgraph_plot*
+
+# Object files
+*.o
+*.obj
+
+# Example executables (out-of-tree and in-source builds)
+/graph_plot_example
+/graph_view_example
+/histogram_grouped_example
+/histogram_slider_example
+/histogram_view_example
+/trigonometry
+/build/graph_plot_example
+/build/graph_view_example
+/build/histogram_grouped_example
+/build/histogram_slider_example
+/build/histogram_view_example
+/build/trigonometry
+
+# IDE / editor
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
