@@ -1,6 +1,7 @@
 #pragma once
 
 #include <cstddef>
+#include <memory>
 #include <string>
 #include <vector>
 
@@ -17,6 +18,29 @@
 class Graph
 {
 public:
+
+    class Point
+    {
+    public:
+        const float X;
+        const float Y;
+        Point(const float x, const float y) : X(x), Y(y) {}
+    };
+
+    class Segment
+    {
+    private:
+        std::vector<Point> data;
+        float min;
+        float max;
+
+    public:
+        Segment(const std::vector<Point>& points);
+        [[nodiscard]] const float Min() const;
+        [[nodiscard]] const float Max() const;
+        const Point& operator[](size_t index) const;
+    };
+
     const bool Slider;
     const std::string WindowTitle;
     const float MinP;
