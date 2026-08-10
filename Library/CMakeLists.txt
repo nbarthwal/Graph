@@ -2,16 +2,20 @@ cmake_minimum_required(VERSION 3.18)
 
 project(GraphPlot VERSION 1.0.0 LANGUAGES CXX)
 
+set(PREFIX "$ENV{HOME}/.local" CACHE PATH "Package install prefix")
+set(CMAKE_INSTALL_PREFIX "${PREFIX}" CACHE PATH "Install prefix" FORCE)
+
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 set(CMAKE_POSITION_INDEPENDENT_CODE ON)
 set(CMAKE_AUTOMOC ON)
 
-set(PREFIX "$ENV{HOME}/.local")
-
 find_package(Qt6 REQUIRED COMPONENTS Widgets)
 set(QT_WIDGETS_LIB Qt6::Widgets)
+
+include(GNUInstallDirs)
+include(CMakePackageConfigHelpers)
 
 add_library(graph_plot STATIC
     plot_app.cpp
@@ -26,6 +30,7 @@ add_library(graph_plot STATIC
 target_include_directories(graph_plot
     PUBLIC
         $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>
+        $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>
 )
 
 target_link_libraries(graph_plot
@@ -37,17 +42,35 @@ set_target_properties(graph_plot PROPERTIES
     OUTPUT_NAME graph_plot
 )
 
-if(MSVC)
-    set(GRAPH_PLOT_LIB_FILENAME graph_plot.lib)
-else()
-    set(GRAPH_PLOT_LIB_FILENAME libgraph_plot.a)
-endif()
+install(TARGETS graph_plot
+    EXPORT GraphPlotTargets
+    ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
+)
 
-add_custom_command(
-    TARGET graph_plot POST_BUILD
-    COMMAND ${CMAKE_COMMAND} -E make_directory "${PREFIX}/include"
-    COMMAND ${CMAKE_COMMAND} -E make_directory "${PREFIX}/lib"
-    COMMAND ${CMAKE_COMMAND} -E copy "${CMAKE_CURRENT_SOURCE_DIR}/graph.h" "${PREFIX}/include/graph.h"
-    COMMAND ${CMAKE_COMMAND} -E copy "$<TARGET_FILE:graph_plot>" "${PREFIX}/lib/${GRAPH_PLOT_LIB_FILENAME}"
-    COMMENT "Installing graph.h to ${PREFIX}/include and ${GRAPH_PLOT_LIB_FILENAME} to ${PREFIX}/lib"
+install(FILES graph.h
+    DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}
+)
+
+install(EXPORT GraphPlotTargets
+    FILE GraphPlotTargets.cmake
+    NAMESPACE GraphPlot::
+    DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/GraphPlot
+)
+
+configure_package_config_file(
+    GraphPlotConfig.cmake.in
+    "${CMAKE_CURRENT_BINARY_DIR}/GraphPlotConfig.cmake"
+    INSTALL_DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/GraphPlot
+)
+
+write_basic_package_version_file(
+    "${CMAKE_CURRENT_BINARY_DIR}/GraphPlotConfigVersion.cmake"
+    VERSION ${PROJECT_VERSION}
+    COMPATIBILITY SameMajorVersion
+)
+
+install(FILES
+    "${CMAKE_CURRENT_BINARY_DIR}/GraphPlotConfig.cmake"
+    "${CMAKE_CURRENT_BINARY_DIR}/GraphPlotConfigVersion.cmake"
+    DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/GraphPlot
 )

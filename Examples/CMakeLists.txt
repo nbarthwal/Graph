@@ -6,22 +6,16 @@ set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 
-set(PREFIX "$ENV{HOME}/.local")
+set(PREFIX "$ENV{HOME}/.local" CACHE PATH "Package search prefix")
 
-find_package(Qt6 REQUIRED COMPONENTS Widgets)
-set(QT_WIDGETS_LIB Qt6::Widgets)
+list(APPEND CMAKE_PREFIX_PATH "${PREFIX}")
 
-if(MSVC)
-    set(GRAPH_PLOT_LIB "${PREFIX}/lib/graph_plot.lib")
-else()
-    set(GRAPH_PLOT_LIB "${PREFIX}/lib/libgraph_plot.a")
-endif()
+find_package(GraphPlot REQUIRED)
 
 function(add_graph_plot_example target_name source_file)
     add_executable(${target_name} ${source_file})
     set_target_properties(${target_name} PROPERTIES OUTPUT_NAME "${target_name}.bin")
-    target_include_directories(${target_name} SYSTEM PRIVATE "${PREFIX}/include")
-    target_link_libraries(${target_name} PRIVATE "${GRAPH_PLOT_LIB}" ${QT_WIDGETS_LIB})
+    target_link_libraries(${target_name} PRIVATE GraphPlot::graph_plot)
 endfunction()
 
 add_graph_plot_example(graph_plot_example sine_graph.cpp)
