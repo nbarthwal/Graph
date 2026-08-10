@@ -53,7 +53,7 @@ class FixedSineCurve final : public Graph::Data
     class FixedParameterGraph final : public Graph
     {
     public:
-        FixedParameterGraph(): Graph(false)
+        FixedParameterGraph(): Graph("Fixed Parameter Graph", false)
         {
             curves_.push_back(
                     std::make_unique<FixedSineCurve>(1.0f, "blue", false));
@@ -95,11 +95,6 @@ class FixedSineCurve final : public Graph::Data
                 curves.push_back(curve.get());
             }
             return curves;
-        }
-
-        std::string Title() const override
-        {
-            return "Fixed Parameter Graph";
         }
 
         std::string Title(const float parameter) const override
@@ -160,7 +155,7 @@ class FixedSineCurve final : public Graph::Data
     class FixedParameterHistogram final : public Histogram
     {
     public:
-        FixedParameterHistogram(): Histogram(false)
+        FixedParameterHistogram(): Histogram("Fixed Parameter Histogram", false)
         {
             data_sets_.push_back(std::make_unique<FixedHistogramData>(
                     std::vector<float> { 1.0f, 2.0f, 3.0f, 4.0f, 5.0f }, 1.0f,
@@ -202,11 +197,6 @@ class FixedSineCurve final : public Graph::Data
                 data_sets.push_back(data_set.get());
             }
             return data_sets;
-        }
-
-        std::string Title() const override
-        {
-            return "Fixed Parameter Histogram";
         }
 
         std::string Title(const float parameter) const override

@@ -217,7 +217,9 @@ class HistogramWindow final : public QWidget
     private:
         void UpdateDisplay(float parameter)
         {
-            SetTitleLabel(*title_label_, histogram_->Title(parameter));
+            SetTitleLabel(*title_label_,
+                    histogram_->Slider() ? histogram_->Title(parameter)
+                                         : histogram_->Title());
             histogram_canvas_->SetParameter(parameter);
         }
 
@@ -239,7 +241,9 @@ class HistogramViewWindow final : public QWidget
             auto *layout = new QVBoxLayout(this);
 
             title_label_ = new QLabel(this);
-            SetTitleLabel(*title_label_, histogram_->Title(parameter));
+            SetTitleLabel(*title_label_,
+                    histogram_->Slider() ? histogram_->Title(parameter)
+                                           : histogram_->Title());
             layout->addWidget(title_label_);
 
             canvas_ = new HistogramCanvas(histogram_, this);

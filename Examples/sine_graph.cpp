@@ -50,7 +50,7 @@ private:
 class SineGraph final : public Graph
 {
 public:
-    SineGraph(): Graph(true)
+    SineGraph(): Graph("Sine Graph", true)
     {
         curves_.push_back(std::make_unique < SineCurve > (1.0f, "blue", false));
         curves_.push_back(std::make_unique < SineCurve > (2.0f, "red", true));
@@ -90,11 +90,6 @@ public:
             curves.push_back(curve.get());
         }
         return curves;
-    }
-
-    std::string Title() const override
-    {
-        return "Sine Graph";
     }
 
     std::string Title(const float parameter) const override

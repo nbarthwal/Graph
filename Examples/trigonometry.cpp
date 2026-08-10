@@ -67,7 +67,7 @@ class CosineCurve final : public Graph::Data
     class TrigonometryGraph final : public Graph
     {
     public:
-        TrigonometryGraph(): Graph(true)
+        TrigonometryGraph(): Graph("Trigonometry", true)
         {
             curves_.push_back(std::make_unique<CosineCurve>());
             curves_.push_back(std::make_unique<SineCurve>());
@@ -107,11 +107,6 @@ class CosineCurve final : public Graph::Data
                 curves.push_back(curve.get());
             }
             return curves;
-        }
-
-        std::string Title() const override
-        {
-            return "Trigonometry";
         }
 
         std::string Title(const float parameter) const override

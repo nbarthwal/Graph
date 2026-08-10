@@ -60,7 +60,7 @@ private:
 class SliderHistogram final : public Histogram
 {
 public:
-    SliderHistogram(): Histogram(true)
+    SliderHistogram(): Histogram("Gaussian Mixture", true)
     {
         data_sets_.push_back(
                 std::make_unique < GaussianHistogramData
@@ -106,11 +106,6 @@ public:
             data_sets.push_back(data_set.get());
         }
         return data_sets;
-    }
-
-    std::string Title() const override
-    {
-        return "Gaussian Mixture";
     }
 
     std::string Title(const float parameter) const override

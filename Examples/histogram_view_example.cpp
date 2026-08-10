@@ -50,7 +50,7 @@ private:
 class GroupedHistogram final : public Histogram
 {
 public:
-    GroupedHistogram(): Histogram(true)
+    GroupedHistogram(): Histogram("Grouped Histogram", true)
     {
         data_sets_.push_back(
                 std::make_unique < StaticHistogramData
@@ -97,11 +97,6 @@ public:
             data_sets.push_back(data_set.get());
         }
         return data_sets;
-    }
-
-    std::string Title() const override
-    {
-        return "Grouped Histogram";
     }
 
     std::string Title(const float /*parameter*/) const override

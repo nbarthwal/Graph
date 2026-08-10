@@ -250,7 +250,8 @@ class PlotWindow final : public QWidget
     private:
         void UpdateDisplay(float parameter)
         {
-            SetTitleLabel(*title_label_, graph_->Title(parameter));
+            SetTitleLabel(*title_label_,
+                    graph_->Slider() ? graph_->Title(parameter) : graph_->Title());
             plot_canvas_->SetParameter(parameter);
         }
 
@@ -272,7 +273,8 @@ class GraphViewWindow final : public QWidget
             auto *layout = new QVBoxLayout(this);
 
             title_label_ = new QLabel(this);
-            SetTitleLabel(*title_label_, graph_->Title(parameter));
+            SetTitleLabel(*title_label_,
+                    graph_->Slider() ? graph_->Title(parameter) : graph_->Title());
             layout->addWidget(title_label_);
 
             canvas_ = new GraphCanvas(graph_, this);
