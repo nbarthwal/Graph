@@ -180,7 +180,7 @@ class HistogramWindow final : public QWidget
         explicit HistogramWindow(const Histogram *histogram) :
                 histogram_(histogram)
         {
-            setWindowTitle(QString::fromStdString(histogram->Title()));
+            setWindowTitle(QString::fromStdString(histogram->WindowTitle));
             resize(900, 700);
 
             auto *layout = new QVBoxLayout(this);
@@ -196,10 +196,8 @@ class HistogramWindow final : public QWidget
             slider_->setValue(0);
             layout->addWidget(slider_);
 
-            const bool show_slider = histogram_->Slider();
-            slider_->setVisible(show_slider);
-
-            if (show_slider)
+            slider_->setVisible(histogram_->Slider);
+            if (histogram_->Slider)
             {
                 connect(slider_, &QSlider::valueChanged, this,
                         [this](
@@ -218,8 +216,8 @@ class HistogramWindow final : public QWidget
         void UpdateDisplay(float parameter)
         {
             SetTitleLabel(*title_label_,
-                    histogram_->Slider() ? histogram_->Title(parameter)
-                                         : histogram_->Title());
+                    histogram_->Slider ? histogram_->Title(parameter)
+                                         : histogram_->WindowTitle);
             histogram_canvas_->SetParameter(parameter);
         }
 
@@ -235,15 +233,15 @@ class HistogramViewWindow final : public QWidget
         HistogramViewWindow(const Histogram *histogram, float parameter):
                 histogram_(histogram)
         {
-            setWindowTitle(QString::fromStdString(histogram_->Title()));
+            setWindowTitle(QString::fromStdString(histogram_->WindowTitle));
             resize(900, 700);
 
             auto *layout = new QVBoxLayout(this);
 
             title_label_ = new QLabel(this);
             SetTitleLabel(*title_label_,
-                    histogram_->Slider() ? histogram_->Title(parameter)
-                                           : histogram_->Title());
+                    histogram_->Slider ? histogram_->Title(parameter)
+                                           : histogram_->WindowTitle);
             layout->addWidget(title_label_);
 
             canvas_ = new HistogramCanvas(histogram_, this);

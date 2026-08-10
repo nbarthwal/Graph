@@ -213,7 +213,7 @@ class PlotWindow final : public QWidget
         explicit PlotWindow(const Graph *graph) :
                 graph_(graph)
         {
-            setWindowTitle(QString::fromStdString(graph->Title()));
+            setWindowTitle(QString::fromStdString(graph->WindowTitle));
             resize(900, 700);
 
             auto *layout = new QVBoxLayout(this);
@@ -229,10 +229,8 @@ class PlotWindow final : public QWidget
             slider_->setValue(0);
             layout->addWidget(slider_);
 
-            const bool show_slider = graph_->Slider();
-            slider_->setVisible(show_slider);
-
-            if (show_slider)
+            slider_->setVisible(graph_->Slider);
+            if (graph_->Slider)
             {
                 connect(slider_, &QSlider::valueChanged, this,
                         [this](
@@ -251,7 +249,7 @@ class PlotWindow final : public QWidget
         void UpdateDisplay(float parameter)
         {
             SetTitleLabel(*title_label_,
-                    graph_->Slider() ? graph_->Title(parameter) : graph_->Title());
+                    graph_->Slider ? graph_->Title(parameter) : graph_->WindowTitle);
             plot_canvas_->SetParameter(parameter);
         }
 
@@ -267,14 +265,14 @@ class GraphViewWindow final : public QWidget
         GraphViewWindow(Graph *graph, float parameter) :
                 graph_(graph)
         {
-            setWindowTitle(QString::fromStdString(graph_->Title()));
+            setWindowTitle(QString::fromStdString(graph_->WindowTitle));
             resize(900, 700);
 
             auto *layout = new QVBoxLayout(this);
 
             title_label_ = new QLabel(this);
             SetTitleLabel(*title_label_,
-                    graph_->Slider() ? graph_->Title(parameter) : graph_->Title());
+                    graph_->Slider ? graph_->Title(parameter) : graph_->WindowTitle);
             layout->addWidget(title_label_);
 
             canvas_ = new GraphCanvas(graph_, this);

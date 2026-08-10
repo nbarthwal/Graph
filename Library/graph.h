@@ -16,17 +16,12 @@
 
 class Graph
 {
-private:
-    const bool slider;
-    std::string title;
-
 public:
+    const bool Slider;
+    const std::string WindowTitle;
+
     Graph(const std::string &title, const bool slider):
-            slider(slider), title(title) { }
-
-    bool Slider() const { return slider; }
-
-    const std::string &Title() const { return title; }
+            Slider(slider), WindowTitle(title) { }
 
     class Data
     {
@@ -56,17 +51,12 @@ public:
 
 class Histogram
 {
-private:
-    const bool slider;
-    std::string title;
-
 public:
+    const bool Slider;
+    const std::string WindowTitle;
+
     Histogram(const std::string &title, const bool slider):
-            slider(slider), title(title) { }
-
-    bool Slider() const { return slider; }
-
-    const std::string &Title() const { return title; }
+            Slider(slider), WindowTitle(title) { }
 
     class Data
     {
