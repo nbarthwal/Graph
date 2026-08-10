@@ -107,7 +107,8 @@ private:
 
     void DrawHistograms(QPainter &painter, const QRect &plot_area) const
     {
-        const std::vector<const Histogram::Data*> data_sets = histogram_->DataSets();
+        const std::vector<std::unique_ptr<Histogram::Data>> &data_sets =
+                histogram_->DataSets();
         if (data_sets.empty())
             return;
 
@@ -116,7 +117,7 @@ private:
 
         for (std::size_t data_index = 0; data_index < data_set_count; ++data_index)
         {
-            const Histogram::Data *data = data_sets[data_index];
+            const Histogram::Data *data = data_sets[data_index].get();
             if (data == nullptr || data->BinCount() == 0)
                 continue;
 
@@ -151,7 +152,7 @@ private:
     void DrawLegend(QPainter &painter, const QRect &plot_area) const
     {
         std::vector<LegendItem> items;
-        for (const Histogram::Data *data : histogram_->DataSets())
+        for (const auto &data : histogram_->DataSets())
         {
             if (data == nullptr)
                 continue;

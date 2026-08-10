@@ -41,15 +41,9 @@ private:
                     std::make_unique<FixedSineCurve>(2.0f, "red", true));
         }
 
-        std::vector<const Graph::Data*> Curves() const override
+        const std::vector<std::unique_ptr<Graph::Data>>& Curves() const override
         {
-            std::vector<const Graph::Data*> curves;
-            curves.reserve(curves_.size());
-            for (const auto &curve : curves_)
-            {
-                curves.push_back(curve.get());
-            }
-            return curves;
+            return curves_;
         }
 
         std::string Title(const float parameter) const override
@@ -110,15 +104,9 @@ private:
                     "blue", "Counts"));
         }
 
-        std::vector<const Histogram::Data*> DataSets() const override
+        const std::vector<std::unique_ptr<Histogram::Data>>& DataSets() const override
         {
-            std::vector<const Histogram::Data*> data_sets;
-            data_sets.reserve(data_sets_.size());
-            for (const auto &data_set : data_sets_)
-            {
-                data_sets.push_back(data_set.get());
-            }
-            return data_sets;
+            return data_sets_;
         }
 
         std::string Title(const float parameter) const override

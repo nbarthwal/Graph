@@ -61,7 +61,7 @@ protected:
         DrawGrid(painter, plot_area);
         DrawAxes(painter, plot_area);
 
-        for (const Graph::Data *curve : graph_->Curves())
+        for (const auto &curve : graph_->Curves())
             if (curve != nullptr)
                 DrawCurve(painter, plot_area, *curve);
         DrawLegend(painter, plot_area);
@@ -177,7 +177,7 @@ private:
     void DrawLegend(QPainter &painter, const QRect &plot_area) const
     {
         std::vector<LegendItem> items;
-        for (const Graph::Data *curve : graph_->Curves())
+        for (const auto &curve : graph_->Curves())
         {
             if (curve == nullptr)
                 continue;

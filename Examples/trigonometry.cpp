@@ -44,15 +44,9 @@ public:
         curves_.push_back(std::make_unique<SineCurve>());
     }
 
-    std::vector<const Graph::Data*> Curves() const override
+    const std::vector<std::unique_ptr<Graph::Data>>& Curves() const override
     {
-        std::vector<const Graph::Data*> curves;
-        curves.reserve(curves_.size());
-        for (const auto &curve : curves_)
-        {
-            curves.push_back(curve.get());
-        }
-        return curves;
+        return curves_;
     }
 
     std::string Title(const float parameter) const override

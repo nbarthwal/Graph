@@ -74,7 +74,7 @@ public:
         virtual ~Data() = default;
     };
 
-    virtual std::vector<const Data*> Curves() const = 0; // Curves defines the curves for this graph.
+    virtual const std::vector<std::unique_ptr<Data>>& Curves() const = 0; // Curves defines the curves for this graph.
     virtual std::string Title(const float parameter) const = 0; // Title defines the graph title for slider value p.
     GRAPH_API void Show(const float parameter);
     GRAPH_API void Plot();
@@ -116,7 +116,7 @@ public:
         virtual ~Data() = default;
     };
 
-    virtual std::vector<const Data*> DataSets() const = 0; // Histogram data to display.
+    virtual const std::vector<std::unique_ptr<Data>>& DataSets() const = 0; // Histogram data to display.
     virtual std::string Title(const float parameter) const = 0; // Title defines the histogram title for slider value p.
     GRAPH_API void Show(const float parameter);
     GRAPH_API void Plot();
