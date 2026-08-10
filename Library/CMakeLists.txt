@@ -19,12 +19,8 @@ include(CMakePackageConfigHelpers)
 
 add_library(graph_plot STATIC
     plot_app.cpp
-    graph_canvas.cpp
-    graph_view.cpp
-    graph_plot.cpp
-    histogram_canvas.cpp
-    histogram_view.cpp
-    histogram_plot.cpp
+    graph.cpp
+    histogram.cpp
 )
 
 target_include_directories(graph_plot
@@ -47,7 +43,7 @@ install(TARGETS graph_plot
     ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
 )
 
-install(FILES graph.h
+install(FILES graph.h graph_impl.h
     DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}
 )
 

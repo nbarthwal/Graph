@@ -1,12 +1,14 @@
 #pragma once
 
-#include "graph.h"
+class Graph;
+class Histogram;
 
 #include <QColor>
 #include <QFont>
 #include <QFontMetrics>
 #include <QLabel>
 #include <QPainter>
+#include <QPen>
 #include <QPointF>
 #include <QRect>
 #include <QWidget>
@@ -169,30 +171,6 @@ namespace plot_detail
             const std::function<std::unique_ptr<QWidget>()> &create_window);
 
 }  // namespace plot_detail
-
-class GraphCanvas final : public QWidget
-{
-public:
-    explicit GraphCanvas(const Graph &graph, QWidget *parent = nullptr);
-
-    void SetParameter(float parameter);
-
-protected:
-    void paintEvent(QPaintEvent *event) override;
-
-private:
-    QRect PlotArea() const;
-    QPointF ToPixel(const QRect &plot_area, float x, float y) const;
-    void DrawBackground(QPainter &painter) const;
-    void DrawGrid(QPainter &painter, const QRect &plot_area) const;
-    void DrawAxes(QPainter &painter, const QRect &plot_area) const;
-    void DrawLegend(QPainter &painter, const QRect &plot_area) const;
-    void DrawCurve(QPainter &painter, const QRect &plot_area,
-            const Graph::Data &curve) const;
-
-    const Graph &graph_;
-    float parameter_ = 0.0f;
-};
 
 class HistogramCanvas final : public QWidget
 {

@@ -1,18 +1,109 @@
-#include "graph_impl.h"
+#include "graph.h"
 
+#include <QLabel>
 #include <QPainter>
 #include <QPen>
+#include <QSlider>
+#include <QVBoxLayout>
+#include <QWidget>
 
 #include <algorithm>
 #include <vector>
 
-using plot_detail::kPlotMarginBottom;
-using plot_detail::kPlotMarginLeft;
-using plot_detail::kPlotMarginRight;
-using plot_detail::kPlotMarginTop;
-using plot_detail::LegendItem;
-using plot_detail::LegendSwatch;
-using plot_detail::ParseColor;
+namespace
+{
+
+    using plot_detail::kPlotMarginBottom;
+    using plot_detail::kPlotMarginLeft;
+    using plot_detail::kPlotMarginRight;
+    using plot_detail::kPlotMarginTop;
+    using plot_detail::kSliderSteps;
+    using plot_detail::LegendItem;
+    using plot_detail::LegendSwatch;
+    using plot_detail::ParseColor;
+    using plot_detail::SetTitleLabel;
+    using plot_detail::SliderToParameter;
+
+    class HistogramWindow final : public QWidget
+    {
+    public:
+        explicit HistogramWindow(const Histogram &histogram) :
+                histogram_(histogram)
+        {
+            setWindowTitle(QString::fromStdString(histogram.Title()));
+            resize(900, 700);
+
+            auto *layout = new QVBoxLayout(this);
+
+            title_label_ = new QLabel(this);
+            layout->addWidget(title_label_);
+
+            histogram_canvas_ = new HistogramCanvas(histogram_, this);
+            layout->addWidget(histogram_canvas_, 1);
+
+            slider_ = new QSlider(Qt::Horizontal, this);
+            slider_->setRange(0, kSliderSteps);
+            slider_->setValue(0);
+            layout->addWidget(slider_);
+
+            const bool show_slider = histogram_.MaxP() != histogram_.MinP();
+            slider_->setVisible(show_slider);
+
+            if (show_slider)
+            {
+                connect(slider_, &QSlider::valueChanged, this,
+                        [this](
+                                int value)
+                                {
+                                    UpdateDisplay(
+                                            SliderToParameter(value, histogram_.MinP(),
+                                                    histogram_.MaxP()));
+                                });
+            }
+
+            UpdateDisplay(histogram_.MinP());
+        }
+
+    private:
+        void UpdateDisplay(float parameter)
+        {
+            SetTitleLabel(*title_label_, histogram_.Title(parameter));
+            histogram_canvas_->SetParameter(parameter);
+        }
+
+        const Histogram &histogram_;
+        QLabel *title_label_ = nullptr;
+        HistogramCanvas *histogram_canvas_ = nullptr;
+        QSlider *slider_ = nullptr;
+    };
+
+    class HistogramViewWindow final : public QWidget
+    {
+    public:
+        HistogramViewWindow(Histogram &histogram, float parameter) :
+                histogram_(histogram)
+        {
+            setWindowTitle(QString::fromStdString(histogram_.Title()));
+            resize(900, 700);
+
+            auto *layout = new QVBoxLayout(this);
+
+            title_label_ = new QLabel(this);
+            SetTitleLabel(*title_label_, histogram_.Title(parameter));
+            layout->addWidget(title_label_);
+
+            canvas_ = new HistogramCanvas(histogram_, this);
+            layout->addWidget(canvas_, 1);
+            canvas_->SetParameter(parameter);
+        }
+
+    private:
+        Histogram &histogram_;
+        QLabel *title_label_ = nullptr;
+        HistogramCanvas *canvas_ = nullptr;
+    };
+
+}  // namespace
 
 HistogramCanvas::HistogramCanvas(const Histogram &histogram, QWidget *parent) :
         QWidget(parent), histogram_(histogram)
@@ -165,4 +256,18 @@ void HistogramCanvas::DrawLegend(QPainter &painter,
     }
 
     plot_detail::DrawLegend(painter, plot_area, items);
+}
+
+void Plot(const Histogram& histogram)
+{
+    plot_detail::RunQtApp([&histogram]()
+    {   return std::make_unique<HistogramWindow>(histogram);});
+}
+
+void Histogram::Show(const float parameter)
+{
+    plot_detail::RunQtApp([this, parameter]()
+    {
+        return std::make_unique<HistogramViewWindow>(*this, parameter);
+    });
 }

@@ -1,4 +1,4 @@
-#include "graph_impl.h"
+#include "graph.h"
 
 #include <QApplication>
 #include <QWidget>
