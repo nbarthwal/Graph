@@ -35,27 +35,10 @@ private:
 class SineGraph final : public Graph
 {
 public:
-    SineGraph(): Graph("Sine Graph", false, 0.5f, 2.0f)
+    SineGraph(): Graph("Sine Graph", false, 0.5f, 2.0f, 0.0f, 6.28318f, -2.0f, 2.0f)
     {
         curves_.push_back(std::make_unique<SineCurve>(1.0f, "blue", false));
         curves_.push_back(std::make_unique<SineCurve>(2.0f, "red", true));
-    }
-
-    float MaxX() const override
-    {
-        return 6.28318f;
-    }
-    float MinX() const override
-    {
-        return 0.0f;
-    }
-    float MaxY() const override
-    {
-        return 2.0f;
-    }
-    float MinY() const override
-    {
-        return -2.0f;
     }
 
     std::vector<const Graph::Data*> Curves() const override

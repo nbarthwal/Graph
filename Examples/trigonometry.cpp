@@ -37,27 +37,11 @@ public:
 class TrigonometryGraph final : public Graph
 {
 public:
-    TrigonometryGraph(): Graph("Trigonometry", true, 1.0f, 5.0f)
+    TrigonometryGraph(): Graph("Trigonometry", true, 1.0f, 5.0f, 0.0f, kTwoPi,
+            -1.0f, 1.0f)
     {
         curves_.push_back(std::make_unique<CosineCurve>());
         curves_.push_back(std::make_unique<SineCurve>());
-    }
-
-    float MaxX() const override
-    {
-        return kTwoPi;
-    }
-    float MinX() const override
-    {
-        return 0.0f;
-    }
-    float MaxY() const override
-    {
-        return 1.0f;
-    }
-    float MinY() const override
-    {
-        return -1.0f;
     }
 
     std::vector<const Graph::Data*> Curves() const override

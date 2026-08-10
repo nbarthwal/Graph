@@ -43,7 +43,8 @@ private:
 class GroupedHistogram final : public Histogram
 {
 public:
-    GroupedHistogram(): Histogram("Grouped Histogram", true, 1.0f, 1.0f)
+    GroupedHistogram(): Histogram("Grouped Histogram", true, 1.0f, 1.0f, 0.0f,
+            6.0f, 0.0f, 10.0f)
     {
         data_sets_.push_back(
                 std::make_unique < StaticHistogramData
@@ -54,23 +55,6 @@ public:
                 std::make_unique < StaticHistogramData
                         > (std::vector<float> { 1.0f, 2.0f, 3.0f, 4.0f, 5.0f }, 1.0f, std::vector<
                                 float> { 1.0f, 3.0f, 6.0f, 7.0f, 2.0f }, "orange", "Series B"));
-    }
-
-    float MaxX() const override
-    {
-        return 6.0f;
-    }
-    float MinX() const override
-    {
-        return 0.0f;
-    }
-    float MaxY() const override
-    {
-        return 10.0f;
-    }
-    float MinY() const override
-    {
-        return 0.0f;
     }
 
     std::vector<const Histogram::Data*> DataSets() const override

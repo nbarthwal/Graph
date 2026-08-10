@@ -76,13 +76,13 @@ private:
 
     QPointF ToPixel(const QRect &plot_area, float x, float y) const
     {
-        const float x_range = graph_->MaxX() - graph_->MinX();
-        const float y_range = graph_->MaxY() - graph_->MinY();
+        const float x_range = graph_->MaxX - graph_->MinX;
+        const float y_range = graph_->MaxY - graph_->MinY;
 
         const float x_ratio =
-                x_range == 0.0f ? 0.0f : (x - graph_->MinX()) / x_range;
+                x_range == 0.0f ? 0.0f : (x - graph_->MinX) / x_range;
         const float y_ratio =
-                y_range == 0.0f ? 0.0f : (y - graph_->MinY()) / y_range;
+                y_range == 0.0f ? 0.0f : (y - graph_->MinY) / y_range;
 
         return QPointF(plot_area.left() + x_ratio * plot_area.width(),
                 plot_area.bottom() - y_ratio * plot_area.height());

@@ -55,17 +55,17 @@ private:
 
     float ToPixelX(const QRect &plot_area, float x) const
     {
-        const float x_range = histogram_->MaxX() - histogram_->MinX();
+        const float x_range = histogram_->MaxX - histogram_->MinX;
         const float x_ratio =
-                x_range == 0.0f ? 0.0f : (x - histogram_->MinX()) / x_range;
+                x_range == 0.0f ? 0.0f : (x - histogram_->MinX) / x_range;
         return plot_area.left() + x_ratio * plot_area.width();
     }
 
     float ToPixelY(const QRect &plot_area, float y) const
     {
-        const float y_range = histogram_->MaxY() - histogram_->MinY();
+        const float y_range = histogram_->MaxY - histogram_->MinY;
         const float y_ratio =
-                y_range == 0.0f ? 0.0f : (y - histogram_->MinY()) / y_range;
+                y_range == 0.0f ? 0.0f : (y - histogram_->MinY) / y_range;
         return plot_area.bottom() - y_ratio * plot_area.height();
     }
 
@@ -112,7 +112,7 @@ private:
             return;
 
         const std::size_t data_set_count = data_sets.size();
-        const float baseline_y = ToPixelY(plot_area, histogram_->MinY());
+        const float baseline_y = ToPixelY(plot_area, histogram_->MinY);
 
         for (std::size_t data_index = 0; data_index < data_set_count; ++data_index)
         {

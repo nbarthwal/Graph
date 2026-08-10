@@ -21,10 +21,16 @@ public:
     const std::string WindowTitle;
     const float MinP;
     const float MaxP;
+    const float MinX;
+    const float MaxX;
+    const float MinY;
+    const float MaxY;
 
     Graph(const std::string &title, const bool slider, const float min_p,
-            const float max_p) :
-            Slider(slider), WindowTitle(title), MinP(min_p), MaxP(max_p) { }
+            const float max_p, const float min_x, const float max_x,
+            const float min_y, const float max_y) :
+            Slider(slider), WindowTitle(title), MinP(min_p), MaxP(max_p),
+            MinX(min_x), MaxX(max_x), MinY(min_y), MaxY(max_y) { }
 
     class Data
     {
@@ -44,10 +50,6 @@ public:
         virtual ~Data() = default;
     };
 
-    virtual float MaxX() const = 0; // MaxX defines the max of X-Axis for this graph.
-    virtual float MinX() const = 0; // MinX defines the min of X-Axis for this graph.
-    virtual float MaxY() const = 0; // MaxY defines the max of Y-Axis for this graph.
-    virtual float MinY() const = 0; // MinY defines the min of Y-Axis for this graph.
     virtual std::vector<const Data*> Curves() const = 0; // Curves defines the curves for this graph.
     virtual std::string Title(const float parameter) const = 0; // Title defines the graph title for slider value p.
     GRAPH_API void Show(const float parameter);
@@ -63,10 +65,16 @@ public:
     const std::string WindowTitle;
     const float MinP;
     const float MaxP;
+    const float MinX;
+    const float MaxX;
+    const float MinY;
+    const float MaxY;
 
     Histogram(const std::string &title, const bool slider, const float min_p,
-            const float max_p) :
-            Slider(slider), WindowTitle(title), MinP(min_p), MaxP(max_p) { }
+            const float max_p, const float min_x, const float max_x,
+            const float min_y, const float max_y) :
+            Slider(slider), WindowTitle(title), MinP(min_p), MaxP(max_p),
+            MinX(min_x), MaxX(max_x), MinY(min_y), MaxY(max_y) { }
 
     class Data
     {
@@ -84,10 +92,6 @@ public:
         virtual ~Data() = default;
     };
 
-    virtual float MaxX() const = 0; // MaxX defines the max of X-Axis for this histogram.
-    virtual float MinX() const = 0; // MinX defines the min of X-Axis for this histogram.
-    virtual float MaxY() const = 0; // MaxY defines the max of Y-Axis for this histogram.
-    virtual float MinY() const = 0; // MinY defines the min of Y-Axis for this histogram.
     virtual std::vector<const Data*> DataSets() const = 0; // Histogram data to display.
     virtual std::string Title(const float parameter) const = 0; // Title defines the histogram title for slider value p.
     GRAPH_API void Show(const float parameter);
