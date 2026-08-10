@@ -119,6 +119,6 @@ private:
 int main()
 {
     GroupedHistogram histogram;
-    Plot(histogram);
+    histogram.Plot();
     return 0;
 }

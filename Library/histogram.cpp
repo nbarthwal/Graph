@@ -16,7 +16,7 @@
 class HistogramCanvas final : public QWidget
 {
 public:
-    explicit HistogramCanvas(const Histogram &histogram, QWidget *parent = nullptr) :
+    explicit HistogramCanvas(const Histogram *histogram, QWidget *parent = nullptr) :
             QWidget(parent), histogram_(histogram)
     {
         setMinimumSize(640, 480);
@@ -55,17 +55,17 @@ private:
 
     float ToPixelX(const QRect &plot_area, float x) const
     {
-        const float x_range = histogram_.MaxX() - histogram_.MinX();
+        const float x_range = histogram_->MaxX() - histogram_->MinX();
         const float x_ratio =
-                x_range == 0.0f ? 0.0f : (x - histogram_.MinX()) / x_range;
+                x_range == 0.0f ? 0.0f : (x - histogram_->MinX()) / x_range;
         return plot_area.left() + x_ratio * plot_area.width();
     }
 
     float ToPixelY(const QRect &plot_area, float y) const
     {
-        const float y_range = histogram_.MaxY() - histogram_.MinY();
+        const float y_range = histogram_->MaxY() - histogram_->MinY();
         const float y_ratio =
-                y_range == 0.0f ? 0.0f : (y - histogram_.MinY()) / y_range;
+                y_range == 0.0f ? 0.0f : (y - histogram_->MinY()) / y_range;
         return plot_area.bottom() - y_ratio * plot_area.height();
     }
 
@@ -107,14 +107,14 @@ private:
 
     void DrawHistograms(QPainter &painter, const QRect &plot_area) const
     {
-        const std::vector<const Histogram::Data*> data_sets = histogram_.DataSets();
+        const std::vector<const Histogram::Data*> data_sets = histogram_->DataSets();
         if (data_sets.empty())
         {
             return;
         }
 
         const std::size_t data_set_count = data_sets.size();
-        const float baseline_y = ToPixelY(plot_area, histogram_.MinY());
+        const float baseline_y = ToPixelY(plot_area, histogram_->MinY());
 
         for (std::size_t data_index = 0; data_index < data_set_count; ++data_index)
         {
@@ -155,7 +155,7 @@ private:
     void DrawLegend(QPainter &painter, const QRect &plot_area) const
     {
         std::vector<LegendItem> items;
-        for (const Histogram::Data *data : histogram_.DataSets())
+        for (const Histogram::Data *data : histogram_->DataSets())
         {
             if (data == nullptr)
             {
@@ -170,17 +170,17 @@ private:
         ::DrawLegend(painter, plot_area, items);
     }
 
-    const Histogram &histogram_;
+    const Histogram *histogram_;
     float parameter_ = 0.0f;
 };
 
 class HistogramWindow final : public QWidget
     {
     public:
-        explicit HistogramWindow(const Histogram &histogram) :
+        explicit HistogramWindow(const Histogram *histogram) :
                 histogram_(histogram)
         {
-            setWindowTitle(QString::fromStdString(histogram.Title()));
+            setWindowTitle(QString::fromStdString(histogram->Title()));
             resize(900, 700);
 
             auto *layout = new QVBoxLayout(this);
@@ -196,7 +196,7 @@ class HistogramWindow final : public QWidget
             slider_->setValue(0);
             layout->addWidget(slider_);
 
-            const bool show_slider = histogram_.MaxP() != histogram_.MinP();
+            const bool show_slider = histogram_->MaxP() != histogram_->MinP();
             slider_->setVisible(show_slider);
 
             if (show_slider)
@@ -206,22 +206,22 @@ class HistogramWindow final : public QWidget
                                 int value)
                                 {
                                     UpdateDisplay(
-                                            SliderToParameter(value, histogram_.MinP(),
-                                                    histogram_.MaxP()));
+                                            SliderToParameter(value, histogram_->MinP(),
+                                                    histogram_->MaxP()));
                                 });
             }
 
-            UpdateDisplay(histogram_.MinP());
+            UpdateDisplay(histogram_->MinP());
         }
 
     private:
         void UpdateDisplay(float parameter)
         {
-            SetTitleLabel(*title_label_, histogram_.Title(parameter));
+            SetTitleLabel(*title_label_, histogram_->Title(parameter));
             histogram_canvas_->SetParameter(parameter);
         }
 
-        const Histogram &histogram_;
+        const Histogram *histogram_;
         QLabel *title_label_ = nullptr;
         HistogramCanvas *histogram_canvas_ = nullptr;
         QSlider *slider_ = nullptr;
@@ -230,16 +230,16 @@ class HistogramWindow final : public QWidget
 class HistogramViewWindow final : public QWidget
     {
     public:
-        HistogramViewWindow(Histogram &histogram, float parameter) :
+        HistogramViewWindow(const Histogram *histogram, float parameter):
                 histogram_(histogram)
         {
-            setWindowTitle(QString::fromStdString(histogram_.Title()));
+            setWindowTitle(QString::fromStdString(histogram_->Title()));
             resize(900, 700);
 
             auto *layout = new QVBoxLayout(this);
 
             title_label_ = new QLabel(this);
-            SetTitleLabel(*title_label_, histogram_.Title(parameter));
+            SetTitleLabel(*title_label_, histogram_->Title(parameter));
             layout->addWidget(title_label_);
 
             canvas_ = new HistogramCanvas(histogram_, this);
@@ -248,21 +248,14 @@ class HistogramViewWindow final : public QWidget
         }
 
     private:
-        Histogram &histogram_;
+        const Histogram *histogram_;
         QLabel *title_label_ = nullptr;
         HistogramCanvas *canvas_ = nullptr;
     };
 
-void Plot(const Histogram& histogram)
-{
-    RunQtApp([&histogram]()
-    {   return std::make_unique<HistogramWindow>(histogram);});
-}
+
+void Histogram::Plot()
+    RunQT(std::make_unique<HistogramWindow>(this))
 
 void Histogram::Show(const float parameter)
-{
-    RunQtApp([this, parameter]()
-    {
-        return std::make_unique<HistogramViewWindow>(*this, parameter);
-    });
-}
+    RunQT(std::make_unique<HistogramViewWindow>(this, parameter))

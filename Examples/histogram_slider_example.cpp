@@ -125,6 +125,6 @@ private:
 int main()
 {
     SliderHistogram histogram;
-    Plot(histogram);
+    histogram.Plot();
     return 0;
 }

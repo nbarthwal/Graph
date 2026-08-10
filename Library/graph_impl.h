@@ -162,23 +162,13 @@ inline void DrawLegend(QPainter &painter, const QRect &plot_area,
     painter.restore();
 }
 
-inline void RunQtApp(
-        const std::function<std::unique_ptr<QWidget>()> &create_window)
-{
-    const bool owns_application = QApplication::instance() == nullptr;
-    std::unique_ptr<QApplication> owned_application;
-    int argc = 0;
 
-    if (owns_application)
-    {
-        owned_application = std::make_unique<QApplication>(argc, nullptr);
-    }
-
-    std::unique_ptr<QWidget> window = create_window();
-    window->show();
-
-    if (owns_application)
-    {
-        QApplication::exec();
-    }
-}
+#define RunQT(function) { \
+    const bool owns_application = QApplication::instance() == nullptr; \
+    std::unique_ptr<QApplication> owned_application; \
+    int argc = 0; \
+    if (owns_application) \
+        owned_application = std::make_unique<QApplication>(argc, nullptr); \
+    std::unique_ptr<QWidget> window = function ;  \
+    window->show(); \
+    if (owns_application) QApplication::exec(); }

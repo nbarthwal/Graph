@@ -224,7 +224,7 @@ int main(int argc, char *argv[])
     if (argc > 1 && std::string(argv[1]) == "histogram")
     {
         FixedParameterHistogram histogram;
-        Plot(histogram);
+        histogram.Plot();
     }
     else
     {

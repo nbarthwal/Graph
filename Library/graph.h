@@ -68,9 +68,6 @@ public:
     virtual std::string Title() const = 0; // Title defines the window title for this histogram.
     virtual std::string Title(const float parameter) const = 0; // Title defines the histogram title for slider value p.
     GRAPH_API void Show(const float parameter);
+    GRAPH_API void Plot();
     virtual ~Histogram() = default;
 };
-
-
-GRAPH_API void Plot(const Histogram& histogram);
-

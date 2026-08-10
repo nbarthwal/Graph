@@ -288,34 +288,7 @@ class GraphViewWindow final : public QWidget
 
 
 void Graph::Plot()
-{
-    const bool owns_application = QApplication::instance() == nullptr;
-    std::unique_ptr<QApplication> owned_application;
-    int argc = 0;
-
-    if (owns_application)
-        owned_application = std::make_unique<QApplication>(argc, nullptr);
-
-    std::unique_ptr<QWidget> window = std::make_unique<PlotWindow>(this);
-    window->show();
-
-    if (owns_application)
-        QApplication::exec();
-}
-
+    RunQT(std::make_unique<PlotWindow>(this))
 
 void Graph::Show(const float parameter)
-{
-    const bool owns_application = QApplication::instance() == nullptr;
-    std::unique_ptr<QApplication> owned_application;
-    int argc = 0;
-
-    if (owns_application)
-        owned_application = std::make_unique<QApplication>(argc, nullptr);
-
-    std::unique_ptr<QWidget> window = std::make_unique<GraphViewWindow>(this, parameter);
-    window->show();
-
-    if (owns_application)
-        QApplication::exec();
-}
+    RunQT(std::make_unique<GraphViewWindow>(this, parameter))
