@@ -26,12 +26,20 @@ public:
     class Data
     {
     public:
-        virtual float MaxX() const = 0; // MaxX defines the max of X-Axis for this curve.
-        virtual float MinX() const = 0; // MinX defines the min of X-Axis for this curve.
-        virtual std::string Color() const = 0; // Color defines the color of the curve.
-        virtual std::string Label() const = 0; // Label defines the legend label for this curve.
+        const float MinX;
+        const float MaxX;
+        const std::string Color;
+        const std::string Label;
+        const bool Point;
+
+        Data(float min_x, float max_x, std::string color, std::string label,
+                bool point) :
+                MinX(min_x), MaxX(max_x), Color(std::move(color)),
+                Label(std::move(label)), Point(point)
+        {
+        }
+
         virtual float Value(float p, float x) const = 0; // Value(p, x) returns y at x for slider value p.
-        virtual bool Point() const = 0; // Point defines if the curve should be plotted as a line or point.
         virtual ~Data() = default;
     };
 
@@ -61,8 +69,14 @@ public:
     class Data
     {
     public:
-        virtual std::string Color() const = 0; // Color defines the fill color of the bars.
-        virtual std::string Label() const = 0; // Label defines the legend label for this data set.
+        const std::string Color;
+        const std::string Label;
+
+        Data(std::string color, std::string label) :
+                Color(std::move(color)), Label(std::move(label))
+        {
+        }
+
         virtual std::size_t BinCount() const = 0; // Number of bins in this histogram.
         virtual float BinCenter(std::size_t bin) const = 0; // Center of the bin on the x-axis.
         virtual float BinWidth() const = 0;  // Width of each bin on the x-axis.

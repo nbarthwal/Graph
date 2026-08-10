@@ -134,16 +134,16 @@ private:
             const Graph::Data &curve) const
     {
         constexpr std::size_t kSampleCount = 500;
-        const std::vector<float> x_values = GraphLinspace(curve.MinX(),
-                curve.MaxX(), kSampleCount);
+        const std::vector<float> x_values = GraphLinspace(curve.MinX,
+                curve.MaxX, kSampleCount);
         if (x_values.empty())
         {
             return;
         }
 
-        const QColor color = ParseColor(curve.Color());
+        const QColor color = ParseColor(curve.Color);
 
-        if (curve.Point())
+        if (curve.Point)
         {
             QPen pen(color, 1.5);
             painter.setPen(pen);
@@ -195,9 +195,9 @@ private:
             }
 
             items.push_back(
-                    { curve->Label(), ParseColor(curve->Color()),
-                            curve->Point() ? LegendSwatch::Point
-                                           : LegendSwatch::Line });
+                    { curve->Label, ParseColor(curve->Color),
+                            curve->Point ? LegendSwatch::Point
+                                         : LegendSwatch::Line });
         }
 
         ::DrawLegend(painter, plot_area, items);

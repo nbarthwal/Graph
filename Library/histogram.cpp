@@ -124,7 +124,7 @@ private:
                 continue;
             }
 
-            const QColor color = ParseColor(data->Color());
+            const QColor color = ParseColor(data->Color);
             const float group_width = data->BinWidth() * 0.9f;
             const float bar_width = group_width
                     / static_cast<float>(data_set_count);
@@ -163,7 +163,7 @@ private:
             }
 
             items.push_back(
-                    { data->Label(), ParseColor(data->Color()),
+                    { data->Label, ParseColor(data->Color),
                             LegendSwatch::Bar });
         }
 

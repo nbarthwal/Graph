@@ -4,47 +4,32 @@
 #include <string>
 #include <vector>
 
+static std::string SineLabel(float frequency)
+{
+    if (frequency == 1.0f)
+    {
+        return "sin(x)";
+    }
+    return "sin(" + std::to_string(frequency) + "x)";
+}
+
 class SineCurve final : public Graph::Data
 {
 public:
-    SineCurve(float frequency, std::string color, bool point):
-            frequency_(frequency), color_(std::move(color)), point_(point)
+    SineCurve(float frequency, std::string color, bool point) :
+            Graph::Data(0.0f, 6.28318f, std::move(color), SineLabel(frequency),
+                    point),
+            frequency_(frequency)
     {
     }
 
-    float MaxX() const override
-    {
-        return 6.28318f;
-    }
-    float MinX() const override
-    {
-        return 0.0f;
-    }
-    std::string Color() const override
-    {
-        return color_;
-    }
-    std::string Label() const override
-    {
-        if (frequency_ == 1.0f)
-        {
-            return "sin(x)";
-        }
-        return "sin(" + std::to_string(frequency_) + "x)";
-    }
     float Value(float p, float x) const override
     {
         return p * std::sin(frequency_ * x);
     }
-    bool Point() const override
-    {
-        return point_;
-    }
 
 private:
     float frequency_;
-    std::string color_;
-    bool point_;
 };
 
 class SineGraph final : public Graph
@@ -52,8 +37,8 @@ class SineGraph final : public Graph
 public:
     SineGraph(): Graph("Sine Graph", false)
     {
-        curves_.push_back(std::make_unique < SineCurve > (1.0f, "blue", false));
-        curves_.push_back(std::make_unique < SineCurve > (2.0f, "red", true));
+        curves_.push_back(std::make_unique<SineCurve>(1.0f, "blue", false));
+        curves_.push_back(std::make_unique<SineCurve>(2.0f, "red", true));
     }
 
     float MaxX() const override

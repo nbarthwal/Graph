@@ -8,47 +8,26 @@ constexpr float kFixedParameter = 1.0f;
 constexpr float kTwoPi = 6.28318f;
 
 class FixedSineCurve final : public Graph::Data
+{
+public:
+    FixedSineCurve(float frequency, std::string color, bool point) :
+            Graph::Data(0.0f, kTwoPi, std::move(color),
+                    frequency == 1.0f ? "sin(x)"
+                                        : "sin(" + std::to_string(frequency)
+                                                + "x)",
+                    point),
+            frequency_(frequency)
     {
-    public:
-        FixedSineCurve(float frequency, std::string color, bool point) :
-                frequency_(frequency), color_(std::move(color)), point_(point)
-        {
-        }
+    }
 
-        float MaxX() const override
-        {
-            return kTwoPi;
-        }
-        float MinX() const override
-        {
-            return 0.0f;
-        }
-        std::string Color() const override
-        {
-            return color_;
-        }
-        std::string Label() const override
-        {
-            if (frequency_ == 1.0f)
-            {
-                return "sin(x)";
-            }
-            return "sin(" + std::to_string(frequency_) + "x)";
-        }
-        float Value(float p, float x) const override
-        {
-            return p * std::sin(frequency_ * x);
-        }
-        bool Point() const override
-        {
-            return point_;
-        }
+    float Value(float p, float x) const override
+    {
+        return p * std::sin(frequency_ * x);
+    }
 
-    private:
-        float frequency_;
-        std::string color_;
-        bool point_;
-    };
+private:
+    float frequency_;
+};
 
     class FixedParameterGraph final : public Graph
     {
@@ -113,20 +92,12 @@ class FixedSineCurve final : public Graph::Data
         FixedHistogramData(std::vector<float> centers, float bin_width,
                 std::vector<float> counts, std::string color,
                 std::string label) :
+                Histogram::Data(std::move(color), std::move(label)),
                 centers_(std::move(centers)), bin_width_(bin_width),
-                counts_(std::move(counts)), color_(std::move(color)),
-                label_(std::move(label))
+                counts_(std::move(counts))
         {
         }
 
-        std::string Color() const override
-        {
-            return color_;
-        }
-        std::string Label() const override
-        {
-            return label_;
-        }
         std::size_t BinCount() const override
         {
             return centers_.size();
@@ -148,8 +119,6 @@ class FixedSineCurve final : public Graph::Data
         std::vector<float> centers_;
         float bin_width_;
         std::vector<float> counts_;
-        std::string color_;
-        std::string label_;
     };
 
     class FixedParameterHistogram final : public Histogram

@@ -8,7 +8,10 @@ class GaussianHistogramData final : public Histogram::Data
 {
 public:
     GaussianHistogramData(float mean, float sigma, std::string color) :
-            mean_(mean), sigma_(sigma), color_(std::move(color))
+            Histogram::Data(std::move(color),
+                    "N(" + std::to_string(mean) + ", " + std::to_string(sigma)
+                            + ")"),
+            mean_(mean), sigma_(sigma)
     {
         for (std::size_t bin = 0; bin < kBinCount; ++bin)
         {
@@ -17,14 +20,6 @@ public:
         }
     }
 
-    std::string Color() const override
-    {
-        return color_;
-    }
-    std::string Label() const override
-    {
-        return "N(" + std::to_string(mean_) + ", " + std::to_string(sigma_) + ")";
-    }
     std::size_t BinCount() const override
     {
         return kBinCount;
@@ -53,7 +48,6 @@ private:
 
     float mean_;
     float sigma_;
-    std::string color_;
     std::vector<float> centers_;
 };
 

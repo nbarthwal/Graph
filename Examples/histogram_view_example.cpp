@@ -8,20 +8,12 @@ class StaticHistogramData final : public Histogram::Data
 public:
     StaticHistogramData(std::vector<float> centers, float bin_width,
             std::vector<float> counts, std::string color, std::string label) :
-            centers_(std::move(centers)), bin_width_(bin_width), counts_(
-                    std::move(counts)), color_(std::move(color)), label_(
-                    std::move(label))
+            Histogram::Data(std::move(color), std::move(label)),
+            centers_(std::move(centers)), bin_width_(bin_width),
+            counts_(std::move(counts))
     {
     }
 
-    std::string Color() const override
-    {
-        return color_;
-    }
-    std::string Label() const override
-    {
-        return label_;
-    }
     std::size_t BinCount() const override
     {
         return centers_.size();
@@ -43,8 +35,6 @@ private:
     std::vector<float> centers_;
     float bin_width_;
     std::vector<float> counts_;
-    std::string color_;
-    std::string label_;
 };
 
 class GroupedHistogram final : public Histogram
