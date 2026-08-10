@@ -18,7 +18,6 @@ include(GNUInstallDirs)
 include(CMakePackageConfigHelpers)
 
 add_library(graph_plot STATIC
-    plot_app.cpp
     graph.cpp
     histogram.cpp
 )
