@@ -1,6 +1,7 @@
 #include "graph.h"
 #include "graph_impl.h"
 
+#include <memory>
 #include <QLabel>
 #include <QSlider>
 #include <QVBoxLayout>
@@ -127,10 +128,9 @@ private:
     void DrawCurve(QPainter &painter, const QRect &plot_area,
             const Graph::Data &curve) const
     {
-        constexpr std::size_t kSampleCount = 500;
-        const std::vector<float> x_values = GraphLinspace(curve.MinX,
-                curve.MaxX, kSampleCount);
-        if (x_values.empty())
+        const Graph::Segment* segment = curve.Value(parameter_);
+        const int size = segment->Size();
+        if (size == 0)
             return;
 
         const QColor color = ParseColor(curve.Color);
@@ -142,10 +142,10 @@ private:
             painter.setBrush(color);
 
             constexpr double kPointRadius = 1.25;
-            for (const float x : x_values)
+            for(int i = 0; i < size; ++i)
             {
-                const float y = curve.Value(parameter_, x);
-                const QPointF point = ToPixel(plot_area, x, y);
+                auto ptr = segment->Get(i);
+                const QPointF point = ToPixel(plot_area, ptr->X, ptr->Y);
                 painter.drawEllipse(point, kPointRadius, kPointRadius);
             }
             return;
@@ -159,10 +159,10 @@ private:
 
         QPainterPath path;
         bool started = false;
-        for (const float x : x_values)
+        for(int i = 0; i < size; ++i)
         {
-            const float y = curve.Value(parameter_, x);
-            const QPointF point = ToPixel(plot_area, x, y);
+            auto ptr = segment->Get(i);
+            const QPointF point = ToPixel(plot_area, ptr->X, ptr->Y);
             if (!started)
             {
                 path.moveTo(point);
@@ -271,6 +271,22 @@ class GraphViewWindow final : public QWidget
         GraphCanvas *canvas_ = nullptr;
     };
 
+
+bool compare(const Graph::Point* p1, const Graph::Point* p2)
+    { return p1->X > p2->X; }
+
+Graph::Segment::Segment(const std::vector<Point> &points): data(points)
+{
+    for (Point x : data)
+        ptr.push_back(&x);
+    std::sort(ptr.begin(), ptr.end(), compare);
+}
+
+const int Graph::Segment::Size() const
+    { return static_cast<int>(data.size()); }
+
+const Graph::Point* Graph::Segment::Get(size_t index) const
+    { return ptr[index]; }
 
 void Graph::Plot()
     { RunQT(std::make_unique<PlotWindow>(this)); }
