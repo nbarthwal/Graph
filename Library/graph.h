@@ -21,36 +21,30 @@ public:
 
     class Point
     {
+    private:
+        float x;
+        float y;
+
     public:
-        const float X;
-        const float Y;
-        Point(const float x, const float y) : X(x), Y(y) {}
+        float X() { return x; };
+        float Y() { return y; };
+        Point(const float x_, const float y_) : x(x_), y(y_) {}
     };
 
     class Segment
     {
     private:
-        const std::vector<Point> data;
+        std::vector<Point> data;
         std::vector<Point*> ptr;
         float min;
         float max;
 
     public:
         Segment(const std::vector<Point>& points);
-        [[nodiscard]] const float Min() const;
-        [[nodiscard]] const float Max() const;
-        const int Size() const;
-        const Point* operator[](size_t index) const;
-    };
-
-    class Segments
-    {
-    private:
-        const std::vector<Segment>& data;
-    public:
-        Segments(const std::vector<Segment>& segments): data(segments) { }
-        const int Size() const;
-        [[nodiscard]] const Segment& operator[](size_t index) const;
+        [[nodiscard]] float Min() const { return min; }
+        [[nodiscard]] float Max() const { return max; }
+        int Size() const { return static_cast<int>(data.size()); }
+        const Point& operator[](size_t index) const { return data[index]; }
     };
 
     const bool Slider;
@@ -82,7 +76,7 @@ public:
                 MinX(min_x), MaxX(max_x), Color(std::move(color)),
                 Label(std::move(label)), Point(point) { }
 
-        virtual Segments& Value(float p) const = 0;
+        virtual Segment& Value(float p) const = 0;
         virtual ~Data() = default;
     };
 

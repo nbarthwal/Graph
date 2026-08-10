@@ -19,18 +19,15 @@ private:
     constexpr int Max = 0f;
     constexpr float Pi = 3.141593f;
     constexpr float n = static_cast<float>(N);
+    Segment segment;
+    Segments segments;
     vector<Graph::Point> segment(N + 1, Point(0.0, 0.0));
     vector<Graph::Segments>>
-
-    float theta(const float k, const float x)
-    {
-        return (2.0f * Pi * (k + 1.0f) * x) / n;
-    }
 
     Graph::Point point(float k, int i)
     {
         const float x = static_cast<float>(i);
-        const float y = f(theta(k, x));
+        const float y = f((2.0f * Pi * (k + 1.0f) * x) / n);
         return Pooint(x, y);
     }
 
@@ -38,7 +35,7 @@ public:
     Curve(const string& color, const string& title, const bool b):
         Graph::Data(Min, Max, color, title, b) { }
 
-    const Graph::Segment& Value(float k) const override
+    const Graph::Segments& Value(float k) const override
     {
         for(int i = 0 ; i <= N ; ++i)
             segment[i] = std::move(point(k, i));
