@@ -7,7 +7,7 @@
 class SineCurve final : public Graph::Data
 {
 public:
-    SineCurve(float frequency, std::string color, bool point) :
+    SineCurve(float frequency, std::string color, bool point):
             frequency_(frequency), color_(std::move(color)), point_(point)
     {
     }
@@ -50,7 +50,7 @@ private:
 class SineGraph final : public Graph
 {
 public:
-    SineGraph()
+    SineGraph(): Graph(false)
     {
         curves_.push_back(std::make_unique < SineCurve > (1.0f, "blue", false));
         curves_.push_back(std::make_unique < SineCurve > (2.0f, "red", true));

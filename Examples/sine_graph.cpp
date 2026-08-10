@@ -50,7 +50,7 @@ private:
 class SineGraph final : public Graph
 {
 public:
-    SineGraph()
+    SineGraph(): Graph(true)
     {
         curves_.push_back(std::make_unique < SineCurve > (1.0f, "blue", false));
         curves_.push_back(std::make_unique < SineCurve > (2.0f, "red", true));

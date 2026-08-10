@@ -53,7 +53,7 @@ private:
 class GroupedHistogram final : public Histogram
 {
 public:
-    GroupedHistogram()
+    GroupedHistogram(): Histogram(true)
     {
         data_sets_.push_back(
                 std::make_unique < StaticHistogramData

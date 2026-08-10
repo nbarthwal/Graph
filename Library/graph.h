@@ -16,7 +16,14 @@
 
 class Graph
 {
+private:
+    const bool slider;
+
 public:
+    Graph(const bool b): slider(b) {}
+
+    bool Slider() const { return slider; }
+
     class Data
     {
     public:
@@ -43,9 +50,17 @@ public:
     virtual ~Graph() = default;
 };
 
+
 class Histogram
 {
+private:
+    const bool slider;
+
 public:
+    Histogram(const bool b): slider(b) {}
+
+    bool Slider() const { return slider; }
+
     class Data
     {
     public:

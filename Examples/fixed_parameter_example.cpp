@@ -53,7 +53,7 @@ class FixedSineCurve final : public Graph::Data
     class FixedParameterGraph final : public Graph
     {
     public:
-        FixedParameterGraph()
+        FixedParameterGraph(): Graph(false)
         {
             curves_.push_back(
                     std::make_unique<FixedSineCurve>(1.0f, "blue", false));
@@ -160,7 +160,7 @@ class FixedSineCurve final : public Graph::Data
     class FixedParameterHistogram final : public Histogram
     {
     public:
-        FixedParameterHistogram()
+        FixedParameterHistogram(): Histogram(false)
         {
             data_sets_.push_back(std::make_unique<FixedHistogramData>(
                     std::vector<float> { 1.0f, 2.0f, 3.0f, 4.0f, 5.0f }, 1.0f,
@@ -186,11 +186,11 @@ class FixedSineCurve final : public Graph::Data
         }
         float MaxP() const override
         {
-            return kFixedParameter;
+            return kFixedParameter + 0.5f;
         }
         float MinP() const override
         {
-            return kFixedParameter;
+            return kFixedParameter - 0.5f;
         }
 
         std::vector<const Histogram::Data*> DataSets() const override

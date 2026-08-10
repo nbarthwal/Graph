@@ -196,7 +196,7 @@ class HistogramWindow final : public QWidget
             slider_->setValue(0);
             layout->addWidget(slider_);
 
-            const bool show_slider = histogram_->MaxP() != histogram_->MinP();
+            const bool show_slider = histogram_->Slider();
             slider_->setVisible(show_slider);
 
             if (show_slider)
@@ -255,7 +255,11 @@ class HistogramViewWindow final : public QWidget
 
 
 void Histogram::Plot()
-    RunQT(std::make_unique<HistogramWindow>(this))
+{
+    RunQT(std::make_unique<HistogramWindow>(this));
+}
 
 void Histogram::Show(const float parameter)
-    RunQT(std::make_unique<HistogramViewWindow>(this, parameter))
+{
+    RunQT(std::make_unique<HistogramViewWindow>(this, parameter));
+}

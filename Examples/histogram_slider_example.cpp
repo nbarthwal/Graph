@@ -60,7 +60,7 @@ private:
 class SliderHistogram final : public Histogram
 {
 public:
-    SliderHistogram()
+    SliderHistogram(): Histogram(true)
     {
         data_sets_.push_back(
                 std::make_unique < GaussianHistogramData

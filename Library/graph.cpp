@@ -229,7 +229,7 @@ class PlotWindow final : public QWidget
             slider_->setValue(0);
             layout->addWidget(slider_);
 
-            const bool show_slider = graph_->MaxP() != graph_->MinP();
+            const bool show_slider = graph_->Slider();
             slider_->setVisible(show_slider);
 
             if (show_slider)
@@ -288,7 +288,11 @@ class GraphViewWindow final : public QWidget
 
 
 void Graph::Plot()
-    RunQT(std::make_unique<PlotWindow>(this))
+{
+    RunQT(std::make_unique<PlotWindow>(this));
+}
 
 void Graph::Show(const float parameter)
-    RunQT(std::make_unique<GraphViewWindow>(this, parameter))
+{
+    RunQT(std::make_unique<GraphViewWindow>(this, parameter));
+}

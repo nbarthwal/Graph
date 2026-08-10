@@ -67,7 +67,7 @@ class CosineCurve final : public Graph::Data
     class TrigonometryGraph final : public Graph
     {
     public:
-        TrigonometryGraph()
+        TrigonometryGraph(): Graph(true)
         {
             curves_.push_back(std::make_unique<CosineCurve>());
             curves_.push_back(std::make_unique<SineCurve>());
