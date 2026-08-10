@@ -1,7 +1,9 @@
 #include "graph.h"
+#include "graph_impl.h"
 
 #include <QLabel>
 #include <QPainter>
+#include <QPalette>
 #include <QPen>
 #include <QSlider>
 #include <QVBoxLayout>
