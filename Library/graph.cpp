@@ -237,12 +237,12 @@ class PlotWindow final : public QWidget
                                 int value)
                                 {
                                     UpdateDisplay(
-                                            SliderToParameter(value, graph_->MinP(),
-                                                    graph_->MaxP()));
+                                            SliderToParameter(value, graph_->MinP,
+                                                    graph_->MaxP));
                                 });
             }
 
-            UpdateDisplay(graph_->MinP());
+            UpdateDisplay(graph_->MinP);
         }
 
     private:

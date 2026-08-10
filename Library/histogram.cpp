@@ -204,12 +204,12 @@ class HistogramWindow final : public QWidget
                                 int value)
                                 {
                                     UpdateDisplay(
-                                            SliderToParameter(value, histogram_->MinP(),
-                                                    histogram_->MaxP()));
+                                            SliderToParameter(value, histogram_->MinP,
+                                                    histogram_->MaxP));
                                 });
             }
 
-            UpdateDisplay(histogram_->MinP());
+            UpdateDisplay(histogram_->MinP);
         }
 
     private:

@@ -54,7 +54,7 @@ private:
 class SliderHistogram final : public Histogram
 {
 public:
-    SliderHistogram(): Histogram("Gaussian Mixture", true)
+    SliderHistogram(): Histogram("Gaussian Mixture", true, 0.5f, 2.0f)
     {
         data_sets_.push_back(
                 std::make_unique < GaussianHistogramData
@@ -81,14 +81,6 @@ public:
     float MinY() const override
     {
         return 0.0f;
-    }
-    float MaxP() const override
-    {
-        return 2.0f;
-    }
-    float MinP() const override
-    {
-        return 0.5f;
     }
 
     std::vector<const Histogram::Data*> DataSets() const override

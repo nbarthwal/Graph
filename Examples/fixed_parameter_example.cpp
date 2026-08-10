@@ -32,7 +32,8 @@ private:
     class FixedParameterGraph final : public Graph
     {
     public:
-        FixedParameterGraph(): Graph("Fixed Parameter Graph", false)
+        FixedParameterGraph(): Graph("Fixed Parameter Graph", false,
+                kFixedParameter, kFixedParameter)
         {
             curves_.push_back(
                     std::make_unique<FixedSineCurve>(1.0f, "blue", false));
@@ -55,14 +56,6 @@ private:
         float MinY() const override
         {
             return -1.5f;
-        }
-        float MaxP() const override
-        {
-            return kFixedParameter;
-        }
-        float MinP() const override
-        {
-            return kFixedParameter;
         }
 
         std::vector<const Graph::Data*> Curves() const override
@@ -124,7 +117,8 @@ private:
     class FixedParameterHistogram final : public Histogram
     {
     public:
-        FixedParameterHistogram(): Histogram("Fixed Parameter Histogram", false)
+        FixedParameterHistogram(): Histogram("Fixed Parameter Histogram", false,
+                kFixedParameter - 0.5f, kFixedParameter + 0.5f)
         {
             data_sets_.push_back(std::make_unique<FixedHistogramData>(
                     std::vector<float> { 1.0f, 2.0f, 3.0f, 4.0f, 5.0f }, 1.0f,
@@ -147,14 +141,6 @@ private:
         float MinY() const override
         {
             return 0.0f;
-        }
-        float MaxP() const override
-        {
-            return kFixedParameter + 0.5f;
-        }
-        float MinP() const override
-        {
-            return kFixedParameter - 0.5f;
         }
 
         std::vector<const Histogram::Data*> DataSets() const override

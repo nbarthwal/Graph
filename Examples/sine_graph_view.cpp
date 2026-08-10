@@ -35,7 +35,7 @@ private:
 class SineGraph final : public Graph
 {
 public:
-    SineGraph(): Graph("Sine Graph", false)
+    SineGraph(): Graph("Sine Graph", false, 0.5f, 2.0f)
     {
         curves_.push_back(std::make_unique<SineCurve>(1.0f, "blue", false));
         curves_.push_back(std::make_unique<SineCurve>(2.0f, "red", true));
@@ -56,14 +56,6 @@ public:
     float MinY() const override
     {
         return -2.0f;
-    }
-    float MaxP() const override
-    {
-        return 2.0f;
-    }
-    float MinP() const override
-    {
-        return 0.5f;
     }
 
     std::vector<const Graph::Data*> Curves() const override

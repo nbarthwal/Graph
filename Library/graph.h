@@ -19,9 +19,12 @@ class Graph
 public:
     const bool Slider;
     const std::string WindowTitle;
+    const float MinP;
+    const float MaxP;
 
-    Graph(const std::string &title, const bool slider):
-            Slider(slider), WindowTitle(title) { }
+    Graph(const std::string &title, const bool slider, const float min_p,
+            const float max_p) :
+            Slider(slider), WindowTitle(title), MinP(min_p), MaxP(max_p) { }
 
     class Data
     {
@@ -47,8 +50,6 @@ public:
     virtual float MinX() const = 0; // MinX defines the min of X-Axis for this graph.
     virtual float MaxY() const = 0; // MaxY defines the max of Y-Axis for this graph.
     virtual float MinY() const = 0; // MinY defines the min of Y-Axis for this graph.
-    virtual float MaxP() const = 0; // MaxP defines the max of slider parameter.
-    virtual float MinP() const = 0; // MinP defines the min of slider parameter.
     virtual std::vector<const Data*> Curves() const = 0; // Curves defines the curves for this graph.
     virtual std::string Title(const float parameter) const = 0; // Title defines the graph title for slider value p.
     GRAPH_API void Show(const float parameter);
@@ -62,9 +63,12 @@ class Histogram
 public:
     const bool Slider;
     const std::string WindowTitle;
+    const float MinP;
+    const float MaxP;
 
-    Histogram(const std::string &title, const bool slider):
-            Slider(slider), WindowTitle(title) { }
+    Histogram(const std::string &title, const bool slider, const float min_p,
+            const float max_p) :
+            Slider(slider), WindowTitle(title), MinP(min_p), MaxP(max_p) { }
 
     class Data
     {
@@ -88,8 +92,6 @@ public:
     virtual float MinX() const = 0; // MinX defines the min of X-Axis for this histogram.
     virtual float MaxY() const = 0; // MaxY defines the max of Y-Axis for this histogram.
     virtual float MinY() const = 0; // MinY defines the min of Y-Axis for this histogram.
-    virtual float MaxP() const = 0; // MaxP defines the max of slider parameter.
-    virtual float MinP() const = 0; // MinP defines the min of slider parameter.
     virtual std::vector<const Data*> DataSets() const = 0; // Histogram data to display.
     virtual std::string Title(const float parameter) const = 0; // Title defines the histogram title for slider value p.
     GRAPH_API void Show(const float parameter);
