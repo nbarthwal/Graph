@@ -16,9 +16,8 @@ inline std::vector<float> GraphLinspace(float min_x, float max_x,
 {
     std::vector<float> values(count);
     if (count == 0)
-    {
         return values;
-    }
+
     if (count == 1)
     {
         values[0] = min_x;
@@ -27,9 +26,8 @@ inline std::vector<float> GraphLinspace(float min_x, float max_x,
 
     const float step = (max_x - min_x) / static_cast<float>(count - 1);
     for (std::size_t i = 0; i < count; ++i)
-    {
         values[i] = min_x + step * static_cast<float>(i);
-    }
+
     return values;
 }
 
@@ -64,12 +62,8 @@ protected:
         DrawAxes(painter, plot_area);
 
         for (const Graph::Data *curve : graph_->Curves())
-        {
             if (curve != nullptr)
-            {
                 DrawCurve(painter, plot_area, *curve);
-            }
-        }
         DrawLegend(painter, plot_area);
     }
 
@@ -137,9 +131,7 @@ private:
         const std::vector<float> x_values = GraphLinspace(curve.MinX,
                 curve.MaxX, kSampleCount);
         if (x_values.empty())
-        {
             return;
-        }
 
         const QColor color = ParseColor(curve.Color);
 
@@ -177,9 +169,7 @@ private:
                 started = true;
             }
             else
-            {
                 path.lineTo(point);
-            }
         }
         painter.drawPath(path);
     }
@@ -190,9 +180,7 @@ private:
         for (const Graph::Data *curve : graph_->Curves())
         {
             if (curve == nullptr)
-            {
                 continue;
-            }
 
             items.push_back(
                     { curve->Label, ParseColor(curve->Color),
@@ -210,8 +198,7 @@ private:
 class PlotWindow final : public QWidget
     {
     public:
-        explicit PlotWindow(const Graph *graph) :
-                graph_(graph)
+        explicit PlotWindow(const Graph *graph): graph_(graph)
         {
             setWindowTitle(QString::fromStdString(graph->WindowTitle));
             resize(900, 700);
@@ -233,12 +220,10 @@ class PlotWindow final : public QWidget
             if (graph_->Slider)
             {
                 connect(slider_, &QSlider::valueChanged, this,
-                        [this](
-                                int value)
-                                {
-                                    UpdateDisplay(
-                                            SliderToParameter(value, graph_->MinP,
-                                                    graph_->MaxP));
+                        [this](int value)
+                                { UpdateDisplay(
+                                      SliderToParameter(value,
+                                                        graph_->MinP, graph_->MaxP));
                                 });
             }
 
@@ -288,11 +273,7 @@ class GraphViewWindow final : public QWidget
 
 
 void Graph::Plot()
-{
-    RunQT(std::make_unique<PlotWindow>(this));
-}
+    { RunQT(std::make_unique<PlotWindow>(this)); }
 
 void Graph::Show(const float parameter)
-{
-    RunQT(std::make_unique<GraphViewWindow>(this, parameter));
-}
+    { RunQT(std::make_unique<GraphViewWindow>(this, parameter)); }

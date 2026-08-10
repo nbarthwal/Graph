@@ -16,7 +16,7 @@
 class HistogramCanvas final : public QWidget
 {
 public:
-    explicit HistogramCanvas(const Histogram *histogram, QWidget *parent = nullptr) :
+    explicit HistogramCanvas(const Histogram *histogram, QWidget *parent = nullptr):
             QWidget(parent), histogram_(histogram)
     {
         setMinimumSize(640, 480);
@@ -109,9 +109,7 @@ private:
     {
         const std::vector<const Histogram::Data*> data_sets = histogram_->DataSets();
         if (data_sets.empty())
-        {
             return;
-        }
 
         const std::size_t data_set_count = data_sets.size();
         const float baseline_y = ToPixelY(plot_area, histogram_->MinY());
@@ -120,9 +118,7 @@ private:
         {
             const Histogram::Data *data = data_sets[data_index];
             if (data == nullptr || data->BinCount() == 0)
-            {
                 continue;
-            }
 
             const QColor color = ParseColor(data->Color);
             const float group_width = data->BinWidth() * 0.9f;
@@ -158,9 +154,7 @@ private:
         for (const Histogram::Data *data : histogram_->DataSets())
         {
             if (data == nullptr)
-            {
                 continue;
-            }
 
             items.push_back(
                     { data->Label, ParseColor(data->Color),
@@ -200,12 +194,10 @@ class HistogramWindow final : public QWidget
             if (histogram_->Slider)
             {
                 connect(slider_, &QSlider::valueChanged, this,
-                        [this](
-                                int value)
-                                {
-                                    UpdateDisplay(
-                                            SliderToParameter(value, histogram_->MinP,
-                                                    histogram_->MaxP));
+                        [this](int value)
+                                { UpdateDisplay(
+                                    SliderToParameter(value, histogram_->MinP,
+                                                      histogram_->MaxP));
                                 });
             }
 
@@ -257,11 +249,7 @@ class HistogramViewWindow final : public QWidget
 
 
 void Histogram::Plot()
-{
-    RunQT(std::make_unique<HistogramWindow>(this));
-}
+    { RunQT(std::make_unique<HistogramWindow>(this)); }
 
 void Histogram::Show(const float parameter)
-{
-    RunQT(std::make_unique<HistogramViewWindow>(this, parameter));
-}
+    { RunQT(std::make_unique<HistogramViewWindow>(this, parameter)); }

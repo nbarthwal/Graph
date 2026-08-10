@@ -49,9 +49,7 @@ inline QColor ParseColor(const std::string &color)
 
     const auto it = named_colors.find(color);
     if (it != named_colors.end())
-    {
         return it->second;
-    }
 
     const QColor parsed(QString::fromStdString(color));
     return parsed.isValid() ? parsed : QColor(38, 139, 210);
@@ -85,9 +83,7 @@ inline void DrawLegend(QPainter &painter, const QRect &plot_area,
         const std::vector<LegendItem> &items)
 {
     if (items.empty())
-    {
         return;
-    }
 
     constexpr int kPadding = 8;
     constexpr int kSwatchWidth = 20;
@@ -103,11 +99,9 @@ inline void DrawLegend(QPainter &painter, const QRect &plot_area,
 
     int max_text_width = 0;
     for (const LegendItem &item : items)
-    {
         max_text_width = std::max(max_text_width,
                 metrics.horizontalAdvance(
                         QString::fromStdString(item.label)));
-    }
 
     const int legend_width =
             kPadding * 2 + kSwatchWidth + kTextOffset + max_text_width;

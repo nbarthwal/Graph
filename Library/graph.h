@@ -38,9 +38,7 @@ public:
         Data(float min_x, float max_x, std::string color, std::string label,
                 bool point) :
                 MinX(min_x), MaxX(max_x), Color(std::move(color)),
-                Label(std::move(label)), Point(point)
-        {
-        }
+                Label(std::move(label)), Point(point) { }
 
         virtual float Value(float p, float x) const = 0; // Value(p, x) returns y at x for slider value p.
         virtual ~Data() = default;
@@ -77,9 +75,7 @@ public:
         const std::string Label;
 
         Data(std::string color, std::string label) :
-                Color(std::move(color)), Label(std::move(label))
-        {
-        }
+                Color(std::move(color)), Label(std::move(label)) { }
 
         virtual std::size_t BinCount() const = 0; // Number of bins in this histogram.
         virtual float BinCenter(std::size_t bin) const = 0; // Center of the bin on the x-axis.
