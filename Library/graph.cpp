@@ -125,17 +125,15 @@ private:
         painter.restore();
     }
 
-    void DrawCurve(QPainter &painter, const QRect &plot_area,
-            const Graph::Data &curve) const
+    void DrawSegment(QPainter &painter, const QRect &plot_area,
+                     const Graph::Segment& segment,
+                     const QColor& color, const bool point) const
     {
-        const Graph::Segment* segment = curve.Value(parameter_);
-        const int size = segment->Size();
+        const int size = segment.Size();
         if (size == 0)
             return;
 
-        const QColor color = ParseColor(curve.Color);
-
-        if (curve.Point)
+        if (point)
         {
             QPen pen(color, 1.5);
             painter.setPen(pen);
@@ -144,8 +142,7 @@ private:
             constexpr double kPointRadius = 1.25;
             for(int i = 0; i < size; ++i)
             {
-                auto ptr = segment->Get(i);
-                const QPointF point = ToPixel(plot_area, ptr->X, ptr->Y);
+                const QPointF point = ToPixel(plot_area, segment[i]->X, segment[i]->Y);
                 painter.drawEllipse(point, kPointRadius, kPointRadius);
             }
             return;
@@ -161,8 +158,7 @@ private:
         bool started = false;
         for(int i = 0; i < size; ++i)
         {
-            auto ptr = segment->Get(i);
-            const QPointF point = ToPixel(plot_area, ptr->X, ptr->Y);
+            const QPointF point = ToPixel(plot_area, segment[i]->X, segment[i]->Y);
             if (!started)
             {
                 path.moveTo(point);
@@ -172,6 +168,16 @@ private:
                 path.lineTo(point);
         }
         painter.drawPath(path);
+    }
+
+    void DrawCurve(QPainter &painter, const QRect &plot_area,
+            const Graph::Data &curve) const
+    {
+        const QColor color = ParseColor(curve.Color);
+        const Graph::Segments& segments = curve.Value(parameter_);
+        const int size = segments.Size();
+        for(int i=0; i<size; ++i)
+            DrawSegment(painter, plot_area, segments[i], color, curve.Point);
     }
 
     void DrawLegend(QPainter &painter, const QRect &plot_area) const
@@ -285,8 +291,14 @@ Graph::Segment::Segment(const std::vector<Point> &points): data(points)
 const int Graph::Segment::Size() const
     { return static_cast<int>(data.size()); }
 
-const Graph::Point* Graph::Segment::Get(size_t index) const
+const Graph::Point* Graph::Segment::operator[](size_t index) const
     { return ptr[index]; }
+
+const int Graph::Segments::Size() const
+    { return static_cast<int>(data.size()); }
+
+const Graph::Segment & Graph::Segments::operator[](size_t index) const
+    { return data[index]; }
 
 void Graph::Plot()
     { RunQT(std::make_unique<PlotWindow>(this)); }

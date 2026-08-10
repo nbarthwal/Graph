@@ -40,7 +40,17 @@ public:
         [[nodiscard]] const float Min() const;
         [[nodiscard]] const float Max() const;
         const int Size() const;
-        const Point* Get(size_t index) const;
+        const Point* operator[](size_t index) const;
+    };
+
+    class Segments
+    {
+    private:
+        const std::vector<Segment>& data;
+    public:
+        Segments(const std::vector<Segment>& segments): data(segments) { }
+        const int Size() const;
+        [[nodiscard]] const Segment& operator[](size_t index) const;
     };
 
     const bool Slider;
@@ -72,12 +82,12 @@ public:
                 MinX(min_x), MaxX(max_x), Color(std::move(color)),
                 Label(std::move(label)), Point(point) { }
 
-        virtual Segment* Value(float p) const = 0; // Value(p, x) returns y at x for slider value p.
+        virtual Segments& Value(float p) const = 0;
         virtual ~Data() = default;
     };
 
-    virtual const std::vector<std::unique_ptr<Data>>& Curves() const = 0; // Curves defines the curves for this graph.
-    virtual std::string Title(const float parameter) const = 0; // Title defines the graph title for slider value p.
+    virtual const std::vector<std::unique_ptr<Data>>& Curves() const = 0;
+    virtual std::string Title(const float parameter) const = 0;
     GRAPH_API void Show(const float parameter);
     GRAPH_API void Plot();
     virtual ~Graph() = default;
