@@ -36,7 +36,7 @@ inline std::vector<float> GraphLinspace(float min_x, float max_x,
 class GraphCanvas final : public QWidget
 {
 public:
-    explicit GraphCanvas(const Graph &graph, QWidget *parent = nullptr) :
+    explicit GraphCanvas(const Graph *graph, QWidget *parent = nullptr) :
             QWidget(parent), graph_(graph)
     {
         setMinimumSize(640, 480);
@@ -63,7 +63,7 @@ protected:
         DrawGrid(painter, plot_area);
         DrawAxes(painter, plot_area);
 
-        for (const Graph::Data *curve : graph_.Curves())
+        for (const Graph::Data *curve : graph_->Curves())
         {
             if (curve != nullptr)
             {
@@ -82,13 +82,13 @@ private:
 
     QPointF ToPixel(const QRect &plot_area, float x, float y) const
     {
-        const float x_range = graph_.MaxX() - graph_.MinX();
-        const float y_range = graph_.MaxY() - graph_.MinY();
+        const float x_range = graph_->MaxX() - graph_->MinX();
+        const float y_range = graph_->MaxY() - graph_->MinY();
 
         const float x_ratio =
-                x_range == 0.0f ? 0.0f : (x - graph_.MinX()) / x_range;
+                x_range == 0.0f ? 0.0f : (x - graph_->MinX()) / x_range;
         const float y_ratio =
-                y_range == 0.0f ? 0.0f : (y - graph_.MinY()) / y_range;
+                y_range == 0.0f ? 0.0f : (y - graph_->MinY()) / y_range;
 
         return QPointF(plot_area.left() + x_ratio * plot_area.width(),
                 plot_area.bottom() - y_ratio * plot_area.height());
@@ -187,7 +187,7 @@ private:
     void DrawLegend(QPainter &painter, const QRect &plot_area) const
     {
         std::vector<LegendItem> items;
-        for (const Graph::Data *curve : graph_.Curves())
+        for (const Graph::Data *curve : graph_->Curves())
         {
             if (curve == nullptr)
             {
@@ -203,17 +203,17 @@ private:
         ::DrawLegend(painter, plot_area, items);
     }
 
-    const Graph &graph_;
+    const Graph *graph_;
     float parameter_ = 0.0f;
 };
 
 class PlotWindow final : public QWidget
     {
     public:
-        explicit PlotWindow(const Graph &graph) :
+        explicit PlotWindow(const Graph *graph) :
                 graph_(graph)
         {
-            setWindowTitle(QString::fromStdString(graph.Title()));
+            setWindowTitle(QString::fromStdString(graph->Title()));
             resize(900, 700);
 
             auto *layout = new QVBoxLayout(this);
@@ -229,7 +229,7 @@ class PlotWindow final : public QWidget
             slider_->setValue(0);
             layout->addWidget(slider_);
 
-            const bool show_slider = graph_.MaxP() != graph_.MinP();
+            const bool show_slider = graph_->MaxP() != graph_->MinP();
             slider_->setVisible(show_slider);
 
             if (show_slider)
@@ -239,22 +239,22 @@ class PlotWindow final : public QWidget
                                 int value)
                                 {
                                     UpdateDisplay(
-                                            SliderToParameter(value, graph_.MinP(),
-                                                    graph_.MaxP()));
+                                            SliderToParameter(value, graph_->MinP(),
+                                                    graph_->MaxP()));
                                 });
             }
 
-            UpdateDisplay(graph_.MinP());
+            UpdateDisplay(graph_->MinP());
         }
 
     private:
         void UpdateDisplay(float parameter)
         {
-            SetTitleLabel(*title_label_, graph_.Title(parameter));
+            SetTitleLabel(*title_label_, graph_->Title(parameter));
             plot_canvas_->SetParameter(parameter);
         }
 
-        const Graph &graph_;
+        const Graph *graph_;
         QLabel *title_label_ = nullptr;
         GraphCanvas *plot_canvas_ = nullptr;
         QSlider *slider_ = nullptr;
@@ -263,16 +263,16 @@ class PlotWindow final : public QWidget
 class GraphViewWindow final : public QWidget
     {
     public:
-        GraphViewWindow(Graph &graph, float parameter) :
+        GraphViewWindow(Graph *graph, float parameter) :
                 graph_(graph)
         {
-            setWindowTitle(QString::fromStdString(graph_.Title()));
+            setWindowTitle(QString::fromStdString(graph_->Title()));
             resize(900, 700);
 
             auto *layout = new QVBoxLayout(this);
 
             title_label_ = new QLabel(this);
-            SetTitleLabel(*title_label_, graph_.Title(parameter));
+            SetTitleLabel(*title_label_, graph_->Title(parameter));
             layout->addWidget(title_label_);
 
             canvas_ = new GraphCanvas(graph_, this);
@@ -281,21 +281,41 @@ class GraphViewWindow final : public QWidget
         }
 
     private:
-        Graph &graph_;
+        Graph *graph_;
         QLabel *title_label_ = nullptr;
         GraphCanvas *canvas_ = nullptr;
     };
 
-void Plot(const Graph& graph)
+
+void Graph::Plot()
 {
-    RunQtApp([&graph]()
-    {   return std::make_unique<PlotWindow>(graph);});
+    const bool owns_application = QApplication::instance() == nullptr;
+    std::unique_ptr<QApplication> owned_application;
+    int argc = 0;
+
+    if (owns_application)
+        owned_application = std::make_unique<QApplication>(argc, nullptr);
+
+    std::unique_ptr<QWidget> window = std::make_unique<PlotWindow>(this);
+    window->show();
+
+    if (owns_application)
+        QApplication::exec();
 }
+
 
 void Graph::Show(const float parameter)
 {
-    RunQtApp([this, parameter]()
-    {
-        return std::make_unique<GraphViewWindow>(*this, parameter);
-    });
+    const bool owns_application = QApplication::instance() == nullptr;
+    std::unique_ptr<QApplication> owned_application;
+    int argc = 0;
+
+    if (owns_application)
+        owned_application = std::make_unique<QApplication>(argc, nullptr);
+
+    std::unique_ptr<QWidget> window = std::make_unique<GraphViewWindow>(this, parameter);
+    window->show();
+
+    if (owns_application)
+        QApplication::exec();
 }
