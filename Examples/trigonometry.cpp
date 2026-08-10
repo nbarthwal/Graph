@@ -126,6 +126,6 @@ class CosineCurve final : public Graph::Data
 int main()
 {
     TrigonometryGraph graph;
-    Plot(graph);
+    graph.Plot();
     return 0;
 }

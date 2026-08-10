@@ -109,6 +109,6 @@ private:
 int main()
 {
     SineGraph graph;
-    Plot(graph);
+    graph.Plot();
     return 0;
 }

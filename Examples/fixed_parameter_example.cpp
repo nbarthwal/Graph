@@ -229,7 +229,7 @@ int main(int argc, char *argv[])
     else
     {
         FixedParameterGraph graph;
-        Plot(graph);
+        graph.Plot();
     }
     return 0;
 }
