@@ -6,10 +6,6 @@ set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 
-set(PREFIX "$ENV{HOME}/.local" CACHE PATH "Package search prefix")
-
-list(APPEND CMAKE_PREFIX_PATH "${PREFIX}")
-
 find_package(GraphPlot REQUIRED)
 
 function(add_graph_plot_example target_name source_file)

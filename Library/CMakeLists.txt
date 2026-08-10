@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 3.18)
 
 project(GraphPlot VERSION 1.0.0 LANGUAGES CXX)
 
-set(PREFIX "$ENV{HOME}/.local" CACHE PATH "Package install prefix")
+set(PREFIX "/usr/local" CACHE PATH "Package install prefix")
 set(CMAKE_INSTALL_PREFIX "${PREFIX}" CACHE PATH "Install prefix" FORCE)
 
 set(CMAKE_CXX_STANDARD 17)
