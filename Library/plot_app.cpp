@@ -1,33 +1,28 @@
-#include "graph.h"
+#include "graph_impl.h"
 
 #include <QApplication>
 #include <QWidget>
 
+#include <functional>
 #include <memory>
 
-namespace plot_detail
+void RunQtApp(
+        const std::function<std::unique_ptr<QWidget>()> &create_window)
 {
+    const bool owns_application = QApplication::instance() == nullptr;
+    std::unique_ptr<QApplication> owned_application;
+    int argc = 0;
 
-    void RunQtApp(
-            const std::function<std::unique_ptr<QWidget>()> &create_window)
+    if (owns_application)
     {
-        const bool owns_application = QApplication::instance() == nullptr;
-        std::unique_ptr < QApplication > owned_application;
-        int argc = 0;
-
-        if (owns_application)
-        {
-            owned_application = std::make_unique < QApplication
-                    > (argc, nullptr);
-        }
-
-        std::unique_ptr < QWidget > window = create_window();
-        window->show();
-
-        if (owns_application)
-        {
-            QApplication::exec();
-        }
+        owned_application = std::make_unique<QApplication>(argc, nullptr);
     }
 
-}  // namespace plot_detail
+    std::unique_ptr<QWidget> window = create_window();
+    window->show();
+
+    if (owns_application)
+    {
+        QApplication::exec();
+    }
+}

@@ -76,9 +76,8 @@ protected:
 private:
     QRect PlotArea() const
     {
-        return rect().adjusted(plot_detail::kPlotMarginLeft,
-                plot_detail::kPlotMarginTop, -plot_detail::kPlotMarginRight,
-                -plot_detail::kPlotMarginBottom);
+        return rect().adjusted(kPlotMarginLeft, kPlotMarginTop,
+                -kPlotMarginRight, -kPlotMarginBottom);
     }
 
     QPointF ToPixel(const QRect &plot_area, float x, float y) const
@@ -142,7 +141,7 @@ private:
             return;
         }
 
-        const QColor color = plot_detail::ParseColor(curve.Color());
+        const QColor color = ParseColor(curve.Color());
 
         if (curve.Point())
         {
@@ -187,7 +186,7 @@ private:
 
     void DrawLegend(QPainter &painter, const QRect &plot_area) const
     {
-        std::vector<plot_detail::LegendItem> items;
+        std::vector<LegendItem> items;
         for (const Graph::Data *curve : graph_.Curves())
         {
             if (curve == nullptr)
@@ -196,26 +195,19 @@ private:
             }
 
             items.push_back(
-                    { curve->Label(), plot_detail::ParseColor(curve->Color()),
-                            curve->Point() ? plot_detail::LegendSwatch::Point
-                                           : plot_detail::LegendSwatch::Line });
+                    { curve->Label(), ParseColor(curve->Color()),
+                            curve->Point() ? LegendSwatch::Point
+                                           : LegendSwatch::Line });
         }
 
-        plot_detail::DrawLegend(painter, plot_area, items);
+        ::DrawLegend(painter, plot_area, items);
     }
 
     const Graph &graph_;
     float parameter_ = 0.0f;
 };
 
-namespace
-{
-
-    using plot_detail::kSliderSteps;
-    using plot_detail::SetTitleLabel;
-    using plot_detail::SliderToParameter;
-
-    class PlotWindow final : public QWidget
+class PlotWindow final : public QWidget
     {
     public:
         explicit PlotWindow(const Graph &graph) :
@@ -268,7 +260,7 @@ namespace
         QSlider *slider_ = nullptr;
     };
 
-    class GraphViewWindow final : public QWidget
+class GraphViewWindow final : public QWidget
     {
     public:
         GraphViewWindow(Graph &graph, float parameter) :
@@ -294,17 +286,15 @@ namespace
         GraphCanvas *canvas_ = nullptr;
     };
 
-}  // namespace
-
 void Plot(const Graph& graph)
 {
-    plot_detail::RunQtApp([&graph]()
+    RunQtApp([&graph]()
     {   return std::make_unique<PlotWindow>(graph);});
 }
 
 void Graph::Show(const float parameter)
 {
-    plot_detail::RunQtApp([this, parameter]()
+    RunQtApp([this, parameter]()
     {
         return std::make_unique<GraphViewWindow>(*this, parameter);
     });

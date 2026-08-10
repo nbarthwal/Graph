@@ -4,12 +4,9 @@
 #include <string>
 #include <vector>
 
-namespace
-{
+constexpr float kTwoPi = 6.28318f;
 
-    constexpr float kTwoPi = 6.28318f;
-
-    class CosineCurve final : public Graph::Data
+class CosineCurve final : public Graph::Data
     {
     public:
         std::string Color() const override
@@ -124,9 +121,7 @@ namespace
 
     private:
         std::vector<std::unique_ptr<Graph::Data>> curves_;
-    };
-
-}  // namespace
+};
 
 int main()
 {

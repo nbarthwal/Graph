@@ -4,13 +4,10 @@
 #include <string>
 #include <vector>
 
-namespace
-{
+constexpr float kFixedParameter = 1.0f;
+constexpr float kTwoPi = 6.28318f;
 
-    constexpr float kFixedParameter = 1.0f;
-    constexpr float kTwoPi = 6.28318f;
-
-    class FixedSineCurve final : public Graph::Data
+class FixedSineCurve final : public Graph::Data
     {
     public:
         FixedSineCurve(float frequency, std::string color, bool point) :
@@ -220,9 +217,7 @@ namespace
 
     private:
         std::vector<std::unique_ptr<Histogram::Data>> data_sets_;
-    };
-
-}  // namespace
+};
 
 int main(int argc, char *argv[])
 {
