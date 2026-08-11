@@ -275,7 +275,11 @@ bool compare(Graph::Point& p1, Graph::Point& p2)
     { return p1.X() > p2.X(); }
 
 Graph::Segment::Segment(const std::vector<Point> &points): data(points)
-    { std::sort(data.begin(), data.end(), compare); }
+    {
+        std::sort(data.begin(), data.end(), compare);
+        min = data.begin()->X();
+        max = data.rbegin()->X();
+    }
 
 void Graph::Plot()
     { RunQT(std::make_unique<PlotWindow>(this)); }

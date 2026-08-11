@@ -20,8 +20,6 @@ private:
     constexpr float Pi = 3.141593f;
     constexpr float n = static_cast<float>(N);
     Segment segment;
-    Segments segments;
-    vector<Graph::Point> segment(N + 1, Point(0.0, 0.0));
     vector<Graph::Segments>>
 
     Graph::Point point(float k, int i)

@@ -35,7 +35,6 @@ public:
     {
     private:
         std::vector<Point> data;
-        std::vector<Point*> ptr;
         float min;
         float max;
 
