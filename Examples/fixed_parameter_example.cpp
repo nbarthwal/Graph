@@ -18,13 +18,26 @@ public:
     {
     }
 
-    float Value(float p, float x) const override
+    [[nodiscard]] const std::unique_ptr<Graph::Segment>& Value(float p) const override
     {
-        return p * std::sin(frequency_ * x);
+        for (int i = 0; i < kPointCount; ++i)
+            segment_->Set(i, p * std::sin(frequency_ * segment_->X(i)));
+        return segment_;
     }
 
 private:
+    static constexpr int kPointCount = 500;
     float frequency_;
+    mutable std::unique_ptr<Graph::Segment> segment_ = BuildSegment();
+
+    static std::unique_ptr<Graph::Segment> BuildSegment()
+    {
+        std::vector<Graph::Point> points;
+        points.reserve(kPointCount);
+        for (int i = 0; i < kPointCount; ++i)
+            points.emplace_back(static_cast<float>(i), 0.0f);
+        return std::make_unique<Graph::Segment>(points);
+    }
 };
 
 class FixedParameterGraph final : public Graph
@@ -39,7 +52,7 @@ public:
                 std::make_unique < FixedSineCurve > (2.0f, "red", true));
     }
 
-    const std::vector<std::unique_ptr<Graph::Data>>& Curves() const override
+    const std::vector<std::unique_ptr<Graph::Data>>& DataSet() const override
     {
         return curves_;
     }
