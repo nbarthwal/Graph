@@ -70,10 +70,12 @@ public:
     const float MaxX;
     const float MinY;
     const float MaxY;
-    const std::vector<std::shared_ptr<Data>> Segments;
+    const std::vector<std::unique_ptr<Data>> Segments;
 
     Graph(const string& title, bool slider, float min_p, float max_p, float min_x,
-          float max_x, float min_y, float max_y, const vector<shared_ptr<Data>>&);
+          float max_x, float min_y, float max_y);
+
+    [[nodiscard]] virtual const vector<unique_ptr<Data>>& DataSet() const = 0;
 
     [[nodiscard]] virtual string Title(float parameter) const = 0;
     GRAPH_API void Show(float parameter);

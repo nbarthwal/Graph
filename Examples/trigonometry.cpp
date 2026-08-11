@@ -4,86 +4,88 @@
 #include <string>
 #include <vector>
 
-use namespace;
+using namespace std;
+
+
+const int N = 500;
+const float Pi = 3.141593f;
 
 
 class Curve: public Graph::Data
 {
-public:
-    const static int N = 500;
-    const static float Pi = 3.141593f;
 protected:
-    float f(float);
+    [[nodiscard]] virtual float f(float) const;
 
 private:
-    const float Max = 10.0f;
-    const float Min = 0.0f;
-    const float n = static_cast<float>(N);
+    const float factor = 2.0f * Pi / static_cast<float>(N);
 
-    static unique_ptr<Graph::Segment> gen(int n)
+    static unique_ptr<Graph::Segment> gen()
     {
-        vector<Graph::Point> points();
-        for(int i=0; i<n; ++i)
-            points.push_back(Point(static_cast<float>(i), 0.0f))
+        vector<Graph::Point> points;
+        for(int i=0; i < N; ++i)
+            points.emplace_back(static_cast<float>(i), 0.0f);
+
         return make_unique<Graph::Segment>(points);
     }
-    unique_ptr<Graph::Segment> segment;
+    unique_ptr<Graph::Segment> segment = std::move(gen());
 
 public:
     Curve(const string &color, const string &title, const bool b):
-        Data(Min, Max, color, title, b), segment(std::move(gen(N)) { }
+        Data(0.0f, static_cast<float>(N), color, title, b) { }
 
-    const unique_ptr<Graph::Segment>& Value(float k) const override
+    [[nodiscard]] const unique_ptr<Graph::Segment>& Value(float k) const override
     {
         for (int i = 0; i <= N; ++i)
-            segment->Set(i, f(
-                (2.0f * Pi * (k + 1.0f) * segment->X(i)) / n));
-        return segment
+            segment->Set(i, f(factor * segment->X(i)));
+        return segment;
     }
+
+    virtual ~Curve() = default;
 };
+
 
 class CosineCurve final : public Curve
 {
 public:
-    CosineCurve() : Curve("blue", "cos(x)", false) { }
+    CosineCurve(): Curve("blue", "cos(x)", false) { }
+    ~CosineCurve() = default;
 
 protected:
-    float f(float theta) const override
+    [[nodiscard]] float f(float theta) const override
         { return std::cos(theta); }
 };
+
 
 class SineCurve final : public Curve
 {
 public:
     SineCurve(): Curve("red", "sin(x)", true) { }
+    ~SineCurve() = default;
 
 protected:
-    float f(float theta) const override
+    [[nodiscard]] float f(float theta) const override
         { return std::sin(theta); }
 };
+
 
 class TrigonometryGraph final : public Graph
 {
 private:
-    std::vector<std::unique_ptr<Graph::Data>> curves;
+    vector<unique_ptr<Graph::Data>> curves;
 
 public:
-    TrigonometryGraph() : Graph("Trigonometry", true, 1.0f, 5.0f, 0.0f, kTwoPi,
-            -1.0f, 1.0f)
+    TrigonometryGraph(): Graph("Trigonometry", true, 1.0f, 5.0f, 0.0f,
+                               static_cast<float>(N), -1.0f, 1.0f)
     {
         curves.push_back(std::make_unique<CosineCurve>());
         curves.push_back(std::make_unique<SineCurve>());
     }
 
-    const std::vector<std::unique_ptr<Graph::Data>>& Curves() const override
-    {
-        return curves;
-    }
+    const vector<unique_ptr<Data>>& DataSet() const override
+        { return curves; }
 
-    std::string Title(const float parameter) const override
-    {
-        return "Trigonometry (frequency = " + std::to_string(parameter) + ")";
-    }
+    [[nodiscard]] string Title(const float parameter) const override
+        { return "Trigonometry (frequency = " + std::to_string(parameter) + ")"; }
 };
 
 int main()

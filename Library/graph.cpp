@@ -63,7 +63,7 @@ protected:
         DrawGrid(painter, plot_area);
         DrawAxes(painter, plot_area);
 
-        for (const auto &curve : graph_->Segments)
+        for (const auto& curve : graph_->DataSet())
             if (curve != nullptr) DrawCurve(painter, plot_area, *curve);
         DrawLegend(painter, plot_area);
     }
@@ -176,7 +176,7 @@ private:
     void DrawLegend(QPainter &painter, const QRect &plot_area) const
     {
         std::vector<LegendItem> items;
-        for (const auto &curve : graph_->Segments)
+        for (const auto& curve : graph_->DataSet())
         {
             if (curve == nullptr) continue;
 
@@ -313,11 +313,9 @@ Graph::Data::Data(const float min_x, const float max_x, const string& color,
 
 Graph::Graph(const string& title, const bool slider, const float min_p,
              const float max_p, const float min_x, const float max_x,
-             const float min_y, const float max_y,
-             const std::vector<std::shared_ptr<Data>> &data):
+             const float min_y, const float max_y):
                  WindowTitle(title), Slider(slider), MinP(min_p), MaxP(max_p),
-                 MinX(min_x), MaxX(max_x), MinY(min_y), MaxY(max_y),
-                 Segments(data) { }
+                 MinX(min_x), MaxX(max_x), MinY(min_y), MaxY(max_y) { }
 
 void Graph::Plot()
     { RunQT(std::make_unique<PlotWindow>(this)); }
