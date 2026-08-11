@@ -4,58 +4,88 @@
 #include <string>
 #include <vector>
 
-constexpr float kTwoPi = 6.28318f;
-
-class CosineCurve final : public Graph::Data
+class Curve final : public Graph::Data
 {
+protected:
+    float f(const float);
+
+private:
+    constexpr int N = 500;
+    constexpr int Max = 10f;
+    constexpr int Max = 0f;
+    constexpr float Pi = 3.141593f;
+    constexpr float n = static_cast<float>(N);
+    Segment segment;vector<Graph::Segments>>
+
+    Graph::Point point(float k, int i)
+    {
+        const float x = static_cast<float>(i);
+        const float y = f((2.0f * Pi * (k + 1.0f) * x) / n);
+        return Pooint(x, y);
+    }
+
 public:
-    CosineCurve() :
-            Graph::Data(0.0f, kTwoPi, "blue", "cos(x)", false)
+    Curve(const string &color, const string &title, const bool b) : Graph::Data(
+            Min, Max, color, title, b)
     {
     }
 
-    float Value(float frequency, float x) const override
+    const Graph::Segments& Value(float k) const override
     {
-        return std::cos(frequency * x);
+        for (int i = 0; i <= N; ++i)
+            segment[i] = std::move(point(k, i));
+    return reference
+}
+};
+
+class CosineCurve final : public Curve
+{
+public:
+    CosineCurve() : Curve("blue", "cos(x)", false)
+    {
+    }
+
+protected:
+    float f(float theta) const override
+    {
+        return std::cos(theta);
     }
 };
 
-class SineCurve final : public Graph::Data
+class SineCurve final : public Curve
 {
-public:
-    SineCurve() :
-            Graph::Data(0.0f, kTwoPi, "red", "sin(x)", true)
-    {
-    }
+public:SineCurve(): : Curve("red", "sin(x)", true)
+    {}
 
-    float Value(float frequency, float x) const override
+protected:
+    float f(float theta) const override
     {
-        return std::sin(frequency * x);
+        return std::sin(theta);
     }
 };
 
 class TrigonometryGraph final : public Graph
 {
+private:
+    std::vector<std::unique_ptr<Graph::Data>> curves;
+
 public:
-    TrigonometryGraph(): Graph("Trigonometry", true, 1.0f, 5.0f, 0.0f, kTwoPi,
+    TrigonometryGraph() : Graph("Trigonometry", true, 1.0f, 5.0f, 0.0f, kTwoPi,
             -1.0f, 1.0f)
     {
-        curves_.push_back(std::make_unique<CosineCurve>());
-        curves_.push_back(std::make_unique<SineCurve>());
+        curves.push_back(std::make_unique<CosineCurve>());
+        curves.push_back(std::make_unique<SineCurve>());
     }
 
     const std::vector<std::unique_ptr<Graph::Data>>& Curves() const override
     {
-        return curves_;
+        return curves;
     }
 
     std::string Title(const float parameter) const override
     {
         return "Trigonometry (frequency = " + std::to_string(parameter) + ")";
     }
-
-private:
-    std::vector<std::unique_ptr<Graph::Data>> curves_;
 };
 
 int main()

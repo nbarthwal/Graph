@@ -10,10 +10,9 @@ class StaticHistogramData final : public Histogram::Data
 {
 public:
     StaticHistogramData(std::vector<float> centers, float bin_width,
-            std::vector<float> counts, std::string color, std::string label) :
-            Histogram::Data(std::move(color), std::move(label)),
-            centers_(std::move(centers)), bin_width_(bin_width),
-            counts_(std::move(counts))
+            std::vector<float> counts, std::string color, std::string label) : Histogram::Data(
+            std::move(color), std::move(label)), centers_(std::move(centers)), bin_width_(
+            bin_width), counts_(std::move(counts))
     {
     }
 
@@ -43,7 +42,7 @@ private:
 class GroupedHistogram final : public Histogram
 {
 public:
-    GroupedHistogram(): Histogram("Grouped Histogram", true, 1.0f, 1.0f, 0.0f,
+    GroupedHistogram() : Histogram("Grouped Histogram", true, 1.0f, 1.0f, 0.0f,
             6.0f, 0.0f, 10.0f)
     {
         data_sets_.push_back(
@@ -57,7 +56,8 @@ public:
                                 float> { 1.0f, 3.0f, 6.0f, 7.0f, 2.0f }, "orange", "Series B"));
     }
 
-    const std::vector<std::unique_ptr<Histogram::Data>>& DataSets() const override
+    const std::vector<std::unique_ptr<Histogram::Data>>& DataSets() const
+            override
     {
         return data_sets_;
     }

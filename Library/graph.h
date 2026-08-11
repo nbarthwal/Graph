@@ -15,58 +15,38 @@
 #  define GRAPH_API
 #endif
 
+using namespace std;
+
 class Graph
 {
 public:
 
     class Point
     {
+    private:
+        float x;
+        float y;
+
     public:
-        const float X;
-        const float Y;
-        Point(const float x, const float y) : X(x), Y(y) {}
+        float X() const;
+        float Y() const;
+        Point(const float x_, const float y_);
     };
 
     class Segment
     {
     private:
-        const std::vector<Point> data;
-        std::vector<Point*> ptr;
+        std::vector<Point> data;
         float min;
         float max;
 
     public:
-        Segment(const std::vector<Point>& points);
-        [[nodiscard]] const float Min() const;
-        [[nodiscard]] const float Max() const;
-        const int Size() const;
-        const Point* operator[](size_t index) const;
+        Segment(const std::vector<Point> &points);
+        [[nodiscard]] float Min() const;
+        [[nodiscard]] float Max() const;
+        int Size() const;
+        const Point& operator[](size_t index) const;
     };
-
-    class Segments
-    {
-    private:
-        const std::vector<Segment>& data;
-    public:
-        Segments(const std::vector<Segment>& segments): data(segments) { }
-        const int Size() const;
-        [[nodiscard]] const Segment& operator[](size_t index) const;
-    };
-
-    const bool Slider;
-    const std::string WindowTitle;
-    const float MinP;
-    const float MaxP;
-    const float MinX;
-    const float MaxX;
-    const float MinY;
-    const float MaxY;
-
-    Graph(const std::string &title, const bool slider, const float min_p,
-            const float max_p, const float min_x, const float max_x,
-            const float min_y, const float max_y) :
-            Slider(slider), WindowTitle(title), MinP(min_p), MaxP(max_p),
-            MinX(min_x), MaxX(max_x), MinY(min_y), MaxY(max_y) { }
 
     class Data
     {
@@ -78,21 +58,32 @@ public:
         const bool Point;
 
         Data(float min_x, float max_x, std::string color, std::string label,
-                bool point) :
-                MinX(min_x), MaxX(max_x), Color(std::move(color)),
-                Label(std::move(label)), Point(point) { }
+                bool point);
 
-        virtual Segments& Value(float p) const = 0;
+        virtual Segment& Value(float p) const = 0;
         virtual ~Data() = default;
     };
 
-    virtual const std::vector<std::unique_ptr<Data>>& Curves() const = 0;
+    const bool Slider;
+    const std::string WindowTitle;
+    const float MinP;
+    const float MaxP;
+    const float MinX;
+    const float MaxX;
+    const float MinY;
+    const float MaxY;
+    const std::vector<std::shared_ptr<Data>> Segments;
+
+    Graph(const std::string &title, const bool slider, const float min_p,
+            const float max_p, const float min_x, const float max_x,
+            const float min_y, const float max_y,
+            const std::vector<shared_ptr<Data>> &data);
+
     virtual std::string Title(const float parameter) const = 0;
     GRAPH_API void Show(const float parameter);
     GRAPH_API void Plot();
     virtual ~Graph() = default;
 };
-
 
 class Histogram
 {
@@ -108,9 +99,11 @@ public:
 
     Histogram(const std::string &title, const bool slider, const float min_p,
             const float max_p, const float min_x, const float max_x,
-            const float min_y, const float max_y) :
-            Slider(slider), WindowTitle(title), MinP(min_p), MaxP(max_p),
-            MinX(min_x), MaxX(max_x), MinY(min_y), MaxY(max_y) { }
+            const float min_y, const float max_y) : Slider(slider), WindowTitle(
+            title), MinP(min_p), MaxP(max_p), MinX(min_x), MaxX(max_x), MinY(
+            min_y), MaxY(max_y)
+    {
+    }
 
     class Data
     {
@@ -118,8 +111,10 @@ public:
         const std::string Color;
         const std::string Label;
 
-        Data(std::string color, std::string label) :
-                Color(std::move(color)), Label(std::move(label)) { }
+        Data(std::string color, std::string label) : Color(std::move(color)), Label(
+                std::move(label))
+        {
+        }
 
         virtual std::size_t BinCount() const = 0; // Number of bins in this histogram.
         virtual float BinCenter(std::size_t bin) const = 0; // Center of the bin on the x-axis.
