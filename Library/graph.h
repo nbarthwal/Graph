@@ -15,6 +15,9 @@
 #  define GRAPH_API
 #endif
 
+using namespace  std;
+
+
 class Graph
 {
 public:
@@ -26,9 +29,9 @@ public:
         float y;
 
     public:
-        float X() const { return x; };
-        float Y() const { return y; };
-        Point(const float x_, const float y_) : x(x_), y(y_) {}
+        float X() const;
+        float Y() const;
+        Point(const float x_, const float y_);
     };
 
     class Segment
@@ -40,26 +43,11 @@ public:
 
     public:
         Segment(const std::vector<Point>& points);
-        [[nodiscard]] float Min() const { return min; }
-        [[nodiscard]] float Max() const { return max; }
-        int Size() const { return static_cast<int>(data.size()); }
-        const Point& operator[](size_t index) const { return data.at(index); }
+        [[nodiscard]] float Min() const;
+        [[nodiscard]] float Max() const;
+        int Size() const;
+        const Point& operator[](size_t index) const;
     };
-
-    const bool Slider;
-    const std::string WindowTitle;
-    const float MinP;
-    const float MaxP;
-    const float MinX;
-    const float MaxX;
-    const float MinY;
-    const float MaxY;
-
-    Graph(const std::string &title, const bool slider, const float min_p,
-            const float max_p, const float min_x, const float max_x,
-            const float min_y, const float max_y) :
-            Slider(slider), WindowTitle(title), MinP(min_p), MaxP(max_p),
-            MinX(min_x), MaxX(max_x), MinY(min_y), MaxY(max_y) { }
 
     class Data
     {
@@ -70,16 +58,28 @@ public:
         const std::string Label;
         const bool Point;
 
-        Data(float min_x, float max_x, std::string color, std::string label,
-                bool point) :
-                MinX(min_x), MaxX(max_x), Color(std::move(color)),
-                Label(std::move(label)), Point(point) { }
+        Data(float min_x, float max_x, std::string color, std::string label, bool point);
 
         virtual Segment& Value(float p) const = 0;
         virtual ~Data() = default;
     };
 
-    virtual const std::vector<std::unique_ptr<Data>>& Curves() const = 0;
+    const bool Slider;
+    const std::string WindowTitle;
+    const float MinP;
+    const float MaxP;
+    const float MinX;
+    const float MaxX;
+    const float MinY;
+    const float MaxY;
+    const std::vector<std::shared_ptr<Data>> Segments;
+
+    Graph(const std::string &title, const bool slider, const float min_p,
+          const float max_p, const float min_x, const float max_x,
+          const float min_y, const float max_y,
+          const std::vector<shared_ptr<Data>>& data);
+
+
     virtual std::string Title(const float parameter) const = 0;
     GRAPH_API void Show(const float parameter);
     GRAPH_API void Plot();

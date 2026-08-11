@@ -1,5 +1,6 @@
 #include "graph.h"
 #include "graph_impl.h"
+#include <memory>
 
 #include <memory>
 #include <QLabel>
@@ -62,7 +63,7 @@ protected:
         DrawGrid(painter, plot_area);
         DrawAxes(painter, plot_area);
 
-        for (const auto &curve : graph_->Curves())
+        for (const auto &curve : graph_->Segments)
             if (curve != nullptr)
                 DrawCurve(painter, plot_area, *curve);
         DrawLegend(painter, plot_area);
@@ -176,7 +177,7 @@ private:
     void DrawLegend(QPainter &painter, const QRect &plot_area) const
     {
         std::vector<LegendItem> items;
-        for (const auto &curve : graph_->Curves())
+        for (const auto &curve : graph_->Segments)
         {
             if (curve == nullptr)
                 continue;
@@ -274,12 +275,37 @@ class GraphViewWindow final : public QWidget
 bool compare(Graph::Point& p1, Graph::Point& p2)
     { return p1.X() > p2.X(); }
 
+
+Graph::Point::Point(const float x_, const float y_) : x(x_), y(y_) { }
+
+float Graph::Point::X() const { return x; };
+float Graph::Point::Y() const { return y; };
+
+
 Graph::Segment::Segment(const std::vector<Graph::Point> &points): data(points)
-    {
-        std::sort(data.begin(), data.end(), compare);
-        min = data.begin()->X();
-        max = data.rbegin()->X();
-    }
+{
+    std::sort(data.begin(), data.end(), compare);
+    min = data.begin()->X();
+    max = data.rbegin()->X();
+}
+
+float Graph::Segment::Min() const { return min; }
+float Graph::Segment::Max() const { return max; }
+int Graph::Segment::Size() const { return static_cast<int>(data.size()); }
+const Graph::Point& Graph::Segment::operator[](size_t index) const
+    { return data.at(index); }
+
+Graph::Data::Data(float min_x, float max_x, std::string color, std::string label,
+                bool point): MinX(min_x), MaxX(max_x), Color(std::move(color)),
+                             Label(std::move(label)), Point(point) { }
+
+Graph::Graph(const std::string &title, const bool slider, const float min_p,
+             const float max_p, const float min_x, const float max_x,
+             const float min_y, const float max_y,
+             const std::vector<std::shared_ptr<Data>>& data):
+                 WindowTitle(title), Slider(slider),  MinP(min_p), MaxP(max_p),
+                 MinX(min_x), MaxX(max_x), MinY(min_y), MaxY(max_y),
+                 Segments(data) { }
 
 void Graph::Plot()
     { RunQT(std::make_unique<PlotWindow>(this)); }
