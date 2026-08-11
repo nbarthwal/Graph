@@ -14,20 +14,19 @@ const float Pi = 3.141593f;
 class Curve: public Graph::Data
 {
 protected:
-    [[nodiscard]] virtual float f(float) const;
+    [[nodiscard]] virtual float f(float) const = 0;
 
 private:
     const float factor = 2.0f * Pi / static_cast<float>(N);
-
     static unique_ptr<Graph::Segment> gen()
     {
         vector<Graph::Point> points;
-        for(int i=0; i < N; ++i)
+        for (int i = 0; i < N; ++i)
             points.emplace_back(static_cast<float>(i), 0.0f);
-
         return make_unique<Graph::Segment>(points);
     }
-    unique_ptr<Graph::Segment> segment = std::move(gen());
+
+    mutable unique_ptr<Graph::Segment> segment = std::move(gen());
 
 public:
     Curve(const string &color, const string &title, const bool b):
@@ -35,8 +34,8 @@ public:
 
     [[nodiscard]] const unique_ptr<Graph::Segment>& Value(float k) const override
     {
-        for (int i = 0; i <= N; ++i)
-            segment->Set(i, f(factor * segment->X(i)));
+        for (int i = 0; i < N; ++i)
+            segment->Set(i, f(k * factor * segment->X(i)));
         return segment;
     }
 
