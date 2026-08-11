@@ -132,8 +132,8 @@ private:
             const Graph::Data &curve) const
     {
         const QColor color = ParseColor(curve.Color);
-        const Graph::Segment &segment = curve.Value(parameter_);
-        const int size = segment.Size();
+        const unique_ptr<Graph::Segment>& segment = curve.Value(parameter_);
+        const int size = segment->Size();
         if (size == 0) return;
 
         if (curve.Point)
@@ -145,8 +145,8 @@ private:
             constexpr double kPointRadius = 1.25;
             for (int i = 0; i < size; ++i)
             {
-                const Graph::Point &pt = segment[i];
-                const QPointF point = ToPixel(plot_area, pt.X(), pt.Y());
+                const QPointF point = ToPixel(plot_area,
+                                              segment->X(i), segment->Y(i));
                 painter.drawEllipse(point, kPointRadius, kPointRadius);
             }
             return;
@@ -162,8 +162,7 @@ private:
         bool started = false;
         for (int i = 0; i < size; ++i)
         {
-            const Graph::Point &pt = segment[i];
-            const QPointF point = ToPixel(plot_area, pt.X(), pt.Y());
+            const QPointF point = ToPixel(plot_area, segment->X(i), segment->Y(i));
             if (!started)
             {
                 path.moveTo(point);
@@ -269,23 +268,24 @@ private:
     GraphCanvas *canvas_ = nullptr;
 };
 
-bool compare(Graph::Point &p1, Graph::Point &p2)
-    { return p1.X() > p2.X(); }
-
-Graph::Point::Point(const float x_, const float y_): x(x_), y(y_) { }
-
-float Graph::Point::X() const
-    { return x; }
-
-float Graph::Point::Y() const
-    { return y; }
 
 
-Graph::Segment::Segment(const std::vector<Graph::Point> &points) : data(points)
+Graph::Point::Point(const float x, const float y): X(x), Y(y) { }
+
+
+bool compare(unique_ptr<Graph::Point>& p1, unique_ptr<Graph::Point>&
+ p2)
+    { return p1->X > p2->X; }
+
+Graph::Segment::Segment(const std::vector<Graph::Point>& points): data(points.size())
 {
+    int size = (int) points.size();
+    for(int i=0; i < size; ++i)
+        data[i] = make_unique<Graph::Point>(points[i].X, points[i].Y);
+    
     std::sort(data.begin(), data.end(), compare);
-    min = data.begin()->X();
-    max = data.rbegin()->X();
+    min = data[0]->X;
+    max = data[size-1]->X;
 }
 
 float Graph::Segment::Min() const
@@ -298,11 +298,13 @@ int Graph::Segment::Size() const
     { return static_cast<int>(data.size()); }
 
 void Graph::Segment::Set(const int index, const float y)
-    { data[index] = Point(data[index].X(), y); }
+    { data[index] = make_unique<Graph::Point>(data[index]->X, y); }
 
-const Graph::Point& Graph::Segment::operator[](size_t index) const
-    { return data.at(index); }
+const float Graph::Segment::X(size_t index) const
+    { return data.at(index)->X; }
 
+const float Graph::Segment::Y(size_t index) const
+    { return data.at(index)->Y; }
 
 Graph::Data::Data(const float min_x, const float max_x, const string& color,
                   const string& label, bool point):

@@ -22,22 +22,17 @@ class Graph
 {
 public:
 
-    class Point
+    struct Point
     {
-    private:
-        float x;
-        float y;
-
-    public:
-        [[nodiscard]] float X() const;
-        [[nodiscard]] float Y() const;
+        const float X;
+        const float Y;
         Point(float x_, float y_);
     };
 
     class Segment
     {
     private:
-        std::vector<Point> data;
+        std::vector<unique_ptr<Point>> data;
         float min;
         float max;
 
@@ -46,7 +41,8 @@ public:
         [[nodiscard]] float Min() const;
         [[nodiscard]] float Max() const;
         [[nodiscard]] int Size() const;
-        const Point& operator[](size_t index) const;
+        const float X(size_t index) const;
+        const float Y(size_t index) const;
         void Set(int, float);
     };
 
@@ -62,7 +58,7 @@ public:
         Data(float min_x, float max_x, const string& color,
              const string& label, bool point);
 
-        [[nodiscard]] virtual Segment& Value(float p) const = 0;
+        [[nodiscard]] virtual const unique_ptr<Segment>& Value(float p) const = 0;
         virtual ~Data() = default;
     };
 

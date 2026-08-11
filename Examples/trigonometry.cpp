@@ -4,65 +4,62 @@
 #include <string>
 #include <vector>
 
+use namespace;
+
+
 class Curve: public Graph::Data
 {
+public:
+    const static int N = 500;
+    const static float Pi = 3.141593f;
 protected:
     float f(float);
 
 private:
-    const int N = 500;
     const float Max = 10.0f;
     const float Min = 0.0f;
-    const float Pi = 3.141593f;
     const float n = static_cast<float>(N);
-    Graph::Segment segment(vector<Graph::Point>());
 
-    Graph::Point point(float k, int i)
+    static unique_ptr<Graph::Segment> gen(int n)
     {
-        const auto x = static_cast<float>(i);
-        const float y = f((2.0f * Pi * (k + 1.0f) * x) / n);
-        return {x, y};
+        vector<Graph::Point> points();
+        for(int i=0; i<n; ++i)
+            points.push_back(Point(static_cast<float>(i), 0.0f))
+        return make_unique<Graph::Segment>(points);
     }
+    unique_ptr<Graph::Segment> segment;
 
 public:
     Curve(const string &color, const string &title, const bool b):
-        Data(Min, Max, color, title, b)
-    {
+        Data(Min, Max, color, title, b), segment(std::move(gen(N)) { }
 
-    }
-
-    const Graph::Segments& Value(float k) const override
+    const unique_ptr<Graph::Segment>& Value(float k) const override
     {
         for (int i = 0; i <= N; ++i)
-            segment[i] = std::move(point(k, i));
-    return reference
-}
+            segment->Set(i, f(
+                (2.0f * Pi * (k + 1.0f) * segment->X(i)) / n));
+        return segment
+    }
 };
 
 class CosineCurve final : public Curve
 {
 public:
-    CosineCurve() : Curve("blue", "cos(x)", false)
-    {
-    }
+    CosineCurve() : Curve("blue", "cos(x)", false) { }
 
 protected:
     float f(float theta) const override
-    {
-        return std::cos(theta);
-    }
+        { return std::cos(theta); }
 };
 
 class SineCurve final : public Curve
 {
-public:SineCurve(): : Curve("red", "sin(x)", true)
-    {}
+public:
+    SineCurve(): Curve("red", "sin(x)", true) { }
 
 protected:
     float f(float theta) const override
-    {
-        return std::sin(theta);
-    }
+        { return std::sin(theta); }
 };
 
 class TrigonometryGraph final : public Graph
