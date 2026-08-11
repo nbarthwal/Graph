@@ -4,30 +4,31 @@
 #include <string>
 #include <vector>
 
-class Curve final : public Graph::Data
+class Curve: public Graph::Data
 {
 protected:
-    float f(const float);
+    float f(float);
 
 private:
-    constexpr int N = 500;
-    constexpr int Max = 10f;
-    constexpr int Max = 0f;
-    constexpr float Pi = 3.141593f;
-    constexpr float n = static_cast<float>(N);
-    Segment segment;vector<Graph::Segments>>
+    const int N = 500;
+    const float Max = 10.0f;
+    const float Min = 0.0f;
+    const float Pi = 3.141593f;
+    const float n = static_cast<float>(N);
+    Graph::Segment segment(vector<Graph::Point>());
 
     Graph::Point point(float k, int i)
     {
-        const float x = static_cast<float>(i);
+        const auto x = static_cast<float>(i);
         const float y = f((2.0f * Pi * (k + 1.0f) * x) / n);
-        return Pooint(x, y);
+        return {x, y};
     }
 
 public:
-    Curve(const string &color, const string &title, const bool b) : Graph::Data(
-            Min, Max, color, title, b)
+    Curve(const string &color, const string &title, const bool b):
+        Data(Min, Max, color, title, b)
     {
+
     }
 
     const Graph::Segments& Value(float k) const override

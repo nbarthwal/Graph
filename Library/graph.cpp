@@ -1,6 +1,5 @@
 #include "graph.h"
 #include "graph_impl.h"
-#include <memory>
 
 #include <memory>
 #include <QLabel>
@@ -12,6 +11,7 @@
 #include <QPainterPath>
 #include <QPalette>
 #include <QPen>
+
 
 inline std::vector<float> GraphLinspace(float min_x, float max_x,
         std::size_t count)
@@ -32,11 +32,12 @@ inline std::vector<float> GraphLinspace(float min_x, float max_x,
     return values;
 }
 
+
 class GraphCanvas final : public QWidget
 {
 public:
-    explicit GraphCanvas(const Graph *graph, QWidget *parent = nullptr) : QWidget(
-            parent), graph_(graph)
+    explicit GraphCanvas(const Graph *graph, QWidget *parent = nullptr):
+        QWidget(parent), graph_(graph)
     {
         setMinimumSize(640, 480);
         setAutoFillBackground(true);
@@ -193,6 +194,7 @@ private:
     float parameter_ = 0.0f;
 };
 
+
 class PlotWindow final : public QWidget
 {
 public:
@@ -216,13 +218,10 @@ public:
 
         slider_->setVisible(graph_->Slider);
         if (graph_->Slider)
-        {
             connect(slider_, &QSlider::valueChanged, this, [this](int value)
-            {    UpdateDisplay(
-                        SliderToParameter(value,
-                                graph_->MinP, graph_->MaxP));
-            });
-        }
+            { UpdateDisplay(
+                SliderToParameter(value, graph_->MinP, graph_->MaxP)); });
+
 
         UpdateDisplay(graph_->MinP);
     }
@@ -241,6 +240,7 @@ private:
     GraphCanvas *plot_canvas_ = nullptr;
     QSlider *slider_ = nullptr;
 };
+
 
 class GraphViewWindow final : public QWidget
 {
@@ -270,24 +270,16 @@ private:
 };
 
 bool compare(Graph::Point &p1, Graph::Point &p2)
-{
-    return p1.X() > p2.X();
-}
+    { return p1.X() > p2.X(); }
 
-Graph::Point::Point(const float x_, const float y_) : x(x_), y(y_)
-{
-}
+Graph::Point::Point(const float x_, const float y_): x(x_), y(y_) { }
 
 float Graph::Point::X() const
-{
-    return x;
-}
-;
+    { return x; }
+
 float Graph::Point::Y() const
-{
-    return y;
-}
-;
+    { return y; }
+
 
 Graph::Segment::Segment(const std::vector<Graph::Point> &points) : data(points)
 {
@@ -297,43 +289,36 @@ Graph::Segment::Segment(const std::vector<Graph::Point> &points) : data(points)
 }
 
 float Graph::Segment::Min() const
-{
-    return min;
-}
+    { return min; }
+
 float Graph::Segment::Max() const
-{
-    return max;
-}
+    { return max; }
+
 int Graph::Segment::Size() const
-{
-    return static_cast<int>(data.size());
-}
+    { return static_cast<int>(data.size()); }
+
+void Graph::Segment::Set(const int index, const float y)
+    { data[index] = Point(data[index].X(), y); }
+
 const Graph::Point& Graph::Segment::operator[](size_t index) const
-{
-    return data.at(index);
-}
+    { return data.at(index); }
 
-Graph::Data::Data(float min_x, float max_x, std::string color,
-        std::string label, bool point) : MinX(min_x), MaxX(max_x), Color(
-        std::move(color)), Label(std::move(label)), Point(point)
-{
-}
 
-Graph::Graph(const std::string &title, const bool slider, const float min_p,
-        const float max_p, const float min_x, const float max_x,
-        const float min_y, const float max_y,
-        const std::vector<std::shared_ptr<Data>> &data) : WindowTitle(title), Slider(
-        slider), MinP(min_p), MaxP(max_p), MinX(min_x), MaxX(max_x), MinY(
-        min_y), MaxY(max_y), Segments(data)
-{
-}
+Graph::Data::Data(const float min_x, const float max_x, const string& color,
+                  const string& label, bool point):
+    MinX(min_x), MaxX(max_x), Color(std::move(color)), Label(std::move(label)),
+    Point(point) { }
+
+Graph::Graph(const string& title, const bool slider, const float min_p,
+             const float max_p, const float min_x, const float max_x,
+             const float min_y, const float max_y,
+             const std::vector<std::shared_ptr<Data>> &data):
+                 WindowTitle(title), Slider(slider), MinP(min_p), MaxP(max_p),
+                 MinX(min_x), MaxX(max_x), MinY(min_y), MaxY(max_y),
+                 Segments(data) { }
 
 void Graph::Plot()
-{
-    RunQT(std::make_unique < PlotWindow > (this));
-}
+    { RunQT(std::make_unique<PlotWindow>(this)); }
 
 void Graph::Show(const float parameter)
-{
-    RunQT(std::make_unique < GraphViewWindow > (this, parameter));
-}
+    { RunQT(std::make_unique <GraphViewWindow>(this, parameter)); }

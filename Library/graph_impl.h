@@ -2,8 +2,6 @@
 
 #include <QApplication>
 #include <QColor>
-#include <QFont>
-#include <QFontMetrics>
 #include <QLabel>
 #include <QPainter>
 #include <QPen>
@@ -13,7 +11,6 @@
 
 #include <algorithm>
 #include <functional>
-#include <memory>
 #include <string>
 #include <unordered_map>
 #include <vector>
@@ -34,9 +31,9 @@ inline float SliderToParameter(int slider_value, float min_p, float max_p)
     return min_p + t * (max_p - min_p);
 }
 
-inline QColor ParseColor(const std::string &color)
+inline QColor ParseColor(const string &color)
 {
-    static const std::unordered_map<std::string, QColor> named_colors = { {
+    static const std::unordered_map<string, QColor> named_colors = { {
             "red", QColor(220, 50, 47) }, { "r", QColor(220, 50, 47) }, {
             "blue", QColor(38, 139, 210) }, { "b", QColor(38, 139, 210) }, {
             "green", QColor(133, 153, 0) }, { "g", QColor(133, 153, 0) }, {
@@ -55,7 +52,7 @@ inline QColor ParseColor(const std::string &color)
     return parsed.isValid() ? parsed : QColor(38, 139, 210);
 }
 
-inline void SetTitleLabel(QLabel &label, const std::string &title)
+inline void SetTitleLabel(QLabel &label, const string &title)
 {
     QFont title_font = label.font();
     title_font.setPointSize(20);
@@ -74,7 +71,7 @@ enum class LegendSwatch
 
 struct LegendItem
 {
-    std::string label;
+    string label;
     QColor color;
     LegendSwatch swatch = LegendSwatch::Line;
 };
