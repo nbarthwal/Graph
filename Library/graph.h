@@ -26,8 +26,8 @@ public:
         float y;
 
     public:
-        float X() { return x; };
-        float Y() { return y; };
+        float X() const { return x; };
+        float Y() const { return y; };
         Point(const float x_, const float y_) : x(x_), y(y_) {}
     };
 
@@ -43,7 +43,7 @@ public:
         [[nodiscard]] float Min() const { return min; }
         [[nodiscard]] float Max() const { return max; }
         int Size() const { return static_cast<int>(data.size()); }
-        const Point& operator[](size_t index) const { return data[index]; }
+        const Point& operator[](size_t index) const { return data.at(index); }
     };
 
     const bool Slider;

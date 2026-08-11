@@ -143,8 +143,8 @@ private:
             constexpr double kPointRadius = 1.25;
             for(int i = 0; i < size; ++i)
             {
-                const QPointF point = ToPixel(plot_area,
-                                              segment[i].X(), segment[i].Y());
+                const Graph::Point& pt = segment[i];
+                const QPointF point = ToPixel(plot_area, pt.X(), pt.Y());
                 painter.drawEllipse(point, kPointRadius, kPointRadius);
             }
             return;
@@ -160,8 +160,8 @@ private:
         bool started = false;
         for(int i = 0; i < size; ++i)
         {
-            const QPointF point = ToPixel(plot_area,
-                                          segment[i].X(), segment[i].Y());
+            const Graph::Point& pt = segment[i];
+            const QPointF point = ToPixel(plot_area, pt.X(), pt.Y());
             if (!started)
             {
                 path.moveTo(point);
@@ -274,7 +274,7 @@ class GraphViewWindow final : public QWidget
 bool compare(Graph::Point& p1, Graph::Point& p2)
     { return p1.X() > p2.X(); }
 
-Graph::Segment::Segment(const std::vector<Point> &points): data(points)
+Graph::Segment::Segment(const std::vector<Graph::Point> &points): data(points)
     {
         std::sort(data.begin(), data.end(), compare);
         min = data.begin()->X();
