@@ -16,8 +16,8 @@
 class HistogramCanvas final : public QWidget
 {
 public:
-    explicit HistogramCanvas(const Histogram *histogram, QWidget *parent = nullptr):
-            QWidget(parent), histogram_(histogram)
+    explicit HistogramCanvas(const Histogram *histogram, QWidget *parent =
+            nullptr) : QWidget(parent), histogram_(histogram)
     {
         setMinimumSize(640, 480);
         setAutoFillBackground(true);
@@ -84,8 +84,10 @@ private:
         constexpr int kGridLines = 8;
         for (int i = 1; i < kGridLines; ++i)
         {
-            const int x = plot_area.left() + (plot_area.width() * i) / kGridLines;
-            const int y = plot_area.top() + (plot_area.height() * i) / kGridLines;
+            const int x = plot_area.left()
+                    + (plot_area.width() * i) / kGridLines;
+            const int y = plot_area.top()
+                    + (plot_area.height() * i) / kGridLines;
             painter.drawLine(x, plot_area.top(), x, plot_area.bottom());
             painter.drawLine(plot_area.left(), y, plot_area.right(), y);
         }
@@ -97,7 +99,8 @@ private:
         painter.drawRect(plot_area);
 
         painter.setPen(Qt::black);
-        painter.drawText(plot_area.center().x() - 10, rect().bottom() - 12, "bin");
+        painter.drawText(plot_area.center().x() - 10, rect().bottom() - 12,
+                "bin");
         painter.save();
         painter.translate(18, plot_area.center().y());
         painter.rotate(-90);
@@ -109,17 +112,16 @@ private:
     {
         const std::vector<std::unique_ptr<Histogram::Data>> &data_sets =
                 histogram_->DataSets();
-        if (data_sets.empty())
-            return;
+        if (data_sets.empty()) return;
 
         const std::size_t data_set_count = data_sets.size();
         const float baseline_y = ToPixelY(plot_area, histogram_->MinY);
 
-        for (std::size_t data_index = 0; data_index < data_set_count; ++data_index)
+        for (std::size_t data_index = 0; data_index < data_set_count;
+                ++data_index)
         {
             const Histogram::Data *data = data_sets[data_index].get();
-            if (data == nullptr || data->BinCount() == 0)
-                continue;
+            if (data == nullptr || data->BinCount() == 0) continue;
 
             const QColor color = ParseColor(data->Color);
             const float group_width = data->BinWidth() * 0.9f;
@@ -142,8 +144,9 @@ private:
                         center + group_offset + bar_width / 2.0f);
                 const float top = ToPixelY(plot_area, count);
 
-                const QRectF bar(std::min(left, right), std::min(top, baseline_y),
-                        std::abs(right - left), std::abs(baseline_y - top));
+                const QRectF bar(std::min(left, right),
+                        std::min(top, baseline_y), std::abs(right - left),
+                        std::abs(baseline_y - top));
                 painter.drawRect(bar);
             }
         }
@@ -154,12 +157,10 @@ private:
         std::vector<LegendItem> items;
         for (const auto &data : histogram_->DataSets())
         {
-            if (data == nullptr)
-                continue;
+            if (data == nullptr) continue;
 
-            items.push_back(
-                    { data->Label, ParseColor(data->Color),
-                            LegendSwatch::Bar });
+            items.push_back( { data->Label, ParseColor(data->Color),
+                    LegendSwatch::Bar });
         }
 
         ::DrawLegend(painter, plot_area, items);
@@ -170,87 +171,88 @@ private:
 };
 
 class HistogramWindow final : public QWidget
+{
+public:
+    explicit HistogramWindow(const Histogram *histogram) : histogram_(histogram)
     {
-    public:
-        explicit HistogramWindow(const Histogram *histogram) :
-                histogram_(histogram)
+        setWindowTitle(QString::fromStdString(histogram->WindowTitle));
+        resize(900, 700);
+
+        auto *layout = new QVBoxLayout(this);
+
+        title_label_ = new QLabel(this);
+        layout->addWidget(title_label_);
+
+        histogram_canvas_ = new HistogramCanvas(histogram_, this);
+        layout->addWidget(histogram_canvas_, 1);
+
+        slider_ = new QSlider(Qt::Horizontal, this);
+        slider_->setRange(0, kSliderSteps);
+        slider_->setValue(0);
+        layout->addWidget(slider_);
+
+        slider_->setVisible(histogram_->Slider);
+        if (histogram_->Slider)
         {
-            setWindowTitle(QString::fromStdString(histogram->WindowTitle));
-            resize(900, 700);
-
-            auto *layout = new QVBoxLayout(this);
-
-            title_label_ = new QLabel(this);
-            layout->addWidget(title_label_);
-
-            histogram_canvas_ = new HistogramCanvas(histogram_, this);
-            layout->addWidget(histogram_canvas_, 1);
-
-            slider_ = new QSlider(Qt::Horizontal, this);
-            slider_->setRange(0, kSliderSteps);
-            slider_->setValue(0);
-            layout->addWidget(slider_);
-
-            slider_->setVisible(histogram_->Slider);
-            if (histogram_->Slider)
-            {
-                connect(slider_, &QSlider::valueChanged, this,
-                        [this](int value)
-                                { UpdateDisplay(
-                                    SliderToParameter(value, histogram_->MinP,
-                                                      histogram_->MaxP));
-                                });
-            }
-
-            UpdateDisplay(histogram_->MinP);
+            connect(slider_, &QSlider::valueChanged, this, [this](int value)
+            {    UpdateDisplay(
+                        SliderToParameter(value, histogram_->MinP,
+                                histogram_->MaxP));
+            });
         }
 
-    private:
-        void UpdateDisplay(float parameter)
-        {
-            SetTitleLabel(*title_label_,
-                    histogram_->Slider ? histogram_->Title(parameter)
-                                         : histogram_->WindowTitle);
-            histogram_canvas_->SetParameter(parameter);
-        }
+        UpdateDisplay(histogram_->MinP);
+    }
 
-        const Histogram *histogram_;
-        QLabel *title_label_ = nullptr;
-        HistogramCanvas *histogram_canvas_ = nullptr;
-        QSlider *slider_ = nullptr;
-    };
+private:
+    void UpdateDisplay(float parameter)
+    {
+        SetTitleLabel(*title_label_,
+                histogram_->Slider ?
+                        histogram_->Title(parameter) : histogram_->WindowTitle);
+        histogram_canvas_->SetParameter(parameter);
+    }
+
+    const Histogram *histogram_;
+    QLabel *title_label_ = nullptr;
+    HistogramCanvas *histogram_canvas_ = nullptr;
+    QSlider *slider_ = nullptr;
+};
 
 class HistogramViewWindow final : public QWidget
+{
+public:
+    HistogramViewWindow(const Histogram *histogram, float parameter) : histogram_(
+            histogram)
     {
-    public:
-        HistogramViewWindow(const Histogram *histogram, float parameter):
-                histogram_(histogram)
-        {
-            setWindowTitle(QString::fromStdString(histogram_->WindowTitle));
-            resize(900, 700);
+        setWindowTitle(QString::fromStdString(histogram_->WindowTitle));
+        resize(900, 700);
 
-            auto *layout = new QVBoxLayout(this);
+        auto *layout = new QVBoxLayout(this);
 
-            title_label_ = new QLabel(this);
-            SetTitleLabel(*title_label_,
-                    histogram_->Slider ? histogram_->Title(parameter)
-                                           : histogram_->WindowTitle);
-            layout->addWidget(title_label_);
+        title_label_ = new QLabel(this);
+        SetTitleLabel(*title_label_,
+                histogram_->Slider ?
+                        histogram_->Title(parameter) : histogram_->WindowTitle);
+        layout->addWidget(title_label_);
 
-            canvas_ = new HistogramCanvas(histogram_, this);
-            layout->addWidget(canvas_, 1);
-            canvas_->SetParameter(parameter);
-        }
+        canvas_ = new HistogramCanvas(histogram_, this);
+        layout->addWidget(canvas_, 1);
+        canvas_->SetParameter(parameter);
+    }
 
-    private:
-        const Histogram *histogram_;
-        QLabel *title_label_ = nullptr;
-        HistogramCanvas *canvas_ = nullptr;
-    };
-
+private:
+    const Histogram *histogram_;
+    QLabel *title_label_ = nullptr;
+    HistogramCanvas *canvas_ = nullptr;
+};
 
 void Histogram::Plot()
-    { RunQT(std::make_unique<HistogramWindow>(this)); }
+{
+    RunQT(std::make_unique < HistogramWindow > (this));
+}
 
 void Histogram::Show(const float parameter)
-    { RunQT(std::make_unique<HistogramViewWindow>(this, parameter)); }
+{
+    RunQT(std::make_unique < HistogramViewWindow > (this, parameter));
+}

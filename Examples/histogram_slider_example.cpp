@@ -7,11 +7,10 @@
 class GaussianHistogramData final : public Histogram::Data
 {
 public:
-    GaussianHistogramData(float mean, float sigma, std::string color) :
-            Histogram::Data(std::move(color),
-                    "N(" + std::to_string(mean) + ", " + std::to_string(sigma)
-                            + ")"),
-            mean_(mean), sigma_(sigma)
+    GaussianHistogramData(float mean, float sigma, std::string color) : Histogram::Data(
+            std::move(color),
+            "N(" + std::to_string(mean) + ", " + std::to_string(sigma) + ")"), mean_(
+            mean), sigma_(sigma)
     {
         for (std::size_t bin = 0; bin < kBinCount; ++bin)
         {
@@ -54,7 +53,7 @@ private:
 class SliderHistogram final : public Histogram
 {
 public:
-    SliderHistogram(): Histogram("Gaussian Mixture", true, 0.5f, 2.0f, 0.0f,
+    SliderHistogram() : Histogram("Gaussian Mixture", true, 0.5f, 2.0f, 0.0f,
             12.0f, 0.0f, 12.0f)
     {
         data_sets_.push_back(
@@ -67,7 +66,8 @@ public:
                         > (2.5f, 0.9f, "green"));
     }
 
-    const std::vector<std::unique_ptr<Histogram::Data>>& DataSets() const override
+    const std::vector<std::unique_ptr<Histogram::Data>>& DataSets() const
+            override
     {
         return data_sets_;
     }

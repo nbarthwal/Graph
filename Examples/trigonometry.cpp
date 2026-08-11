@@ -4,10 +4,6 @@
 #include <string>
 #include <vector>
 
-
-
-
-
 class Curve final : public Graph::Data
 {
 protected:
@@ -19,8 +15,7 @@ private:
     constexpr int Max = 0f;
     constexpr float Pi = 3.141593f;
     constexpr float n = static_cast<float>(N);
-    Segment segment;
-    vector<Graph::Segments>>
+    Segment segment;vector<Graph::Segments>>
 
     Graph::Point point(float k, int i)
     {
@@ -30,37 +25,44 @@ private:
     }
 
 public:
-    Curve(const string& color, const string& title, const bool b):
-        Graph::Data(Min, Max, color, title, b) { }
+    Curve(const string &color, const string &title, const bool b) : Graph::Data(
+            Min, Max, color, title, b)
+    {
+    }
 
     const Graph::Segments& Value(float k) const override
     {
-        for(int i = 0 ; i <= N ; ++i)
+        for (int i = 0; i <= N; ++i)
             segment[i] = std::move(point(k, i));
-        return reference
-    }
+    return reference
+}
 };
-
 
 class CosineCurve final : public Curve
 {
 public:
-    CosineCurve(): Curve("blue", "cos(x)", false) { }
+    CosineCurve() : Curve("blue", "cos(x)", false)
+    {
+    }
 
 protected:
-    float f(float theta) const override { return std::cos(theta); }
+    float f(float theta) const override
+    {
+        return std::cos(theta);
+    }
 };
-
 
 class SineCurve final : public Curve
 {
-public:
-    SineCurve(): : Curve("red", "sin(x)", true) { }
+public:SineCurve(): : Curve("red", "sin(x)", true)
+    {}
 
 protected:
-    float f(float theta) const override { return std::sin(theta); }
+    float f(float theta) const override
+    {
+        return std::sin(theta);
+    }
 };
-
 
 class TrigonometryGraph final : public Graph
 {
@@ -68,7 +70,7 @@ private:
     std::vector<std::unique_ptr<Graph::Data>> curves;
 
 public:
-    TrigonometryGraph(): Graph("Trigonometry", true, 1.0f, 5.0f, 0.0f, kTwoPi,
+    TrigonometryGraph() : Graph("Trigonometry", true, 1.0f, 5.0f, 0.0f, kTwoPi,
             -1.0f, 1.0f)
     {
         curves.push_back(std::make_unique<CosineCurve>());
@@ -76,10 +78,14 @@ public:
     }
 
     const std::vector<std::unique_ptr<Graph::Data>>& Curves() const override
-        { return curves; }
+    {
+        return curves;
+    }
 
     std::string Title(const float parameter) const override
-        { return "Trigonometry (frequency = " + std::to_string(parameter) + ")"; }
+    {
+        return "Trigonometry (frequency = " + std::to_string(parameter) + ")";
+    }
 };
 
 int main()
