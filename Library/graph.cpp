@@ -175,15 +175,18 @@ private:
 
     void DrawLegend(QPainter &painter, const QRect &plot_area) const
     {
-        std::vector<LegendItem> items;
+        set<pair<string, string>> labels;
+        vector<LegendItem> items;
         for (const auto& curve : graph_->DataSet())
         {
-            if (curve == nullptr) continue;
+            pair<string, string> p = make_pair(curve->Label, curve->Color);
+            if (labels.count(p) > 0)
+                continue;
 
+            labels.emplace(p);
             items.push_back(
-                    { curve->Label, ParseColor(curve->Color),
-                            curve->Point ?
-                                    LegendSwatch::Point : LegendSwatch::Line });
+                { curve->Label, ParseColor(curve->Color),
+                    curve->Point ? LegendSwatch::Point : LegendSwatch::Line });
         }
 
         ::DrawLegend(painter, plot_area, items);
@@ -282,7 +285,7 @@ Graph::Segment::Segment(const std::vector<Graph::Point>& points): data(points.si
     int size = (int) points.size();
     for(int i=0; i < size; ++i)
         data[i] = make_unique<Graph::Point>(points[i].X, points[i].Y);
-    
+
     std::sort(data.begin(), data.end(), compare);
     min = data[0]->X;
     max = data[size-1]->X;
