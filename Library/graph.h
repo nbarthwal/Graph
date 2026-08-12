@@ -106,22 +106,17 @@ public:
     public:
         const string Color;
         const string Label;
+        const int Size;
 
-        Data(string color, string label): Color(std::move(color)),
-                                          Label(std::move(label)) {}
+        Data(string color, string label, int size): Color(std::move(color)),
+                                                    Label(std::move(label)),
+                                                    Size(size) {}
 
-        // Number of bins in this histogram. Bins are placed in serial order
-        // across [MinX, MaxX] with constant auto-adjusted width.
-        [[nodiscard]] virtual std::size_t BinCount() const = 0;
-
-        // Count in bin for slider value p.
-        [[nodiscard]] virtual float Count(float p, std::size_t bin) const = 0;
+        [[nodiscard]] virtual float Count(float p, int bin) const = 0;
         virtual ~Data() = default;
     };
 
-    // Histogram data to display.
     [[nodiscard]] virtual const vector<unique_ptr<Data>>& DataSets() const = 0;
-    // Title defines the histogram title for slider value p.
     [[nodiscard]] virtual string Title(float parameter) const = 0;
     GRAPH_API void Show(float parameter);
     GRAPH_API void Plot();

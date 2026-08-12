@@ -11,15 +11,12 @@ class StaticHistogramData final : public Histogram::Data
 public:
     StaticHistogramData(std::vector<float> counts, std::string color,
             std::string label) : Histogram::Data(std::move(color),
-            std::move(label)), counts_(std::move(counts))
+            std::move(label), static_cast<int>(counts.size())), counts_(
+            std::move(counts))
     {
     }
 
-    std::size_t BinCount() const override
-    {
-        return counts_.size();
-    }
-    float Count(float /*p*/, std::size_t bin) const override
+    float Count(float /*p*/, int bin) const override
     {
         return counts_.at(bin);
     }

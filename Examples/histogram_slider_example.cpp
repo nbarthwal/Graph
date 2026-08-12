@@ -9,19 +9,14 @@ class GaussianHistogramData final : public Histogram::Data
 public:
     GaussianHistogramData(float mean, float sigma, std::string color) : Histogram::Data(
             std::move(color),
-            "N(" + std::to_string(mean) + ", " + std::to_string(sigma) + ")"), mean_(
-            mean), sigma_(sigma)
+            "N(" + std::to_string(mean) + ", " + std::to_string(sigma) + ")",
+            kSize), mean_(mean), sigma_(sigma)
     {
     }
 
-    std::size_t BinCount() const override
+    float Count(float p, int bin) const override
     {
-        return kBinCount;
-    }
-
-    float Count(float p, std::size_t bin) const override
-    {
-        const float bin_width = (kMaxX - kMinX) / static_cast<float>(kBinCount);
+        const float bin_width = (kMaxX - kMinX) / static_cast<float>(Size);
         const float x = kMinX + (static_cast<float>(bin) + 0.5f) * bin_width;
         const float exponent = -((x - mean_) * (x - mean_))
                 / (2.0f * sigma_ * sigma_);
@@ -29,7 +24,7 @@ public:
     }
 
 private:
-    static constexpr std::size_t kBinCount = 12;
+    static constexpr int kSize = 12;
     static constexpr float kMinX = 0.0f;
     static constexpr float kMaxX = 12.0f;
 

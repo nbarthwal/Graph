@@ -121,10 +121,10 @@ private:
                 ++data_index)
         {
             const Histogram::Data *data = data_sets[data_index].get();
-            if (data == nullptr || data->BinCount() == 0) continue;
+            if (data == nullptr || data->Size <= 0) continue;
 
             const QColor color = ParseColor(data->Color);
-            const float bin_count = static_cast<float>(data->BinCount());
+            const float bin_count = static_cast<float>(data->Size);
             const float bin_width = (histogram_->MaxX - histogram_->MinX)
                     / bin_count;
             const float group_width = bin_width * 0.9f;
@@ -137,7 +137,7 @@ private:
             painter.setPen(QPen(color.darker(120), 1.0));
             painter.setBrush(color);
 
-            for (std::size_t bin = 0; bin < data->BinCount(); ++bin)
+            for (int bin = 0; bin < data->Size; ++bin)
             {
                 const float center = histogram_->MinX
                         + (static_cast<float>(bin) + 0.5f) * bin_width;
