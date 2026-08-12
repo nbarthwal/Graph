@@ -107,17 +107,12 @@ public:
         const string Color;
         const string Label;
 
-        Data(string color, string label) : Color(std::move(color)),
-                                                     Label(std::move(label)) {}
+        Data(string color, string label): Color(std::move(color)),
+                                          Label(std::move(label)) {}
 
-        // Number of bins in this histogram.
+        // Number of bins in this histogram. Bins are placed in serial order
+        // across [MinX, MaxX] with constant auto-adjusted width.
         [[nodiscard]] virtual std::size_t BinCount() const = 0;
-
-        // Center of the bin on the x-axis.
-        [[nodiscard]] virtual float BinCenter(std::size_t bin) const = 0;
-
-        // Width of each bin on the x-axis.
-        [[nodiscard]] virtual float BinWidth() const = 0;
 
         // Count in bin for slider value p.
         [[nodiscard]] virtual float Count(float p, std::size_t bin) const = 0;

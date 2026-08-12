@@ -124,7 +124,10 @@ private:
             if (data == nullptr || data->BinCount() == 0) continue;
 
             const QColor color = ParseColor(data->Color);
-            const float group_width = data->BinWidth() * 0.9f;
+            const float bin_count = static_cast<float>(data->BinCount());
+            const float bin_width = (histogram_->MaxX - histogram_->MinX)
+                    / bin_count;
+            const float group_width = bin_width * 0.9f;
             const float bar_width = group_width
                     / static_cast<float>(data_set_count);
             const float group_offset = (static_cast<float>(data_index)
@@ -136,7 +139,8 @@ private:
 
             for (std::size_t bin = 0; bin < data->BinCount(); ++bin)
             {
-                const float center = data->BinCenter(bin);
+                const float center = histogram_->MinX
+                        + (static_cast<float>(bin) + 0.5f) * bin_width;
                 const float count = data->Count(parameter_, bin);
                 const float left = ToPixelX(plot_area,
                         center + group_offset - bar_width / 2.0f);

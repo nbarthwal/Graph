@@ -12,29 +12,17 @@ public:
             "N(" + std::to_string(mean) + ", " + std::to_string(sigma) + ")"), mean_(
             mean), sigma_(sigma)
     {
-        for (std::size_t bin = 0; bin < kBinCount; ++bin)
-        {
-            centers_.push_back(
-                    kMinCenter + static_cast<float>(bin) * kBinWidth);
-        }
     }
 
     std::size_t BinCount() const override
     {
         return kBinCount;
     }
-    float BinCenter(std::size_t bin) const override
-    {
-        return centers_.at(bin);
-    }
-    float BinWidth() const override
-    {
-        return kBinWidth;
-    }
 
     float Count(float p, std::size_t bin) const override
     {
-        const float x = centers_.at(bin);
+        const float bin_width = (kMaxX - kMinX) / static_cast<float>(kBinCount);
+        const float x = kMinX + (static_cast<float>(bin) + 0.5f) * bin_width;
         const float exponent = -((x - mean_) * (x - mean_))
                 / (2.0f * sigma_ * sigma_);
         return p * 10.0f * std::exp(exponent);
@@ -42,12 +30,11 @@ public:
 
 private:
     static constexpr std::size_t kBinCount = 12;
-    static constexpr float kMinCenter = 0.5f;
-    static constexpr float kBinWidth = 1.0f;
+    static constexpr float kMinX = 0.0f;
+    static constexpr float kMaxX = 12.0f;
 
     float mean_;
     float sigma_;
-    std::vector<float> centers_;
 };
 
 class SliderHistogram final : public Histogram

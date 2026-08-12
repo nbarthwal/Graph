@@ -69,24 +69,15 @@ private:
 class FixedHistogramData final : public Histogram::Data
 {
 public:
-    FixedHistogramData(std::vector<float> centers, float bin_width,
-            std::vector<float> counts, std::string color, std::string label) : Histogram::Data(
-            std::move(color), std::move(label)), centers_(std::move(centers)), bin_width_(
-            bin_width), counts_(std::move(counts))
+    FixedHistogramData(std::vector<float> counts, std::string color,
+            std::string label) : Histogram::Data(std::move(color),
+            std::move(label)), counts_(std::move(counts))
     {
     }
 
     std::size_t BinCount() const override
     {
-        return centers_.size();
-    }
-    float BinCenter(std::size_t bin) const override
-    {
-        return centers_.at(bin);
-    }
-    float BinWidth() const override
-    {
-        return bin_width_;
+        return counts_.size();
     }
     float Count(float /*p*/, std::size_t bin) const override
     {
@@ -94,8 +85,6 @@ public:
     }
 
 private:
-    std::vector<float> centers_;
-    float bin_width_;
     std::vector<float> counts_;
 };
 
@@ -103,13 +92,12 @@ class FixedParameterHistogram final : public Histogram
 {
 public:
     FixedParameterHistogram() : Histogram("Fixed Parameter Histogram", false,
-            kFixedParameter - 0.5f, kFixedParameter + 0.5f, 0.0f, 6.0f, 0.0f,
+            kFixedParameter - 0.5f, kFixedParameter + 0.5f, 0.0f, 5.0f, 0.0f,
             8.0f)
     {
         data_sets_.push_back(
                 std::make_unique < FixedHistogramData
-                        > (std::vector<float> { 1.0f, 2.0f, 3.0f, 4.0f, 5.0f }, 1.0f, std::vector<
-                                float> { 3.0f, 6.0f, 4.0f, 2.0f, 1.0f }, "blue", "Counts"));
+                        > (std::vector<float> { 3.0f, 6.0f, 4.0f, 2.0f, 1.0f }, "blue", "Counts"));
     }
 
     const std::vector<std::unique_ptr<Histogram::Data>>& DataSets() const
