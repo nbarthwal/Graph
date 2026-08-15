@@ -16,9 +16,10 @@
 #include <QRect>
 
 
-class GraphBase
+class BaseGraph
 {
 public:
+    const bool BaseSlider;
     const string BaseWindowTitle;
     const float BaseMinP;
     const float BaseMaxP;
@@ -26,24 +27,24 @@ public:
     const float BaseMaxX;
     const float BaseMinY;
     const float BaseMaxY;
-    const bool BaseSlider;
 
-    GraphBase(const string& title,
+    BaseGraph(const string& title,
                const float minP, const float maxP,
                const float minX, const float maxX,
                const float minY, const float maxY);
 
-    //GRAPH_API void Show(float) const;
-    //GRAPH_API void Show();
+    void Show();
+    void Show(float parameter);
+
     [[nodiscard]] virtual string BaseTitle(float parameter) const = 0;
-    [[nodiscard]] virtual const vector<const Graph::Data*> BaseEval(float parameter) const = 0;
-    virtual ~GraphBase() = default;
+    [[nodiscard]] virtual vector<const Graph::Data*>& BaseEval(float parameter) const = 0;
+    virtual ~BaseGraph() = default;
 };
 
 class GraphCanvas final : public QWidget
 {
 public:
-    explicit GraphCanvas(const GraphBase *g, QWidget *parent = nullptr):
+    explicit GraphCanvas(const BaseGraph *g, QWidget *parent = nullptr):
         QWidget(parent), graph(g)
     {
         setMinimumSize(640, 480);
@@ -199,7 +200,7 @@ private:
         ::DrawLegend(painter, plot_area, items);
     }
 
-    const GraphBase *graph;
+    const BaseGraph *graph;
     float parameter = 0.0f;
 };
 
@@ -207,7 +208,7 @@ private:
 class PlotWindow final : public QWidget
 {
 public:
-    explicit PlotWindow(const GraphBase *g) : graph(g)
+    explicit PlotWindow(const BaseGraph *g) : graph(g)
     {
         setWindowTitle(QString::fromStdString(graph->BaseWindowTitle));
         resize(900, 700);
@@ -244,7 +245,7 @@ private:
         plot_canvas->SetParameter(parameter);
     }
 
-    const GraphBase *graph;
+    const BaseGraph *graph;
     QLabel *title_label = nullptr;
     GraphCanvas *plot_canvas = nullptr;
     QSlider *slider_ = nullptr;
@@ -254,7 +255,7 @@ private:
 class GraphViewWindow final : public QWidget
 {
 public:
-    GraphViewWindow(GraphBase *g, float parameter) : graph(g)
+    GraphViewWindow(BaseGraph *g, float parameter) : graph(g)
     {
         setWindowTitle(QString::fromStdString(graph->BaseWindowTitle));
         resize(900, 700);
@@ -273,7 +274,7 @@ public:
     }
 
 private:
-    GraphBase *graph;
+    BaseGraph *graph;
     QLabel *title_label = nullptr;
     GraphCanvas *canvas = nullptr;
 };
@@ -328,13 +329,22 @@ Graph::Graph(const string& title, const bool slider, const float min_p,
                  MinX(min_x), MaxX(max_x), MinY(min_y), MaxY(max_y) { }
 
 
-void Graph::Show()
+void BaGraph::Show()
     { RunQT(std::make_unique<PlotWindow>(this)); }
 
 void Graph::Show(const float parameter)
     { RunQT(std::make_unique <GraphViewWindow>(this, parameter)); }
 */
-void debug()
+
+
+void BaseGraph::Show()
 {
-    auto x = std::make_unique<PlotWindow>(this); }
+    const std::unique_ptr<QWidget> widget = std::make_unique<PlotWindow>(this);
+    ShowPlot(widget);
+}
+
+void BaseGraph::Show(const float parameter)
+{
+    const std::unique_ptr<QWidget> widget = std::make_unique <GraphViewWindow>(this, parameter);
+    ShowPlot(widget);
 }

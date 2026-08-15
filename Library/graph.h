@@ -34,8 +34,11 @@ namespace Graph
 
     class SliderPlot
     {
-    public:
+    private:
+        class BaseGraph;
+        unique_ptr<BaseGraph> baseGraph;
 
+    public:
         const string WindowTitle;
         const float MinP;
         const float MaxP;
@@ -52,17 +55,19 @@ namespace Graph
         GRAPH_API void Show(float) const;
         GRAPH_API void Show();
 
-        virtual ~SliderPlot() = default;
-
-    protected:
         [[nodiscard]] virtual string Title(float parameter) const = 0;
-        [[nodiscard]] virtual const vector<const Data*>
-            Eval(float parameter) const = 0;
+        [[nodiscard]] virtual vector<const Data*>&
+                                   Eval(float parameter) const = 0;
+        virtual ~SliderPlot() = default;
     };
 
 
     class DynamicPlot
     {
+    private:
+        class BaseGraph;
+        unique_ptr<BaseGraph> baseGraph;
+
     public:
         const string WindowTitle;
         const float MinP;
@@ -81,16 +86,20 @@ namespace Graph
         GRAPH_API void Show(float) const;
         GRAPH_API void Show();
 
-        virtual ~DynamicPlot() = default;
+        GRAPH_API virtual ~DynamicPlot() = default;
+        GRAPH_API [[nodiscard]] virtual string Title(float parameter) const = 0;
         
     protected:
         GRAPH_API void Update(float p, int pos, float x);
-        [[nodiscard]] virtual string Title(float parameter) const = 0;
     };
 
 
     class StaticPlot
     {
+    private:
+        class BaseGraph;
+        unique_ptr<BaseGraph> baseGraph;
+
     public:
         const string WindowTitle;
         const float MinX;
