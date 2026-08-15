@@ -1,7 +1,6 @@
 #pragma once
 
-#include <cstddef>
-#include <memory>
+#include <map>
 #include <string>
 #include <vector>
 
@@ -18,113 +17,94 @@
 using namespace std;
 
 
-class Graph
+namespace Graph
 {
-public:
+    typedef map<float, float> Points;
 
-    struct Point
+    struct Data
     {
-        const float X;
-        const float Y;
-        Point(float x_, float y_);
-    };
-
-    class Segment
-    {
-    private:
-        std::vector<unique_ptr<Point>> data;
-        float min;
-        float max;
-
-    public:
-        Segment(const std::vector<Point> &points);
-        [[nodiscard]] float Min() const;
-        [[nodiscard]] float Max() const;
-        [[nodiscard]] int Size() const;
-        const float X(size_t index) const;
-        const float Y(size_t index) const;
-        void Set(int, float);
-    };
-
-    class Data
-    {
-    protected:
-        unique_ptr<Segment>& data;
-
-    public:
         const string Color;
         const string Label;
         const bool Point;
-
-        Data(const string& color, const string& label, bool point);
-        [[nodiscard]] const unique_ptr<Segment>& Value(float p);
-
-        virtual void Update(float) = 0;
+        const int Size;
+        GRAPH_API [[nodiscard]] virtual const Points* Points() const = 0;
+        Data(const string& color, const string& label, const bool point);
         virtual ~Data() = default;
     };
 
-private:
-    vector<unique_ptr<Data>>& data;
-
-protected:
-    [[nodiscard]] virtual string Title(float parameter) const = 0;
-
-public:
-    const bool Slider;
-    const string WindowTitle;
-    const float MinP;
-    const float MaxP;
-    const float MinX;
-    const float MaxX;
-    const float MinY;
-    const float MaxY;
-    const std::vector<std::unique_ptr<Data>> Segments;
-
-    Graph(const string& title, bool slider, float min_p, float max_p,
-          float min_x, float max_x, float min_y, float max_y,
-          const vector<unique_ptr<Data>>&);
-
-    GRAPH_API void Show(float parameter);
-    GRAPH_API void Plot();
-    virtual ~Graph() = default;
-};
-
-class Histogram
-{
-public:
-    const bool Slider;
-    const string WindowTitle;
-    const float MinP;
-    const float MaxP;
-    const float MinX;
-    const float MaxX;
-    const float MinY;
-    const float MaxY;
-
-    Histogram(const string& title, const bool slider, const float min_p,
-              const float max_p, const float min_x, const float max_x,
-              const float min_y, const float max_y):
-                  Slider(slider), WindowTitle(title), MinP(min_p), MaxP(max_p),
-                  MinX(min_x), MaxX(max_x), MinY(min_y), MaxY(max_y) { }
-
-    class Data
+    class SliderPlot
     {
     public:
-        const string Color;
-        const string Label;
-        const int Size;
 
-        Data(string color, string label, int size): Color(std::move(color)),
-                                                    Label(std::move(label)),
-                                                    Size(size) {}
+        const string WindowTitle;
+        const float MinP;
+        const float MaxP;
+        const float MinX;
+        const float MaxX;
+        const float MinY;
+        const float MaxY;
 
-        [[nodiscard]] virtual float Count(float p, int bin) const = 0;
-        virtual ~Data() = default;
+        SliderPlot(const string& title,
+                   const float minP, const float maxP,
+                   const float minX, const float maxX,
+                   const float minY, const float maxY);
+
+        GRAPH_API void Show(float) const;
+        GRAPH_API void Show();
+
+        virtual ~SliderPlot() = default;
+
+    protected:
+        [[nodiscard]] virtual string Title(float parameter) const = 0;
+        [[nodiscard]] virtual const vector<const Data*>
+            Eval(float parameter) const = 0;
     };
 
-    [[nodiscard]] virtual const vector<unique_ptr<Data>>& DataSets() const = 0;
-    [[nodiscard]] virtual string Title(float parameter) const = 0;
-    GRAPH_API void Show(float parameter);
-    GRAPH_API void Plot();
-    virtual ~Histogram() = default;
+
+    class DynamicPlot
+    {
+    public:
+        const string WindowTitle;
+        const float MinP;
+        const float MaxP;
+        const float MinX;
+        const float MaxX;
+        const float MinY;
+        const float MaxY;
+        const int Count;
+
+        DynamicPlot(const string& title, const vector<Data>& data,
+              const float minP, const float maxP,
+              const float minX, const float maxX,
+              const float minY, const float maxY);
+
+        GRAPH_API void Show(float) const;
+        GRAPH_API void Show();
+
+        virtual ~DynamicPlot() = default;
+        
+    protected:
+        GRAPH_API void Update(float p, int pos, float x);
+        [[nodiscard]] virtual string Title(float parameter) const = 0;
+    };
+
+
+    class StaticPlot
+    {
+    public:
+        const string WindowTitle;
+        const float MinX;
+        const float MaxX;
+        const float MinY;
+        const float MaxY;
+
+        StaticPlot(const string& title, const Data&,
+                   const float minX, const float maxX,
+                   const float minY, const float maxY);
+
+        virtual ~StaticPlot() = default;
+
+        GRAPH_API void Show(float) const;
+        GRAPH_API void Show();
+    };
 };
