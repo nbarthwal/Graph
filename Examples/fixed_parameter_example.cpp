@@ -1,5 +1,6 @@
 #include <cmath>
 #include <graph.h>
+#include <histogram.h>
 #include <memory>
 #include <string>
 #include <vector>
@@ -7,63 +8,62 @@
 constexpr float kFixedParameter = 1.0f;
 constexpr float kTwoPi = 6.28318f;
 
-class FixedSineCurve final : public Graph::Data
+class FixedParameterGraph final : public Graph::DynamicPlot
 {
 public:
-    FixedSineCurve(float frequency, std::string color, bool point) : Graph::Data(
-            0.0f, kTwoPi, std::move(color),
-            frequency == 1.0f ?
-                    "sin(x)" : "sin(" + std::to_string(frequency) + "x)",
-            point), frequency_(frequency)
+    FixedParameterGraph() : Graph::DynamicPlot("Fixed Parameter Graph",
+            Graph::Canvas(0.0f, kTwoPi, -1.5f, 1.5f), kFixedParameter,
+            kFixedParameter)
     {
     }
 
-    [[nodiscard]] const std::unique_ptr<Graph::Segment>& Value(float p) const override
-    {
-        for (int i = 0; i < kPointCount; ++i)
-            segment_->Set(i, p * std::sin(frequency_ * segment_->X(i)));
-        return segment_;
-    }
-
-private:
-    static constexpr int kPointCount = 500;
-    float frequency_;
-    mutable std::unique_ptr<Graph::Segment> segment_ = BuildSegment();
-
-    static std::unique_ptr<Graph::Segment> BuildSegment()
-    {
-        std::vector<Graph::Point> points;
-        points.reserve(kPointCount);
-        for (int i = 0; i < kPointCount; ++i)
-            points.emplace_back(static_cast<float>(i), 0.0f);
-        return std::make_unique<Graph::Segment>(points);
-    }
-};
-
-class FixedParameterGraph final : public Graph
-{
-public:
-    FixedParameterGraph() : Graph("Fixed Parameter Graph", false,
-            kFixedParameter, kFixedParameter, 0.0f, kTwoPi, -1.5f, 1.5f)
-    {
-        curves_.push_back(
-                std::make_unique < FixedSineCurve > (1.0f, "blue", false));
-        curves_.push_back(
-                std::make_unique < FixedSineCurve > (2.0f, "red", true));
-    }
-
-    const std::vector<std::unique_ptr<Graph::Data>>& DataSet() const override
-    {
-        return curves_;
-    }
-
-    std::string Title(const float parameter) const override
+    std::string Title(float parameter) const override
     {
         return "Fixed Parameter Graph (p = " + std::to_string(parameter) + ")";
     }
 
+    Graph::DynamicData Eval(float p) const override
+    {
+        curves_.clear();
+        result_.clear();
+        result_.reserve(2);
+
+        curves_.push_back(MakeCurve(1.0f, "blue", false, p));
+        result_.push_back(curves_.back().get());
+
+        curves_.push_back(MakeCurve(2.0f, "red", true, p));
+        result_.push_back(curves_.back().get());
+
+        return result_;
+    }
+
 private:
-    std::vector<std::unique_ptr<Graph::Data>> curves_;
+    struct Curve final : public Graph::Data
+    {
+        Curve(std::string color, std::string label, Graph::points pts,
+                bool bullet) : Graph::Data(color, label, pts, bullet)
+        {
+        }
+    };
+
+    static std::unique_ptr<Curve> MakeCurve(float frequency,
+            const std::string& color, bool bullet, float p)
+    {
+        constexpr int kPointCount = 500;
+        Graph::points pts;
+        for (int i = 0; i < kPointCount; ++i)
+        {
+            const float x = kTwoPi * static_cast<float>(i)
+                    / static_cast<float>(kPointCount - 1);
+            pts[x] = p * std::sin(frequency * x);
+        }
+        const std::string label = frequency == 1.0f ?
+                "sin(x)" : "sin(" + std::to_string(frequency) + "x)";
+        return std::make_unique<Curve>(color, label, std::move(pts), bullet);
+    }
+
+    mutable std::vector<std::unique_ptr<Curve>> curves_;
+    mutable std::vector<Graph::Data*> result_;
 };
 
 class FixedHistogramData final : public Histogram::Data
@@ -122,7 +122,7 @@ int main(int argc, char *argv[])
     } else
     {
         FixedParameterGraph graph;
-        graph.Plot();
+        graph.Show();
     }
     return 0;
 }

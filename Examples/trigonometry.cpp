@@ -1,95 +1,76 @@
 #include <cmath>
 #include <graph.h>
+#include <functional>
 #include <memory>
 #include <string>
 #include <vector>
 
 using namespace std;
 
-
 const int N = 500;
 const float Pi = 3.141593f;
 
-
-class Curve: public Graph::Data
+class TrigonometryGraph final : public Graph::DynamicPlot
 {
-protected:
-    [[nodiscard]] virtual float f(float) const = 0;
+public:
+    TrigonometryGraph() : Graph::DynamicPlot("Trigonometry",
+            Graph::Canvas(0.0f, static_cast<float>(N), -1.0f, 1.0f), 1.0f, 5.0f)
+    {
+    }
+
+    string Title(float parameter) const override
+    {
+        return "Trigonometry (frequency = " + to_string(parameter) + ")";
+    }
+
+    Graph::DynamicData Eval(float k) const override
+    {
+        curves_.clear();
+        result_.clear();
+        result_.reserve(2);
+
+        const float factor = 2.0f * Pi / static_cast<float>(N);
+
+        curves_.push_back(MakeCurve("blue", "cos(x)", false, k, factor,
+                [](float theta) { return cos(theta); }));
+        result_.push_back(curves_.back().get());
+
+        curves_.push_back(MakeCurve("red", "sin(x)", true, k, factor,
+                [](float theta) { return sin(theta); }));
+        result_.push_back(curves_.back().get());
+
+        return result_;
+    }
 
 private:
-    const float factor = 2.0f * Pi / static_cast<float>(N);
-    static unique_ptr<Graph::Segment> gen()
+    struct Curve final : public Graph::Data
     {
-        vector<Graph::Point> points;
+        Curve(string color, string label, Graph::points pts, bool bullet) :
+                Graph::Data(color, label, pts, bullet)
+        {
+        }
+    };
+
+    static unique_ptr<Curve> MakeCurve(const string& color, const string& label,
+            bool bullet, float k, float factor,
+            const function<float(float)>& f)
+    {
+        Graph::points pts;
         for (int i = 0; i < N; ++i)
-            points.emplace_back(static_cast<float>(i), 0.0f);
-        return make_unique<Graph::Segment>(points);
+        {
+            const float x = static_cast<float>(i);
+            pts[x] = f(k * factor * x);
+        }
+        return make_unique<Curve>(color, label, std::move(pts), bullet);
     }
 
-    mutable unique_ptr<Graph::Segment> segment = std::move(gen());
-
-public:
-    Curve(const string &color, const string &title, const bool b):
-        Data(0.0f, static_cast<float>(N), color, title, b) { }
-
-    [[nodiscard]] const unique_ptr<Graph::Segment>& Value(float k) const override
-    {
-        for (int i = 0; i < N; ++i)
-            segment->Set(i, f(k * factor * segment->X(i)));
-        return segment;
-    }
-
-    virtual ~Curve() = default;
-};
-
-
-class CosineCurve final : public Curve
-{
-public:
-    CosineCurve(): Curve("blue", "cos(x)", false) { }
-    ~CosineCurve() = default;
-
-protected:
-    [[nodiscard]] float f(float theta) const override
-        { return std::cos(theta); }
-};
-
-
-class SineCurve final : public Curve
-{
-public:
-    SineCurve(): Curve("red", "sin(x)", true) { }
-    ~SineCurve() = default;
-
-protected:
-    [[nodiscard]] float f(float theta) const override
-        { return std::sin(theta); }
-};
-
-
-class TrigonometryGraph final : public Graph
-{
-private:
-    vector<unique_ptr<Graph::Data>> curves;
-
-public:
-    TrigonometryGraph(): Graph("Trigonometry", true, 1.0f, 5.0f, 0.0f,
-                               static_cast<float>(N), -1.0f, 1.0f)
-    {
-        curves.push_back(std::make_unique<CosineCurve>());
-        curves.push_back(std::make_unique<SineCurve>());
-    }
-
-    const vector<unique_ptr<Data>>& DataSet() const override
-        { return curves; }
-
-    [[nodiscard]] string Title(const float parameter) const override
-        { return "Trigonometry (frequency = " + std::to_string(parameter) + ")"; }
+    mutable vector<unique_ptr<Curve>> curves_;
+    mutable vector<Graph::Data*> result_;
 };
 
 int main()
 {
     TrigonometryGraph graph;
-    graph.Plot();
+    graph.Show();
     return 0;
 }
