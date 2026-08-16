@@ -1,4 +1,4 @@
-#pragma once
+#include "common.h"
 
 #include <QApplication>
 #include <QColor>
@@ -11,27 +11,22 @@
 
 #include <algorithm>
 #include <functional>
-#include <string>
+#include <memory>
 #include <unordered_map>
 #include <vector>
 
 class QPainter;
 class QPaintEvent;
 
-constexpr int kSliderSteps = 1000;
-constexpr int kPlotMarginLeft = 60;
-constexpr int kPlotMarginRight = 20;
-constexpr int kPlotMarginTop = 20;
-constexpr int kPlotMarginBottom = 50;
 
-inline float SliderToParameter(int slider_value, float min_p, float max_p)
+float SliderToParameter(int slider_value, float min_p, float max_p)
 {
     const float t = static_cast<float>(slider_value)
             / static_cast<float>(kSliderSteps);
     return min_p + t * (max_p - min_p);
 }
 
-inline QColor ParseColor(const string &color)
+QColor ParseColor(const string &color)
 {
     static const std::unordered_map<string, QColor> named_colors = { {
             "red", QColor(220, 50, 47) }, { "r", QColor(220, 50, 47) }, {
@@ -52,7 +47,7 @@ inline QColor ParseColor(const string &color)
     return parsed.isValid() ? parsed : QColor(38, 139, 210);
 }
 
-inline void SetTitleLabel(QLabel &label, const string &title)
+void SetTitleLabel(QLabel &label, const string &title)
 {
     QFont title_font = label.font();
     title_font.setPointSize(20);
@@ -62,22 +57,9 @@ inline void SetTitleLabel(QLabel &label, const string &title)
     label.setText(QString::fromStdString(title));
 }
 
-enum class LegendSwatch
-{
-    Line,
-    Point,
-    Bar,
-};
 
-struct LegendItem
-{
-    string label;
-    QColor color;
-    LegendSwatch swatch = LegendSwatch::Line;
-};
-
-inline void DrawLegend(QPainter &painter, const QRect &plot_area,
-        const std::vector<LegendItem> &items)
+void DrawLegend(QPainter &painter, const QRect &plot_area,
+                const std::vector<LegendItem> &items)
 {
     if (items.empty())
         return;
@@ -153,13 +135,35 @@ inline void DrawLegend(QPainter &painter, const QRect &plot_area,
     painter.restore();
 }
 
+vector<float> GraphLinspace(float min_x, float max_x, size_t count)
+{
+    std::vector<float> values(count);
+    if (count == 0) return values;
 
-#define RunQT(function) { \
-    const bool owns_application = QApplication::instance() == nullptr; \
-    std::unique_ptr<QApplication> owned_application; \
-    int argc = 0; \
-    if (owns_application) \
-        owned_application = std::make_unique<QApplication>(argc, nullptr); \
-    std::unique_ptr<QWidget> window = function ;  \
-    window->show(); \
-    if (owns_application) QApplication::exec(); }
+    if (count == 1)
+    {
+        values[0] = min_x;
+        return values;
+    }
+
+    const float step = (max_x - min_x) / static_cast<float>(count - 1);
+    for (std::size_t i = 0; i < count; ++i)
+        values[i] = min_x + step * static_cast<float>(i);
+
+    return values;
+}
+
+
+void ShowPlot(const std::function<std::unique_ptr<QWidget>()>& create_window)
+{
+    int argc = 0;
+    const bool owns_application = QApplication::instance() == nullptr;
+    std::unique_ptr<QApplication> owned_application;
+    if (owns_application)
+        owned_application = std::make_unique<QApplication>(argc, nullptr);
+
+    const std::unique_ptr<QWidget> window = create_window();
+    window->show();
+    if (owns_application)
+        QApplication::exec();
+}

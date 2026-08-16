@@ -1,5 +1,5 @@
-#include "graph.h"
-#include "graph_impl.h"
+#include "histogram.h"
+#include "common.h"
 
 #include <QLabel>
 #include <QPaintEvent>
@@ -11,6 +11,7 @@
 #include <QWidget>
 
 #include <algorithm>
+#include <memory>
 #include <vector>
 
 class HistogramCanvas final : public QWidget
@@ -253,10 +254,12 @@ private:
 
 void Histogram::Plot()
 {
-    RunQT(std::make_unique < HistogramWindow > (this));
+    ShowPlot([this]() { return std::make_unique<HistogramWindow>(this); });
 }
 
 void Histogram::Show(const float parameter)
 {
-    RunQT(std::make_unique < HistogramViewWindow > (this, parameter));
+    ShowPlot([this, parameter]() {
+        return std::make_unique<HistogramViewWindow>(this, parameter);
+    });
 }

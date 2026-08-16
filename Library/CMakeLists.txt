@@ -18,6 +18,10 @@ include(GNUInstallDirs)
 include(CMakePackageConfigHelpers)
 
 add_library(graph_plot STATIC
+    graph.h
+    histogram.h
+    common.h
+    common.cpp
     graph.cpp
     histogram.cpp
 )
@@ -42,7 +46,7 @@ install(TARGETS graph_plot
     ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
 )
 
-install(FILES graph.h graph_impl.h
+install(FILES graph.h histogram.h
     DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}
 )
 

@@ -1,7 +1,10 @@
 #include "graph.h"
-#include "graph_impl.h"
+#include "common.h"
 
 #include <memory>
+#include <set>
+#include <utility>
+#include <vector>
 #include <QLabel>
 #include <QSlider>
 #include <QVBoxLayout>
@@ -11,33 +14,44 @@
 #include <QPainterPath>
 #include <QPalette>
 #include <QPen>
+#include <QColor>
+#include <QPointF>
+#include <QRect>
+
+using namespace std;
 
 
-inline std::vector<float> GraphLinspace(float min_x, float max_x,
-        std::size_t count)
+Graph::DynamicData::~DynamicData() = default;
+
+
+class PlotBase
 {
-    std::vector<float> values(count);
-    if (count == 0) return values;
+public:
+    const string WindowTitle;
+    const Graph::Canvas Canvas;
+    const float MinP;
+    const float MaxP;
+    const bool Slider;
 
-    if (count == 1)
-    {
-        values[0] = min_x;
-        return values;
-    }
+    PlotBase(const string& title, const Graph::Canvas& canvas,
+              const float minP, const float maxP):
+        WindowTitle(title), Canvas(canvas), Slider(minP != maxP),
+        MinP(minP), MaxP(maxP) { }
 
-    const float step = (max_x - min_x) / static_cast<float>(count - 1);
-    for (std::size_t i = 0; i < count; ++i)
-        values[i] = min_x + step * static_cast<float>(i);
+    void Show() const;
+    void Show(float) const;
 
-    return values;
-}
+    [[nodiscard]] virtual string Title(float parameter) const = 0;
+    [[nodiscard]] virtual Graph::DataFrame Get(float) const = 0;
+    virtual ~PlotBase() = default;
+};
 
 
 class GraphCanvas final : public QWidget
 {
 public:
-    explicit GraphCanvas(const Graph *graph, QWidget *parent = nullptr):
-        QWidget(parent), graph_(graph)
+    explicit GraphCanvas(const PlotBase *g, QWidget *parent = nullptr):
+        QWidget(parent), graph(g)
     {
         setMinimumSize(640, 480);
         setAutoFillBackground(true);
@@ -46,9 +60,9 @@ public:
         setPalette(palette);
     }
 
-    void SetParameter(float parameter)
+    void SetParameter(float param)
     {
-        parameter_ = parameter;
+        parameter = param;
         update();
     }
 
@@ -63,27 +77,27 @@ protected:
         DrawGrid(painter, plot_area);
         DrawAxes(painter, plot_area);
 
-        for (const auto& curve : graph_->DataSet())
-            if (curve != nullptr) DrawCurve(painter, plot_area, *curve);
+        for (const Graph::Data* data : graph->Get(parameter))
+            if (data != nullptr) DrawCurve(painter, plot_area, data);
         DrawLegend(painter, plot_area);
     }
 
 private:
-    QRect PlotArea() const
+    [[nodiscard]] QRect PlotArea() const
     {
         return rect().adjusted(kPlotMarginLeft, kPlotMarginTop,
                 -kPlotMarginRight, -kPlotMarginBottom);
     }
 
-    QPointF ToPixel(const QRect &plot_area, float x, float y) const
+    [[nodiscard]] QPointF ToPixel(const QRect &plot_area, float x, float y) const
     {
-        const float x_range = graph_->MaxX - graph_->MinX;
-        const float y_range = graph_->MaxY - graph_->MinY;
+        const float x_range = graph->Canvas.MaxX - graph->Canvas.MinX;
+        const float y_range = graph->Canvas.MaxY - graph->Canvas.MinY;
 
         const float x_ratio =
-                x_range == 0.0f ? 0.0f : (x - graph_->MinX) / x_range;
+                x_range == 0.0f ? 0.0f : (x - graph->Canvas.MinX) / x_range;
         const float y_ratio =
-                y_range == 0.0f ? 0.0f : (y - graph_->MinY) / y_range;
+                y_range == 0.0f ? 0.0f : (y - graph->Canvas.MinY) / y_range;
 
         return QPointF(plot_area.left() + x_ratio * plot_area.width(),
                 plot_area.bottom() - y_ratio * plot_area.height());
@@ -95,7 +109,7 @@ private:
         painter.fillRect(PlotArea(), Qt::white);
     }
 
-    void DrawGrid(QPainter &painter, const QRect &plot_area) const
+    static void DrawGrid(QPainter &painter, const QRect &plot_area)
     {
         QPen grid_pen(QColor(220, 220, 220));
         grid_pen.setStyle(Qt::DotLine);
@@ -129,25 +143,24 @@ private:
     }
 
     void DrawCurve(QPainter &painter, const QRect &plot_area,
-            const Graph::Data &curve) const
+                   const Graph::Data* data) const
     {
-        const QColor color = ParseColor(curve.Color);
-        const unique_ptr<Graph::Segment>& segment = curve.Value(parameter_);
-        const int size = segment->Size();
-        if (size == 0) return;
+        const QColor color = ParseColor(data->Color);
 
-        if (curve.Point)
+        const auto points = data->Points;
+        if (points.empty()) return;
+
+        if (data->Bullet)
         {
             QPen pen(color, 1.5);
             painter.setPen(pen);
             painter.setBrush(color);
 
             constexpr double kPointRadius = 1.25;
-            for (int i = 0; i < size; ++i)
+            for (auto point : points)
             {
-                const QPointF point = ToPixel(plot_area,
-                                              segment->X(i), segment->Y(i));
-                painter.drawEllipse(point, kPointRadius, kPointRadius);
+                const QPointF p = ToPixel(plot_area, point.first, point.second);
+                painter.drawEllipse(p, kPointRadius, kPointRadius);
             }
             return;
         }
@@ -160,14 +173,15 @@ private:
 
         QPainterPath path;
         bool started = false;
-        for (int i = 0; i < size; ++i)
+        for (auto it : points)
         {
-            const QPointF point = ToPixel(plot_area, segment->X(i), segment->Y(i));
+            const QPointF point = ToPixel(plot_area, it.first, it.second);
             if (!started)
             {
                 path.moveTo(point);
                 started = true;
-            } else
+            }
+            else
                 path.lineTo(point);
         }
         painter.drawPath(path);
@@ -177,7 +191,7 @@ private:
     {
         set<pair<string, string>> labels;
         vector<LegendItem> items;
-        for (const auto& curve : graph_->DataSet())
+        for (const auto& curve : graph->Get(parameter))
         {
             pair<string, string> p = make_pair(curve->Label, curve->Color);
             if (labels.count(p) > 0)
@@ -186,60 +200,59 @@ private:
             labels.emplace(p);
             items.push_back(
                 { curve->Label, ParseColor(curve->Color),
-                    curve->Point ? LegendSwatch::Point : LegendSwatch::Line });
+                    curve->Bullet ? LegendSwatch::Point : LegendSwatch::Line });
         }
 
         ::DrawLegend(painter, plot_area, items);
     }
 
-    const Graph *graph_;
-    float parameter_ = 0.0f;
+    const PlotBase *graph;
+    float parameter = 0.0f;
 };
 
 
 class PlotWindow final : public QWidget
 {
 public:
-    explicit PlotWindow(const Graph *graph) : graph_(graph)
+    explicit PlotWindow(const PlotBase *g) : graph(g)
     {
         setWindowTitle(QString::fromStdString(graph->WindowTitle));
         resize(900, 700);
 
         auto *layout = new QVBoxLayout(this);
 
-        title_label_ = new QLabel(this);
-        layout->addWidget(title_label_);
+        title_label = new QLabel(this);
+        layout->addWidget(title_label);
 
-        plot_canvas_ = new GraphCanvas(graph_, this);
-        layout->addWidget(plot_canvas_, 1);
+        plot_canvas = new GraphCanvas(graph, this);
+        layout->addWidget(plot_canvas, 1);
 
         slider_ = new QSlider(Qt::Horizontal, this);
         slider_->setRange(0, kSliderSteps);
         slider_->setValue(0);
         layout->addWidget(slider_);
 
-        slider_->setVisible(graph_->Slider);
-        if (graph_->Slider)
+        slider_->setVisible(graph->Slider);
+        if (graph->Slider)
             connect(slider_, &QSlider::valueChanged, this, [this](int value)
             { UpdateDisplay(
-                SliderToParameter(value, graph_->MinP, graph_->MaxP)); });
+                SliderToParameter(value, graph->MinP, graph->MaxP)); });
 
 
-        UpdateDisplay(graph_->MinP);
+        UpdateDisplay(graph->MinP);
     }
 
 private:
-    void UpdateDisplay(float parameter)
-    {
-        SetTitleLabel(*title_label_,
-                graph_->Slider ?
-                        graph_->Title(parameter) : graph_->WindowTitle);
-        plot_canvas_->SetParameter(parameter);
+    void UpdateDisplay(float parameter) const {
+        SetTitleLabel(*title_label,
+                graph->Slider ?
+                        graph->Title(parameter) : graph->WindowTitle);
+        plot_canvas->SetParameter(parameter);
     }
 
-    const Graph *graph_;
-    QLabel *title_label_ = nullptr;
-    GraphCanvas *plot_canvas_ = nullptr;
+    const PlotBase *graph;
+    QLabel *title_label = nullptr;
+    GraphCanvas *plot_canvas = nullptr;
     QSlider *slider_ = nullptr;
 };
 
@@ -247,81 +260,95 @@ private:
 class GraphViewWindow final : public QWidget
 {
 public:
-    GraphViewWindow(Graph *graph, float parameter) : graph_(graph)
+    GraphViewWindow(const PlotBase *g, float parameter) : graph(g)
     {
-        setWindowTitle(QString::fromStdString(graph_->WindowTitle));
+        setWindowTitle(QString::fromStdString(graph->WindowTitle));
         resize(900, 700);
 
         auto *layout = new QVBoxLayout(this);
 
-        title_label_ = new QLabel(this);
-        SetTitleLabel(*title_label_,
-                graph_->Slider ?
-                        graph_->Title(parameter) : graph_->WindowTitle);
-        layout->addWidget(title_label_);
+        title_label = new QLabel(this);
+        SetTitleLabel(*title_label,
+                graph->Slider ?
+                        graph->Title(parameter) : graph->WindowTitle);
+        layout->addWidget(title_label);
 
-        canvas_ = new GraphCanvas(graph_, this);
-        layout->addWidget(canvas_, 1);
-        canvas_->SetParameter(parameter);
+        canvas = new GraphCanvas(graph, this);
+        layout->addWidget(canvas, 1);
+        canvas->SetParameter(parameter);
     }
 
 private:
-    Graph *graph_;
-    QLabel *title_label_ = nullptr;
-    GraphCanvas *canvas_ = nullptr;
+    const PlotBase *graph;
+    QLabel *title_label = nullptr;
+    GraphCanvas *canvas = nullptr;
 };
 
 
-
-Graph::Point::Point(const float x, const float y): X(x), Y(y) { }
-
-
-bool compare(unique_ptr<Graph::Point>& p1, unique_ptr<Graph::Point>&
- p2)
-    { return p1->X > p2->X; }
-
-Graph::Segment::Segment(const std::vector<Graph::Point>& points): data(points.size())
+void PlotBase::Show() const
 {
-    int size = (int) points.size();
-    for(int i=0; i < size; ++i)
-        data[i] = make_unique<Graph::Point>(points[i].X, points[i].Y);
-
-    std::sort(data.begin(), data.end(), compare);
-    min = data[0]->X;
-    max = data[size-1]->X;
+    ShowPlot([this]() { return std::make_unique<PlotWindow>(this); });
 }
 
-float Graph::Segment::Min() const
-    { return min; }
+void PlotBase::Show(const float parameter) const
+{
+    ShowPlot([this, parameter]() {
+        return std::make_unique<GraphViewWindow>(this, parameter);
+    });
+}
 
-float Graph::Segment::Max() const
-    { return max; }
 
-int Graph::Segment::Size() const
-    { return static_cast<int>(data.size()); }
+class DynamicPlot final: public PlotBase
+{
+private:
+    const Graph::DynamicData& data;
 
-void Graph::Segment::Set(const int index, const float y)
-    { data[index] = make_unique<Graph::Point>(data[index]->X, y); }
+public:
+    DynamicPlot(const string& title, const Graph::Canvas& canvas,
+                Graph::DynamicData& ptr):
+        PlotBase(title, canvas, ptr.MinP, ptr.MaxP), data(ptr) { }
 
-const float Graph::Segment::X(size_t index) const
-    { return data.at(index)->X; }
+    [[nodiscard]] string Title(float parameter) const override
+        { return data.Title(parameter); }
 
-const float Graph::Segment::Y(size_t index) const
-    { return data.at(index)->Y; }
+    [[nodiscard]] Graph::DataFrame Get(float parameter) const override
+        { return const_cast<Graph::DynamicData&>(data).Eval(parameter); }
+};
 
-Graph::Data::Data(const float min_x, const float max_x, const string& color,
-                  const string& label, bool point):
-    MinX(min_x), MaxX(max_x), Color(std::move(color)), Label(std::move(label)),
-    Point(point) { }
+void Graph::Plot(const string& title, const Graph::Canvas& canvas,
+                 DynamicData& data)
+{
+    DynamicPlot plot(title, canvas, data);
+    plot.Show();
+}
 
-Graph::Graph(const string& title, const bool slider, const float min_p,
-             const float max_p, const float min_x, const float max_x,
-             const float min_y, const float max_y):
-                 WindowTitle(title), Slider(slider), MinP(min_p), MaxP(max_p),
-                 MinX(min_x), MaxX(max_x), MinY(min_y), MaxY(max_y) { }
 
-void Graph::Plot()
-    { RunQT(std::make_unique<PlotWindow>(this)); }
+class StaticPlot final: public PlotBase
+{
+private:
+    const vector<Graph::Data>& data;
+    mutable vector<Graph::Data*> result;
 
-void Graph::Show(const float parameter)
-    { RunQT(std::make_unique <GraphViewWindow>(this, parameter)); }
+public:
+    StaticPlot(const string& title, const Graph::Canvas& canvas,
+               const vector<Graph::Data>& d):
+        PlotBase(title, canvas, 0.0, 0.0), data(d) { }
+
+    [[nodiscard]] string Title(float parameter) const override
+        { return ""; }
+
+    [[nodiscard]] Graph::DataFrame Get(float) const override
+    {
+        result.clear();
+        for (const Graph::Data& d : data)
+            result.push_back(const_cast<Graph::Data*>(&d));
+        return result;
+    }
+};
+
+void Graph::Plot(const string& title, const Graph::Canvas& canvas,
+                 const vector<Graph::Data>& data)
+{
+    StaticPlot plot(title, canvas, data);
+    plot.Show();
+}

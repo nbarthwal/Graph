@@ -1,5 +1,6 @@
 #include <cmath>
 #include <graph.h>
+#include <histogram.h>
 #include <memory>
 #include <string>
 #include <vector>
