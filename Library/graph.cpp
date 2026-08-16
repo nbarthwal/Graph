@@ -2,6 +2,8 @@
 #include "common.h"
 
 #include <memory>
+#include <set>
+#include <utility>
 #include <vector>
 #include <QLabel>
 #include <QSlider>
@@ -33,8 +35,8 @@ public:
         WindowTitle(title), Canvas(canvas), Slider(minP == maxP),
         MinP(minP), MaxP(maxP) { }
 
-    void Show();
-    void Show(const float);
+    void Show() const;
+    void Show(float) const;
 
     [[nodiscard]] virtual string Title(float parameter) const = 0;
     [[nodiscard]] virtual Graph::DynamicData Get(float) const = 0;
@@ -256,7 +258,7 @@ private:
 class GraphViewWindow final : public QWidget
 {
 public:
-    GraphViewWindow(PlotBase *g, float parameter) : graph(g)
+    GraphViewWindow(const PlotBase *g, float parameter) : graph(g)
     {
         setWindowTitle(QString::fromStdString(graph->WindowTitle));
         resize(900, 700);
@@ -275,49 +277,51 @@ public:
     }
 
 private:
-    PlotBase *graph;
+    const PlotBase *graph;
     QLabel *title_label = nullptr;
     GraphCanvas *canvas = nullptr;
 };
 
 
-void PlotBase::Show()
+void PlotBase::Show() const
 {
     const std::unique_ptr<QWidget> widget = std::make_unique<PlotWindow>(this);
     ShowPlot(widget);
 }
 
-void PlotBase::Show(const float parameter)
+void PlotBase::Show(const float parameter) const
 {
-    const std::unique_ptr<QWidget> widget = std::make_unique <GraphViewWindow>(this, parameter);
+    const std::unique_ptr<QWidget> widget = std::make_unique<GraphViewWindow>(this, parameter);
     ShowPlot(widget);
 }
 
 
-class DynamicPlotBase final: public PlotBase
+class Graph::DynamicPlot::DynamicPlotBase final: public PlotBase
 {
 private:
-    const Graph::DynamicPlot* ptr;
+    const Graph::DynamicPlot* plot;
 
 public:
     DynamicPlotBase(const string& title, const Graph::Canvas& canvas,
                     const float minP, const float maxP,
                     const Graph::DynamicPlot* p):
-        PlotBase(title, canvas, minP, maxP), ptr(p) { }
+        PlotBase(title, canvas, minP, maxP), plot(p) { }
 
     [[nodiscard]] string Title(float parameter) const override
-        { return ptr->Title(parameter); }
+        { return plot->Title(parameter); }
 
     [[nodiscard]] Graph::DynamicData Get(float parameter) const override
-        { return ptr->Eval(parameter); }
+        { return plot->Eval(parameter); }
 };
 
 Graph::DynamicPlot::DynamicPlot(const string& title, const Canvas& canvas,
                                 const float minP, const float maxP):
-    ptr(make_unique(title, canvas, minP, maxP, this)) { }
+    ptr(make_unique<DynamicPlotBase>(title, canvas, minP, maxP, this)) { }
 
-void Graph::DynamicPlot::Show(const float p)
-    { return ptr->Show(p); }
+Graph::DynamicPlot::~DynamicPlot() = default;
+
+void Graph::DynamicPlot::Show(float p) const
+    { ptr->Show(p); }
 
 void Graph::DynamicPlot::Show()
-    { return ptr->Show(); }
+    { ptr->Show(); }

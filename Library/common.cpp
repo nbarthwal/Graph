@@ -1,5 +1,3 @@
-#pragma once
-
 #include "common.h"
 
 #include <QApplication>
@@ -12,6 +10,7 @@
 #include <QWidget>
 
 #include <algorithm>
+#include <memory>
 #include <unordered_map>
 #include <vector>
 
@@ -154,13 +153,14 @@ vector<float> GraphLinspace(float min_x, float max_x, size_t count)
 }
 
 
-void Show(const std::unique_ptr<QWidget>& window)
+void ShowPlot(const std::unique_ptr<QWidget>& window)
 {
     const bool owns_application = QApplication::instance() == nullptr;
     int argc = 0;
+    std::unique_ptr<QApplication> owned_application;
     if (owns_application)
-        std::unique_ptr<QApplication> owned_application =
-            std::make_unique<QApplication>(argc, nullptr);
+        owned_application = std::make_unique<QApplication>(argc, nullptr);
     window->show();
-    if (owns_application) QApplication::exec();
+    if (owns_application)
+        QApplication::exec();
 }

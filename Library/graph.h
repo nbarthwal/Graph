@@ -1,6 +1,7 @@
 #pragma once
 
 #include <map>
+#include <memory>
 #include <string>
 #include <vector>
 
@@ -43,7 +44,7 @@ namespace Graph
         const float MaxX;
         const float MinY;
         const float MaxY;
-        Canvas(const Canvas&);
+        Canvas(const Canvas&) = default;
 
         Canvas(const float minX, const float maxX,
                const float minY, const float maxY):
@@ -59,12 +60,13 @@ namespace Graph
     public:
         DynamicPlot(const string& title, const Canvas& canvas,
                     const float minP, const float maxP);
+        virtual ~DynamicPlot();
 
         GRAPH_API void Show(float) const;
         GRAPH_API void Show();
 
         [[nodiscard]] virtual string Title(float parameter) const = 0;
-        [[nodiscard]] virtual const DynamicData Eval(float) const = 0;
+        [[nodiscard]] virtual DynamicData Eval(float) const = 0;
     };
 
     //TODO: void Plot(const string& title, const Canvas&, const vector<Data>&);

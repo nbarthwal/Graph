@@ -1,6 +1,5 @@
 #pragma once
 
-#include <cstddef>
 #include <memory>
 #include <string>
 #include <vector>
@@ -18,66 +17,42 @@
 using namespace std;
 
 
-namespace Histogram
+class Histogram
 {
-    typedef vector<int> Points;
+public:
+    const bool Slider;
+    const string WindowTitle;
+    const float MinP;
+    const float MaxP;
+    const float MinX;
+    const float MaxX;
+    const float MinY;
+    const float MaxY;
 
+    Histogram(const string& title, const bool slider, const float min_p,
+              const float max_p, const float min_x, const float max_x,
+              const float min_y, const float max_y) : Slider(slider), WindowTitle(
+              title), MinP(min_p), MaxP(max_p), MinX(min_x), MaxX(max_x),
+              MinY(min_y), MaxY(max_y) { }
 
-    class SliderPlot
-    {
-    protected:
-        [[nodiscard]] virtual string Title(float parameter) const = 0;
-
-    public:
-        struct Data
-        {
-            const string Color;
-            const string Label;
-            const Points* Point;
-            Data(const string& color, const string& label);
-            virtual ~Data() = default;
-        };
-
-        const string WindowTitle;
-        const float MinP;
-        const float MaxP;
-        const int Count;
-
-        SliderPlot(const string&, const float min_p, const float max_p,
-                   const vector<Data>&);
-        GRAPH_API void Show(float) const;
-    };
-
-
-    class DynamicPlot
-    {
-    protected:
-        [[nodiscard]] virtual string Title(float parameter) const = 0;
-
-    public:
-        const string WindowTitle;
-        const float MinP;
-        const float MaxP;
-        const int Count;
-
-        Graph(const string& title, const vector<Data>& data,
-              const float min_p, const float max_p);
-
-        GRAPH_API void Show(float) const;
-        GRAPH_API void Update(float p, int pos, int n);
-    };
-
-
-    class Plot
+    class Data
     {
     public:
-        const string WindowTitle;
+        const string Color;
+        const string Label;
+        const int Size;
 
-        Graph(const string& title, const Data& data);
+        Data(string color, string label, int size): Color(std::move(color)),
+                                                    Label(std::move(label)),
+                                                    Size(size) {}
+
+        [[nodiscard]] virtual float Count(float p, int bin) const = 0;
+        virtual ~Data() = default;
     };
 
-
-    void Show(SliderPlot&);
-    void Show(DynamicPlot&);
-    void Show(Plot&);
+    [[nodiscard]] virtual const vector<unique_ptr<Data>>& DataSets() const = 0;
+    [[nodiscard]] virtual string Title(float parameter) const = 0;
+    GRAPH_API void Show(float parameter);
+    GRAPH_API void Plot();
+    virtual ~Histogram() = default;
 };

@@ -5,6 +5,7 @@
 #include <QLabel>
 #include <QPainter>
 #include <QWidget>
+#include <memory>
 #include <string>
 #include <vector>
 

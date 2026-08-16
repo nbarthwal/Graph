@@ -24,7 +24,6 @@ add_library(graph_plot STATIC
     common.cpp
     graph.cpp
     histogram.cpp
-        common.h
 )
 
 target_include_directories(graph_plot
@@ -47,7 +46,7 @@ install(TARGETS graph_plot
     ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
 )
 
-install(FILES graph.h graph_impl.h
+install(FILES graph.h histogram.h
     DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}
 )
 
