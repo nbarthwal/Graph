@@ -295,36 +295,29 @@ void PlotBase::Show(const float parameter) const
 }
 
 
-class Graph::DynamicPlot::DynamicPlotBase final: public PlotBase
+class DynamicPlot final: public PlotBase
 {
 private:
-    const Graph::DynamicPlot* plot;
+    const Graph::DynamicData& data;
 
 public:
     DynamicPlotBase(const string& title, const Graph::Canvas& canvas,
-                    const float minP, const float maxP,
-                    const Graph::DynamicPlot* p):
-        PlotBase(title, canvas, minP, maxP), plot(p) { }
+                    Graph::DynamicData& ptr):
+        PlotBase(title, canvas, ptr.MinP, ptr.MaxP), data(ptr) { }
 
     [[nodiscard]] string Title(float parameter) const override
-        { return plot->Title(parameter); }
+        { return data.Title(parameter); }
 
     [[nodiscard]] Graph::DynamicData Get(float parameter) const override
-        { return plot->Eval(parameter); }
+        { return data.Eval(parameter); }
 };
 
-Graph::DynamicPlot::DynamicPlot(const string& title, const Canvas& canvas,
-                                const float minP, const float maxP):
-    ptr(make_unique<DynamicPlotBase>(title, canvas, minP, maxP, this)) { }
-
-Graph::DynamicPlot::~DynamicPlot() = default;
-
-void Graph::DynamicPlot::Show(float p) const
-    { ptr->Show(p); }
-
-void Graph::DynamicPlot::Show() const
-    { ptr->Show(); }
-
+void Graph::Plot(const string& title, const Graph::Canvas& canvas,
+                 DynamicData& data)
+{
+    DynamicPlot plot(title, canvas, data);
+    plot.Show();
+}
 
 
 class StaticPlot final: public PlotBase

@@ -37,7 +37,7 @@ namespace Graph
             Color(color), Label(label), Points(pts), Bullet(bullet) { }
     };
 
-    typedef vector<Data*>& DynamicData;
+    typedef vector<Data*>& DataFrame;
 
     struct Canvas
     {
@@ -52,23 +52,23 @@ namespace Graph
             MinX(minX), MaxX(maxX), MinY(minY), MaxY(maxY) { }
     };
 
-    class DynamicPlot
+    class DynamicData
     {
-    private:
-        class DynamicPlotBase;
-        unique_ptr<DynamicPlotBase> ptr;
-
     public:
-        DynamicPlot(const string& title, const Canvas& canvas,
-                    const float minP, const float maxP);
-        virtual ~DynamicPlot();
+        const float MinP;
+        const float MaxP;
 
-        GRAPH_API void Show(float) const;
-        GRAPH_API void Show() const;
+        DynamicData(const float minP, const float maxP):
+            MinP(minP), MaxP(maxP) { }
+        virtual ~DynamicData();
 
         [[nodiscard]] virtual string Title(float parameter) const = 0;
-        [[nodiscard]] virtual DynamicData Eval(float) const = 0;
+        [[nodiscard]] virtual DataFrame Eval(float) = 0;
     };
 
+    GRAPH_API
     void Plot(const string& title, const Canvas&, const vector<Data>&);
+    GRAPH_API
+    void Plot(const string& title, const Canvas&, DynamicData&);
+
 };
