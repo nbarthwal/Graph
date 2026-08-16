@@ -39,7 +39,7 @@ public:
     void Show(float) const;
 
     [[nodiscard]] virtual string Title(float parameter) const = 0;
-    [[nodiscard]] virtual Graph::DynamicData Get(float) const = 0;
+    [[nodiscard]] virtual Graph::DataFrame Get(float) const = 0;
     virtual ~PlotBase() = default;
 };
 
@@ -301,15 +301,15 @@ private:
     const Graph::DynamicData& data;
 
 public:
-    DynamicPlotBase(const string& title, const Graph::Canvas& canvas,
-                    Graph::DynamicData& ptr):
+    DynamicPlot(const string& title, const Graph::Canvas& canvas,
+                Graph::DynamicData& ptr):
         PlotBase(title, canvas, ptr.MinP, ptr.MaxP), data(ptr) { }
 
     [[nodiscard]] string Title(float parameter) const override
         { return data.Title(parameter); }
 
-    [[nodiscard]] Graph::DynamicData Get(float parameter) const override
-        { return data.Eval(parameter); }
+    [[nodiscard]] Graph::DataFrame Get(float parameter) const override
+        { return const_cast<Graph::DynamicData&>(data).Eval(parameter); }
 };
 
 void Graph::Plot(const string& title, const Graph::Canvas& canvas,
@@ -334,7 +334,7 @@ public:
     [[nodiscard]] string Title(float parameter) const override
         { return ""; }
 
-    [[nodiscard]] Graph::DynamicData Get(float) const override
+    [[nodiscard]] Graph::DataFrame Get(float) const override
     {
         result.clear();
         for (const Graph::Data& d : data)
