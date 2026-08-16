@@ -10,7 +10,6 @@
 #include <QWidget>
 
 #include <algorithm>
-#include <functional>
 #include <memory>
 #include <unordered_map>
 #include <vector>
@@ -151,19 +150,4 @@ vector<float> GraphLinspace(float min_x, float max_x, size_t count)
         values[i] = min_x + step * static_cast<float>(i);
 
     return values;
-}
-
-
-void ShowPlot(const std::function<std::unique_ptr<QWidget>()>& create_window)
-{
-    int argc = 0;
-    const bool owns_application = QApplication::instance() == nullptr;
-    std::unique_ptr<QApplication> owned_application;
-    if (owns_application)
-        owned_application = std::make_unique<QApplication>(argc, nullptr);
-
-    const std::unique_ptr<QWidget> window = create_window();
-    window->show();
-    if (owns_application)
-        QApplication::exec();
 }

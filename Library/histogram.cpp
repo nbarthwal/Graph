@@ -254,12 +254,10 @@ private:
 
 void Histogram::Plot()
 {
-    ShowPlot([this]() { return std::make_unique<HistogramWindow>(this); });
+    RunQT(std::make_unique < HistogramWindow > (this));
 }
 
 void Histogram::Show(const float parameter)
 {
-    ShowPlot([this, parameter]() {
-        return std::make_unique<HistogramViewWindow>(this, parameter);
-    });
+    RunQT(std::make_unique < HistogramViewWindow > (this, parameter));
 }

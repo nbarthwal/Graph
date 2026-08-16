@@ -286,16 +286,10 @@ private:
 
 
 void PlotBase::Show() const
-{
-    ShowPlot([this]() { return std::make_unique<PlotWindow>(this); });
-}
+    { RunQT(std::make_unique<PlotWindow>(this)); }
 
 void PlotBase::Show(const float parameter) const
-{
-    ShowPlot([this, parameter]() {
-        return std::make_unique<GraphViewWindow>(this, parameter);
-    });
-}
+    { RunQT(std::make_unique <GraphViewWindow>(this, parameter)); }
 
 
 class DynamicPlot final: public PlotBase

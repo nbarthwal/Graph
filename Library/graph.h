@@ -27,8 +27,8 @@ namespace Graph
     public:
         const string Color;
         const string Label;
-        const points Points;
         const bool Bullet;
+        const points Points;
         virtual ~Data() = default;
 
     protected:
