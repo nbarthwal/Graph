@@ -19,101 +19,53 @@ using namespace std;
 
 namespace Graph
 {
-    typedef map<float, float> Points;
+    typedef map<float, float> points;
 
-    struct Data
+    class Data
     {
+    public:
         const string Color;
         const string Label;
-        const bool Point;
-        const int Size;
-        GRAPH_API [[nodiscard]] virtual const Points* Points() const = 0;
-        Data(const string& color, const string& label, const bool point);
+        const points Points;
+        const bool Bullet;
         virtual ~Data() = default;
+
+    protected:
+        Data(const string& color, const string& label, bool bullet):
+            Color(color), Label(label), Bullet(bullet) { }
     };
 
-    class SliderPlot
-    {
-    private:
-        class BaseGraph;
-        unique_ptr<BaseGraph> baseGraph;
+    typedef vector<Data*>& DynamicData;
 
-    public:
-        const string WindowTitle;
-        const float MinP;
-        const float MaxP;
+    struct Canvas
+    {
         const float MinX;
         const float MaxX;
         const float MinY;
         const float MaxY;
+        Canvas(const Canvas&);
 
-        SliderPlot(const string& title,
-                   const float minP, const float maxP,
-                   const float minX, const float maxX,
-                   const float minY, const float maxY);
+        Canvas(const float minX, const float maxX,
+               const float minY, const float maxY):
+            MinX(minX), MaxX(maxX), MinY(minY), MaxY(maxY) { }
+    };
+
+    class DynamicPlot
+    {
+    private:
+        class DynamicPlotBase;
+        unique_ptr<DynamicPlotBase> ptr;
+
+    public:
+        DynamicPlot(const string& title, const Canvas& canvas,
+                    const float minP, const float maxP);
 
         GRAPH_API void Show(float) const;
         GRAPH_API void Show();
 
         [[nodiscard]] virtual string Title(float parameter) const = 0;
-        [[nodiscard]] virtual vector<const Data*>&
-                                   Eval(float parameter) const = 0;
-        virtual ~SliderPlot() = default;
+        [[nodiscard]] virtual const DynamicData Eval(float) const = 0;
     };
 
-
-    class DynamicPlot
-    {
-    private:
-        class BaseGraph;
-        unique_ptr<BaseGraph> baseGraph;
-
-    public:
-        const string WindowTitle;
-        const float MinP;
-        const float MaxP;
-        const float MinX;
-        const float MaxX;
-        const float MinY;
-        const float MaxY;
-        const int Count;
-
-        DynamicPlot(const string& title, const vector<Data>& data,
-              const float minP, const float maxP,
-              const float minX, const float maxX,
-              const float minY, const float maxY);
-
-        GRAPH_API void Show(float) const;
-        GRAPH_API void Show();
-
-        GRAPH_API virtual ~DynamicPlot() = default;
-        GRAPH_API [[nodiscard]] virtual string Title(float parameter) const = 0;
-        
-    protected:
-        GRAPH_API void Update(float p, int pos, float x);
-    };
-
-
-    class StaticPlot
-    {
-    private:
-        class BaseGraph;
-        unique_ptr<BaseGraph> baseGraph;
-
-    public:
-        const string WindowTitle;
-        const float MinX;
-        const float MaxX;
-        const float MinY;
-        const float MaxY;
-
-        StaticPlot(const string& title, const Data&,
-                   const float minX, const float maxX,
-                   const float minY, const float maxY);
-
-        virtual ~StaticPlot() = default;
-
-        GRAPH_API void Show(float) const;
-        GRAPH_API void Show();
-    };
+    //TODO: void Plot(const string& title, const Canvas&, const vector<Data>&);
 };
