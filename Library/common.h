@@ -5,6 +5,7 @@
 #include <QLabel>
 #include <QPainter>
 #include <QWidget>
+#include <functional>
 #include <memory>
 #include <string>
 #include <vector>
@@ -44,4 +45,4 @@ void DrawLegend(QPainter &painter, const QRect &plot_area,
 
 vector<float> GraphLinspace(float min_x, float max_x, size_t count);
 
-void ShowPlot(const std::unique_ptr<QWidget>& window);
+void ShowPlot(const std::function<std::unique_ptr<QWidget>()>& create_window);

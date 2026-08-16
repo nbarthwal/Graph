@@ -9,28 +9,36 @@ const float Pi = 3.141593f;
 const float factor = 2.0f * Pi / N;
 
 
-Data SinCurve(float frequency)
+class CurveData final : public Graph::Data
+{
+public:
+    CurveData(const string& color, const string& label, const Graph::points& pts,
+              bool bullet) : Graph::Data(color, label, pts, bullet) {}
+};
+
+
+inline CurveData SinCurve(float frequency)
 {
     Graph::points pts;
     for (int i = 0; i < N; ++i)
     {
         const float x = static_cast<float>(i);
-        pts[x] = sin(k * factor * x);
+        pts[x] = sin(frequency * factor * x);
     }
-    return Graph::Data("blue", "Sin(x)", false, pts); 
+    return CurveData("blue", "Sin(x)", pts, false);
 }
 
 
-Data CosCurve(float frequency)
+inline CurveData CosCurve(float frequency)
 {
     Graph::points pts;
     for (int i = 0; i < N; ++i)
     {
         const float x = static_cast<float>(i);
-        pts[x] = sin(k * factor * x);
+        pts[x] = cos(frequency * factor * x);
     }
-    return Data("red", "Cosn(x)", true, pts); 
+    return CurveData("red", "Cos(x)", pts, true);
 }
 
 
-Graph::Canvas canvas(0.0f, N, , -1.0f, 1.0f);
+const Graph::Canvas canvas(0.0f, N, -1.0f, 1.0f);

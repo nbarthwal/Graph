@@ -1,25 +1,24 @@
 #include <graph.h>
-#include <memory>
+#include <vector>
 #include "trigonometry.h"
 
 
-class DynamicData final: public Graph::DynamacData
+class TrigonometryPlot final : public Graph::DynamicData
 {
 private:
-    Data sinCurve(SinCurve(1.0f));
-    Data cosCurve(CosCurve(1.0f));
-    DataFrame result(2, nullptr);
+    std::vector<CurveData> curves_;
+    std::vector<Graph::Data*> result_;
 
 public:
-    DynamicData(): base(1.0, 5.0) { }
+    TrigonometryPlot() : Graph::DynamicData(1.0f, 5.0f) { }
 
-    DataFrame Eval(float parameter) override
+    Graph::DataFrame Eval(float parameter) override
     {
-        Data sinCurve = SinCurve(parameter);
-        Data cosCurve = CosCurve(parameter);
-        result[0] = &sinCurve;
-        result[1] = &cosCurve;
-        return result;
+        curves_.clear();
+        curves_.push_back(SinCurve(parameter));
+        curves_.push_back(CosCurve(parameter));
+        result_ = { &curves_[0], &curves_[1] };
+        return result_;
     }
 
     string Title(float parameter) const override
@@ -31,7 +30,7 @@ public:
 
 int main()
 {
-    DynamicData data;
-    Graph::Plot("Dynamic Graph Exampple", canvas, data);
+    TrigonometryPlot plot;
+    Graph::Plot("Dynamic Graph Exampple", canvas, plot);
     return 0;
 }

@@ -254,13 +254,12 @@ private:
 
 void Histogram::Plot()
 {
-    const std::unique_ptr<QWidget> widget = std::make_unique<HistogramWindow>(this);
-    ShowPlot(widget);
+    ShowPlot([this]() { return std::make_unique<HistogramWindow>(this); });
 }
 
 void Histogram::Show(const float parameter)
 {
-    const std::unique_ptr<QWidget> widget =
-            std::make_unique<HistogramViewWindow>(this, parameter);
-    ShowPlot(widget);
+    ShowPlot([this, parameter]() {
+        return std::make_unique<HistogramViewWindow>(this, parameter);
+    });
 }

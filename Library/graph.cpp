@@ -21,6 +21,9 @@
 using namespace std;
 
 
+Graph::DynamicData::~DynamicData() = default;
+
+
 class PlotBase
 {
 public:
@@ -284,14 +287,14 @@ private:
 
 void PlotBase::Show() const
 {
-    const std::unique_ptr<QWidget> widget = std::make_unique<PlotWindow>(this);
-    ShowPlot(widget);
+    ShowPlot([this]() { return std::make_unique<PlotWindow>(this); });
 }
 
 void PlotBase::Show(const float parameter) const
 {
-    const std::unique_ptr<QWidget> widget = std::make_unique<GraphViewWindow>(this, parameter);
-    ShowPlot(widget);
+    ShowPlot([this, parameter]() {
+        return std::make_unique<GraphViewWindow>(this, parameter);
+    });
 }
 
 
