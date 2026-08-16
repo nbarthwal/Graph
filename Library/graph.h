@@ -32,8 +32,9 @@ namespace Graph
         virtual ~Data() = default;
 
     protected:
-        Data(const string& color, const string& label, bool bullet):
-            Color(color), Label(label), Bullet(bullet) { }
+        Data(const string& color, const string& label, const points& pts,
+             bool bullet):
+            Color(color), Label(label), Points(pts), Bullet(bullet) { }
     };
 
     typedef vector<Data*>& DynamicData;
@@ -69,5 +70,5 @@ namespace Graph
         [[nodiscard]] virtual DynamicData Eval(float) const = 0;
     };
 
-    //TODO: void Plot(const string& title, const Canvas&, const vector<Data>&);
+    void Plot(const string& title, const Canvas&, const vector<Data>&);
 };

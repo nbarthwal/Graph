@@ -324,3 +324,35 @@ void Graph::DynamicPlot::Show(float p) const
 
 void Graph::DynamicPlot::Show() const
     { ptr->Show(); }
+
+
+
+class StaticPlot final: public PlotBase
+{
+private:
+    const vector<Graph::Data>& data;
+    mutable vector<Graph::Data*> result;
+
+public:
+    StaticPlot(const string& title, const Graph::Canvas& canvas,
+               const vector<Graph::Data>& d):
+        PlotBase(title, canvas, 0.0, 0.0), data(d) { }
+
+    [[nodiscard]] string Title(float parameter) const override
+        { return ""; }
+
+    [[nodiscard]] Graph::DynamicData Get(float) const override
+    {
+        result.clear();
+        for (const Graph::Data& d : data)
+            result.push_back(const_cast<Graph::Data*>(&d));
+        return result;
+    }
+};
+
+void Graph::Plot(const string& title, const Graph::Canvas& canvas,
+                 const vector<Graph::Data>& data)
+{
+    StaticPlot plot(title, canvas, data);
+    plot.Show();
+}
