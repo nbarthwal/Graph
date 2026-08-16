@@ -63,7 +63,7 @@ namespace Graph
         virtual ~DynamicPlot();
 
         GRAPH_API void Show(float) const;
-        GRAPH_API void Show();
+        GRAPH_API void Show() const;
 
         [[nodiscard]] virtual string Title(float parameter) const = 0;
         [[nodiscard]] virtual DynamicData Eval(float) const = 0;

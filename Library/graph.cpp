@@ -32,7 +32,7 @@ public:
 
     PlotBase(const string& title, const Graph::Canvas& canvas,
               const float minP, const float maxP):
-        WindowTitle(title), Canvas(canvas), Slider(minP == maxP),
+        WindowTitle(title), Canvas(canvas), Slider(minP != maxP),
         MinP(minP), MaxP(maxP) { }
 
     void Show() const;
@@ -80,13 +80,13 @@ protected:
     }
 
 private:
-    QRect PlotArea() const
+    [[nodiscard]] QRect PlotArea() const
     {
         return rect().adjusted(kPlotMarginLeft, kPlotMarginTop,
                 -kPlotMarginRight, -kPlotMarginBottom);
     }
 
-    QPointF ToPixel(const QRect &plot_area, float x, float y) const
+    [[nodiscard]] QPointF ToPixel(const QRect &plot_area, float x, float y) const
     {
         const float x_range = graph->Canvas.MaxX - graph->Canvas.MinX;
         const float y_range = graph->Canvas.MaxY - graph->Canvas.MinY;
@@ -106,7 +106,7 @@ private:
         painter.fillRect(PlotArea(), Qt::white);
     }
 
-    void DrawGrid(QPainter &painter, const QRect &plot_area) const
+    static void DrawGrid(QPainter &painter, const QRect &plot_area)
     {
         QPen grid_pen(QColor(220, 220, 220));
         grid_pen.setStyle(Qt::DotLine);
@@ -154,9 +154,9 @@ private:
             painter.setBrush(color);
 
             constexpr double kPointRadius = 1.25;
-            for (auto it = points.begin() ; it != points.end() ; ++it)
+            for (auto point : points)
             {
-                const QPointF p = ToPixel(plot_area, it->first, it->second);
+                const QPointF p = ToPixel(plot_area, point.first, point.second);
                 painter.drawEllipse(p, kPointRadius, kPointRadius);
             }
             return;
@@ -170,9 +170,9 @@ private:
 
         QPainterPath path;
         bool started = false;
-        for (auto it = points.begin() ; it != points.end() ; ++it)
+        for (auto it : points)
         {
-            const QPointF point = ToPixel(plot_area, it->first, it->second);
+            const QPointF point = ToPixel(plot_area, it.first, it.second);
             if (!started)
             {
                 path.moveTo(point);
@@ -240,8 +240,7 @@ public:
     }
 
 private:
-    void UpdateDisplay(float parameter)
-    {
+    void UpdateDisplay(float parameter) const {
         SetTitleLabel(*title_label,
                 graph->Slider ?
                         graph->Title(parameter) : graph->WindowTitle);
@@ -323,5 +322,5 @@ Graph::DynamicPlot::~DynamicPlot() = default;
 void Graph::DynamicPlot::Show(float p) const
     { ptr->Show(p); }
 
-void Graph::DynamicPlot::Show()
+void Graph::DynamicPlot::Show() const
     { ptr->Show(); }

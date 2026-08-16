@@ -157,9 +157,9 @@ void ShowPlot(const std::unique_ptr<QWidget>& window)
 {
     const bool owns_application = QApplication::instance() == nullptr;
     int argc = 0;
-    std::unique_ptr<QApplication> owned_application;
     if (owns_application)
-        owned_application = std::make_unique<QApplication>(argc, nullptr);
+        std::unique_ptr<QApplication> owned_application =
+            std::make_unique<QApplication>(argc, nullptr);
     window->show();
     if (owns_application)
         QApplication::exec();
