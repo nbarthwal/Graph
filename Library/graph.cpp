@@ -24,7 +24,7 @@ using namespace std;
 Graph::DynamicData::~DynamicData() = default;
 
 
-class PlotBase
+class Plot
 {
 public:
     const string WindowTitle;
@@ -33,7 +33,7 @@ public:
     const float MaxP;
     const bool Slider;
 
-    PlotBase(const Graph::Canvas& canvas, const float minP, const float maxP):
+    Plot(const Graph::Canvas& canvas, const float minP, const float maxP):
         WindowTitle(canvas.Title), Canvas(canvas), Slider(minP != maxP),
         MinP(minP), MaxP(maxP) { }
 
@@ -42,14 +42,14 @@ public:
 
     [[nodiscard]] virtual string Title(float parameter) const = 0;
     [[nodiscard]] virtual Graph::DataFrame Get(float) const = 0;
-    virtual ~PlotBase() = default;
+    virtual ~Plot() = default;
 };
 
 
 class GraphCanvas final : public QWidget
 {
 public:
-    explicit GraphCanvas(const PlotBase *g, QWidget *parent = nullptr):
+    explicit GraphCanvas(const Plot *g, QWidget *parent = nullptr):
         QWidget(parent), graph(g)
     {
         setMinimumSize(640, 480);
@@ -208,7 +208,7 @@ private:
         ::DrawLegend(painter, plot_area, items);
     }
 
-    const PlotBase *graph;
+    const Plot *graph;
     float parameter = 0.0f;
 };
 
@@ -216,7 +216,7 @@ private:
 class PlotWindow final : public QWidget
 {
 public:
-    explicit PlotWindow(const PlotBase *g) : graph(g)
+    explicit PlotWindow(const Plot *g) : graph(g)
     {
         setWindowTitle(QString::fromStdString(graph->WindowTitle));
         resize(900, 700);
@@ -252,7 +252,7 @@ private:
         plot_canvas->SetParameter(parameter);
     }
 
-    const PlotBase *graph;
+    const Plot *graph;
     QLabel *title_label = nullptr;
     GraphCanvas *plot_canvas = nullptr;
     QSlider *slider_ = nullptr;
@@ -262,7 +262,7 @@ private:
 class GraphViewWindow final : public QWidget
 {
 public:
-    GraphViewWindow(const PlotBase *g, float parameter) : graph(g)
+    GraphViewWindow(const Plot *g, float parameter) : graph(g)
     {
         setWindowTitle(QString::fromStdString(graph->WindowTitle));
         resize(900, 700);
@@ -281,27 +281,27 @@ public:
     }
 
 private:
-    const PlotBase *graph;
+    const Plot *graph;
     QLabel *title_label = nullptr;
     GraphCanvas *canvas = nullptr;
 };
 
 
-void PlotBase::Show() const
+void Plot::Show() const
     { RunQT(std::make_unique<PlotWindow>(this)); }
 
-void PlotBase::Show(const float parameter) const
+void Plot::Show(const float parameter) const
     { RunQT(std::make_unique <GraphViewWindow>(this, parameter)); }
 
 
-class DynamicPlot final: public PlotBase
+class DynamicPlot final: public Plot
 {
 private:
     const Graph::DynamicData& data;
 
 public:
     DynamicPlot(const Graph::Canvas& canvas, Graph::DynamicData& ptr):
-        PlotBase(canvas, ptr.MinP, ptr.MaxP), data(ptr) { }
+        Plot(canvas, ptr.MinP, ptr.MaxP), data(ptr) { }
 
     [[nodiscard]] string Title(float parameter) const override
         { return data.Title(parameter); }
@@ -317,7 +317,7 @@ void Graph::Plot(const Graph::Canvas& canvas, DynamicData& data)
 }
 
 
-class StaticPlot final: public PlotBase
+class StaticPlot final: public Plot
 {
 private:
     const vector<Graph::Data>& data;
@@ -325,7 +325,7 @@ private:
 
 public:
     StaticPlot(const Graph::Canvas& canvas, const vector<Graph::Data>& d):
-        PlotBase(canvas, 0.0, 0.0), data(d) { }
+        Plot(canvas, 0.0, 0.0), data(d) { }
 
     [[nodiscard]] string Title(float parameter) const override
         { return ""; }
