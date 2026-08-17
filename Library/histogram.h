@@ -19,18 +19,21 @@ using namespace std;
 
 namespace Histogram
 {
-    typedef vector<float> values;
+    typedef vector<float> counts;
 
     class Data
     {
+    private:
+        const counts Values;
+
     public:
         const string Color;
         const string Label;
-        const values Salues
-        const int Size;
 
-        Data(const string& color, const string& label, const value& values):
+        Data(const string& color, const string& label, const counts& values):
             Color(color), Label(label), Values(values) { }
+
+        counts Counts(const int) const;
     };
 
     typedef vector<Data*>& DataFrame;
@@ -40,13 +43,15 @@ namespace Histogram
         const string Title;
         const string XLabel;
         const string YLabel;
+        const int Bins;
         const float MinY;
         const float MaxY;
         Canvas(const Canvas&) = default;
 
         Canvas(const string& title, const string& xLabel, const string& yLabel,
-               const float minY, const float maxY):
-            Title(title), XLabel(xLabel), YLabel(yLabel), MinY(minY), MaxY(maxY) { }
+               const int bins, const float minY, const float maxY):
+            Title(title), XLabel(xLabel), YLabel(yLabel), Bins(bins),
+            MinY(minY), MaxY(maxY) { }
     };
 
     class DynamicData
