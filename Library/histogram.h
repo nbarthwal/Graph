@@ -17,23 +17,25 @@
 using namespace std;
 
 
-class Histogram
+namespace Histogram
 {
-public:
-    const bool Slider;
-    const string WindowTitle;
-    const float MinP;
-    const float MaxP;
-    const float MinX;
-    const float MaxX;
-    const float MinY;
-    const float MaxY;
+    struct Canvas
+    {
+        const string Title;
+        const string XLabel;
+        const string YLabel;
+        const float MinX;
+        const float MaxX;
+        const float MinY;
+        const float MaxY;
+        Canvas(const Canvas&) = default;
 
-    Histogram(const string& title, const bool slider, const float min_p,
-              const float max_p, const float min_x, const float max_x,
-              const float min_y, const float max_y) : Slider(slider), WindowTitle(
-              title), MinP(min_p), MaxP(max_p), MinX(min_x), MaxX(max_x),
-              MinY(min_y), MaxY(max_y) { }
+        Canvas(const string& title, const string& xLabel, const string& yLabel,
+               const float minX, const float maxX,
+               const float minY, const float maxY):
+            Title(title), XLabel(xLabel), YLabel(yLabel),
+            MinX(minX), MaxX(maxX), MinY(minY), MaxY(maxY) { }
+    };
 
     class Data
     {
@@ -50,9 +52,34 @@ public:
         virtual ~Data() = default;
     };
 
-    [[nodiscard]] virtual const vector<unique_ptr<Data>>& DataSets() const = 0;
-    [[nodiscard]] virtual string Title(float parameter) const = 0;
-    GRAPH_API void Show(float parameter);
-    GRAPH_API void Plot();
-    virtual ~Histogram() = default;
-};
+    class Base
+    {
+    public:
+        const bool Slider;
+        const string WindowTitle;
+        const string XLabel;
+        const string YLabel;
+        const float MinP;
+        const float MaxP;
+        const float MinX;
+        const float MaxX;
+        const float MinY;
+        const float MaxY;
+
+        Base(const Canvas& canvas, const bool slider, const float min_p,
+             const float max_p) :
+            Slider(slider), WindowTitle(canvas.Title),
+            XLabel(canvas.XLabel), YLabel(canvas.YLabel),
+            MinP(min_p), MaxP(max_p),
+            MinX(canvas.MinX), MaxX(canvas.MaxX),
+            MinY(canvas.MinY), MaxY(canvas.MaxY) { }
+
+        [[nodiscard]] virtual const vector<unique_ptr<Data>>& DataSets() const = 0;
+        [[nodiscard]] virtual string Title(float parameter) const = 0;
+        virtual ~Base() = default;
+    };
+
+    GRAPH_API void Plot(Base&);
+    GRAPH_API void Show(Base&, float parameter);
+
+}

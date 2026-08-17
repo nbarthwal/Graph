@@ -23,11 +23,12 @@ private:
     std::vector<float> counts_;
 };
 
-class GroupedHistogram final : public Histogram
+class GroupedHistogram final : public Histogram::Base
 {
 public:
-    GroupedHistogram() : Histogram("Grouped Histogram", true, 1.0f, 1.0f, 0.0f,
-            5.0f, 0.0f, 10.0f)
+    GroupedHistogram() : Histogram::Base(
+            { "Grouped Histogram", "bin", "count", 0.0f, 5.0f, 0.0f, 10.0f },
+            true, 1.0f, 1.0f)
     {
         data_sets_.push_back(
                 std::make_unique < StaticHistogramData
@@ -56,6 +57,6 @@ private:
 int main()
 {
     GroupedHistogram histogram;
-    histogram.Show(1.0f);
+    Histogram::Show(histogram, 1.0f);
     return 0;
 }

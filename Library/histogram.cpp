@@ -17,7 +17,7 @@
 class HistogramCanvas final : public QWidget
 {
 public:
-    explicit HistogramCanvas(const Histogram *histogram, QWidget *parent =
+    explicit HistogramCanvas(const Histogram::Base *histogram, QWidget *parent =
             nullptr) : QWidget(parent), histogram_(histogram)
     {
         setMinimumSize(640, 480);
@@ -100,12 +100,15 @@ private:
         painter.drawRect(plot_area);
 
         painter.setPen(Qt::black);
-        painter.drawText(plot_area.center().x() - 10, rect().bottom() - 12,
-                "bin");
+        const QRect x_label_rect(plot_area.left(), rect().bottom() - 24,
+                                 plot_area.width(), 20);
+        painter.drawText(x_label_rect, Qt::AlignHCenter | Qt::AlignBottom,
+                         QString::fromStdString(histogram_->XLabel));
         painter.save();
         painter.translate(18, plot_area.center().y());
         painter.rotate(-90);
-        painter.drawText(0, 0, "count");
+        painter.drawText(-50, -10, 100, 20, Qt::AlignHCenter | Qt::AlignVCenter,
+                         QString::fromStdString(histogram_->YLabel));
         painter.restore();
     }
 
@@ -171,14 +174,14 @@ private:
         ::DrawLegend(painter, plot_area, items);
     }
 
-    const Histogram *histogram_;
+    const Histogram::Base *histogram_;
     float parameter_ = 0.0f;
 };
 
 class HistogramWindow final : public QWidget
 {
 public:
-    explicit HistogramWindow(const Histogram *histogram) : histogram_(histogram)
+    explicit HistogramWindow(const Histogram::Base *histogram) : histogram_(histogram)
     {
         setWindowTitle(QString::fromStdString(histogram->WindowTitle));
         resize(900, 700);
@@ -218,7 +221,7 @@ private:
         histogram_canvas_->SetParameter(parameter);
     }
 
-    const Histogram *histogram_;
+    const Histogram::Base *histogram_;
     QLabel *title_label_ = nullptr;
     HistogramCanvas *histogram_canvas_ = nullptr;
     QSlider *slider_ = nullptr;
@@ -227,7 +230,7 @@ private:
 class HistogramViewWindow final : public QWidget
 {
 public:
-    HistogramViewWindow(const Histogram *histogram, float parameter) : histogram_(
+    HistogramViewWindow(const Histogram::Base *histogram, float parameter) : histogram_(
             histogram)
     {
         setWindowTitle(QString::fromStdString(histogram_->WindowTitle));
@@ -247,17 +250,17 @@ public:
     }
 
 private:
-    const Histogram *histogram_;
+    const Histogram::Base *histogram_;
     QLabel *title_label_ = nullptr;
     HistogramCanvas *canvas_ = nullptr;
 };
 
-void Histogram::Plot()
+void Histogram::Plot(Base& plot)
 {
-    RunQT(std::make_unique < HistogramWindow > (this));
+    RunQT(std::make_unique < HistogramWindow > (&plot));
 }
 
-void Histogram::Show(const float parameter)
+void Histogram::Show(Base& plot, const float parameter)
 {
-    RunQT(std::make_unique < HistogramViewWindow > (this, parameter));
+    RunQT(std::make_unique < HistogramViewWindow > (&plot, parameter));
 }

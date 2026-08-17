@@ -33,11 +33,12 @@ private:
     float sigma_;
 };
 
-class SliderHistogram final : public Histogram
+class SliderHistogram final : public Histogram::Base
 {
 public:
-    SliderHistogram() : Histogram("Gaussian Mixture", true, 0.5f, 2.0f, 0.0f,
-            12.0f, 0.0f, 12.0f)
+    SliderHistogram() : Histogram::Base(
+            { "Gaussian Mixture", "bin", "count", 0.0f, 12.0f, 0.0f, 12.0f },
+            true, 0.5f, 2.0f)
     {
         data_sets_.push_back(
                 std::make_unique < GaussianHistogramData
@@ -67,6 +68,6 @@ private:
 int main()
 {
     SliderHistogram histogram;
-    histogram.Plot();
+    Histogram::Plot(histogram);
     return 0;
 }
