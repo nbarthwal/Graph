@@ -33,9 +33,8 @@ public:
     const float MaxP;
     const bool Slider;
 
-    PlotBase(const string& title, const Graph::Canvas& canvas,
-              const float minP, const float maxP):
-        WindowTitle(title), Canvas(canvas), Slider(minP != maxP),
+    PlotBase(const Graph::Canvas& canvas, const float minP, const float maxP):
+        WindowTitle(canvas.Title), Canvas(canvas), Slider(minP != maxP),
         MinP(minP), MaxP(maxP) { }
 
     void Show() const;
@@ -133,12 +132,15 @@ private:
         painter.drawRect(plot_area);
 
         painter.setPen(Qt::black);
-        painter.drawText(plot_area.center().x() - 10, rect().bottom() - 12,
-                "x");
+        const QRect x_label_rect(plot_area.left(), rect().bottom() - 24,
+                                 plot_area.width(), 20);
+        painter.drawText(x_label_rect, Qt::AlignHCenter | Qt::AlignBottom,
+                         QString::fromStdString(graph->Canvas.XLabel));
         painter.save();
         painter.translate(18, plot_area.center().y());
         painter.rotate(-90);
-        painter.drawText(0, 0, "y");
+        painter.drawText(-50, -10, 100, 20, Qt::AlignHCenter | Qt::AlignVCenter,
+                         QString::fromStdString(graph->Canvas.YLabel));
         painter.restore();
     }
 
@@ -298,9 +300,8 @@ private:
     const Graph::DynamicData& data;
 
 public:
-    DynamicPlot(const string& title, const Graph::Canvas& canvas,
-                Graph::DynamicData& ptr):
-        PlotBase(title, canvas, ptr.MinP, ptr.MaxP), data(ptr) { }
+    DynamicPlot(const Graph::Canvas& canvas, Graph::DynamicData& ptr):
+        PlotBase(canvas, ptr.MinP, ptr.MaxP), data(ptr) { }
 
     [[nodiscard]] string Title(float parameter) const override
         { return data.Title(parameter); }
@@ -309,10 +310,9 @@ public:
         { return const_cast<Graph::DynamicData&>(data).Eval(parameter); }
 };
 
-void Graph::Plot(const string& title, const Graph::Canvas& canvas,
-                 DynamicData& data)
+void Graph::Plot(const Graph::Canvas& canvas, DynamicData& data)
 {
-    DynamicPlot plot(title, canvas, data);
+    DynamicPlot plot(canvas, data);
     plot.Show();
 }
 
@@ -324,9 +324,8 @@ private:
     mutable vector<Graph::Data*> result;
 
 public:
-    StaticPlot(const string& title, const Graph::Canvas& canvas,
-               const vector<Graph::Data>& d):
-        PlotBase(title, canvas, 0.0, 0.0), data(d) { }
+    StaticPlot(const Graph::Canvas& canvas, const vector<Graph::Data>& d):
+        PlotBase(canvas, 0.0, 0.0), data(d) { }
 
     [[nodiscard]] string Title(float parameter) const override
         { return ""; }
@@ -340,9 +339,8 @@ public:
     }
 };
 
-void Graph::Plot(const string& title, const Graph::Canvas& canvas,
-                 const vector<Graph::Data>& data)
+void Graph::Plot(const Graph::Canvas& canvas, const vector<Graph::Data>& data)
 {
-    StaticPlot plot(title, canvas, data);
+    StaticPlot plot(canvas, data);
     plot.Show();
 }

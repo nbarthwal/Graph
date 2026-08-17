@@ -30,7 +30,9 @@ public:
 
 int main()
 {
+    const Graph::Canvas canvas("Dynamic Graph Example", "Frequency", "Magnitute",
+                               0.0f, N, -1.0f, 1.0f);
     TrigonometryPlot plot;
-    Graph::Plot("Dynamic Graph Exampple", canvas, plot);
+    Graph::Plot(canvas, plot);
     return 0;
 }

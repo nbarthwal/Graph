@@ -19,6 +19,7 @@
 *.class
 *.exe
 *.bin
+*/build
 
 # Qt autogen / MOC
 *_autogen/

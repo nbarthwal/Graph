@@ -39,6 +39,3 @@ inline CurveData CosCurve(float frequency)
     }
     return CurveData("red", "Cos(x)", pts, true);
 }
-
-
-const Graph::Canvas canvas(0.0f, N, -1.0f, 1.0f);

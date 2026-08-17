@@ -41,14 +41,19 @@ namespace Graph
 
     struct Canvas
     {
+        const string Title;
+        const string XLabel;
+        const string YLabel;
         const float MinX;
         const float MaxX;
         const float MinY;
         const float MaxY;
         Canvas(const Canvas&) = default;
 
-        Canvas(const float minX, const float maxX,
+        Canvas(const string& title, const string& xLabel, const string& yLabel,
+               const float minX, const float maxX,
                const float minY, const float maxY):
+            Title(title), XLabel(xLabel), YLabel(yLabel),
             MinX(minX), MaxX(maxX), MinY(minY), MaxY(maxY) { }
     };
 
@@ -67,8 +72,8 @@ namespace Graph
     };
 
     GRAPH_API
-    void Plot(const string& title, const Canvas&, const vector<Data>&);
+    void Plot(const Canvas&, const vector<Data>&);
     GRAPH_API
-    void Plot(const string& title, const Canvas&, DynamicData&);
+    void Plot(const Canvas&, DynamicData&);
 
 };
