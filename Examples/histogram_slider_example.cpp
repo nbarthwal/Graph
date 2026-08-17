@@ -17,8 +17,7 @@ public:
 
     float Count(float p, int bin) const override
     {
-        const float bin_width = (kMaxX - kMinX) / static_cast<float>(Size);
-        const float x = kMinX + (static_cast<float>(bin) + 0.5f) * bin_width;
+        const float x = static_cast<float>(bin) + 0.5f;
         const float exponent = -((x - mean_) * (x - mean_))
                 / (2.0f * sigma_ * sigma_);
         return p * 10.0f * std::exp(exponent);
@@ -26,8 +25,6 @@ public:
 
 private:
     static constexpr int kSize = 12;
-    static constexpr float kMinX = 0.0f;
-    static constexpr float kMaxX = 12.0f;
 
     float mean_;
     float sigma_;
@@ -37,7 +34,7 @@ class SliderHistogram final : public Histogram::Base
 {
 public:
     SliderHistogram() : Histogram::Base(
-            { "Gaussian Mixture", "bin", "count", 0.0f, 12.0f, 0.0f, 12.0f },
+            { "Gaussian Mixture", "bin", "count", 0.0f, 12.0f },
             true, 0.5f, 2.0f)
     {
         data_sets_.push_back(

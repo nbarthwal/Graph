@@ -12,6 +12,7 @@
 
 #include <algorithm>
 #include <memory>
+#include <utility>
 #include <vector>
 
 class HistogramCanvas final : public QWidget
@@ -48,6 +49,22 @@ protected:
     }
 
 private:
+    [[nodiscard]] static float MinX()
+    {
+        return 0.0f;
+    }
+
+    [[nodiscard]] float MaxX() const
+    {
+        int max_bins = 0;
+        for (const auto &data : histogram_->DataSets())
+        {
+            if (data != nullptr)
+                max_bins = std::max(max_bins, data->Size);
+        }
+        return max_bins > 0 ? static_cast<float>(max_bins) : 1.0f;
+    }
+
     QRect PlotArea() const
     {
         return rect().adjusted(kPlotMarginLeft, kPlotMarginTop,
@@ -56,9 +73,9 @@ private:
 
     float ToPixelX(const QRect &plot_area, float x) const
     {
-        const float x_range = histogram_->MaxX - histogram_->MinX;
+        const float x_range = MaxX() - MinX();
         const float x_ratio =
-                x_range == 0.0f ? 0.0f : (x - histogram_->MinX) / x_range;
+                x_range == 0.0f ? 0.0f : (x - MinX()) / x_range;
         return plot_area.left() + x_ratio * plot_area.width();
     }
 
@@ -129,8 +146,7 @@ private:
 
             const QColor color = ParseColor(data->Color);
             const float bin_count = static_cast<float>(data->Size);
-            const float bin_width = (histogram_->MaxX - histogram_->MinX)
-                    / bin_count;
+            const float bin_width = (MaxX() - MinX()) / bin_count;
             const float group_width = bin_width * 0.9f;
             const float bar_width = group_width
                     / static_cast<float>(data_set_count);
@@ -143,7 +159,7 @@ private:
 
             for (int bin = 0; bin < data->Size; ++bin)
             {
-                const float center = histogram_->MinX
+                const float center = MinX()
                         + (static_cast<float>(bin) + 0.5f) * bin_width;
                 const float count = data->Count(parameter_, bin);
                 const float left = ToPixelX(plot_area,

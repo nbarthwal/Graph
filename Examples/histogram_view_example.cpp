@@ -27,7 +27,7 @@ class GroupedHistogram final : public Histogram::Base
 {
 public:
     GroupedHistogram() : Histogram::Base(
-            { "Grouped Histogram", "bin", "count", 0.0f, 5.0f, 0.0f, 10.0f },
+            { "Grouped Histogram", "bin", "count", 0.0f, 10.0f },
             true, 1.0f, 1.0f)
     {
         data_sets_.push_back(

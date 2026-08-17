@@ -24,17 +24,14 @@ namespace Histogram
         const string Title;
         const string XLabel;
         const string YLabel;
-        const float MinX;
-        const float MaxX;
         const float MinY;
         const float MaxY;
         Canvas(const Canvas&) = default;
 
         Canvas(const string& title, const string& xLabel, const string& yLabel,
-               const float minX, const float maxX,
                const float minY, const float maxY):
             Title(title), XLabel(xLabel), YLabel(yLabel),
-            MinX(minX), MaxX(maxX), MinY(minY), MaxY(maxY) { }
+            MinY(minY), MaxY(maxY) { }
     };
 
     class Data
@@ -61,8 +58,6 @@ namespace Histogram
         const string YLabel;
         const float MinP;
         const float MaxP;
-        const float MinX;
-        const float MaxX;
         const float MinY;
         const float MaxY;
 
@@ -71,7 +66,6 @@ namespace Histogram
             Slider(slider), WindowTitle(canvas.Title),
             XLabel(canvas.XLabel), YLabel(canvas.YLabel),
             MinP(min_p), MaxP(max_p),
-            MinX(canvas.MinX), MaxX(canvas.MaxX),
             MinY(canvas.MinY), MaxY(canvas.MaxY) { }
 
         [[nodiscard]] virtual const vector<unique_ptr<Data>>& DataSets() const = 0;
