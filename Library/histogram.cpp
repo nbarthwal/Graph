@@ -15,10 +15,37 @@
 #include <utility>
 #include <vector>
 
+using namespace std;
+
+
+Histogram::DynamicData::~DynamicData() = default;
+
+class Plot
+{
+public:
+    const string WindowTitle;
+    const Graph::Canvas Canvas;
+    const float MinP;
+    const float MaxP;
+    const bool Slider;
+
+    Plot(const Graph::Canvas& canvas, const float minP, const float maxP):
+        WindowTitle(canvas.Title), Canvas(canvas), Slider(minP != maxP),
+        MinP(minP), MaxP(maxP) { }
+
+    void Show() const;
+    void Show(float) const;
+
+    [[nodiscard]] virtual string Title(float parameter) const = 0;
+    [[nodiscard]] virtual Graph::DataFrame Get(float) const = 0;
+    virtual ~Plot() = default;
+};
+
+
 class HistogramCanvas final : public QWidget
 {
 public:
-    explicit HistogramCanvas(const Histogram::Base *histogram, QWidget *parent =
+    explicit HistogramCanvas(const Plot *histogram, QWidget *parent =
             nullptr) : QWidget(parent), histogram_(histogram)
     {
         setMinimumSize(640, 480);
@@ -271,12 +298,62 @@ private:
     HistogramCanvas *canvas_ = nullptr;
 };
 
-void Histogram::Plot(Base& plot)
+
+
+void Plot::Show() const
+    { RunQT(std::make_unique<PlotWindow>(this)); }
+
+void Plot::Show(const float parameter) const
+    { RunQT(std::make_unique <GraphViewWindow>(this, parameter)); }
+
+
+class DynamicPlot final: public Plot
 {
-    RunQT(std::make_unique < HistogramWindow > (&plot));
+private:
+    const Graph::DynamicData& data;
+
+public:
+    DynamicPlot(const Graph::Canvas& canvas, Graph::DynamicData& ptr):
+        Plot(canvas, ptr.MinP, ptr.MaxP), data(ptr) { }
+
+    [[nodiscard]] string Title(float parameter) const override
+        { return data.Title(parameter); }
+
+    [[nodiscard]] Graph::DataFrame Get(float parameter) const override
+        { return const_cast<Graph::DynamicData&>(data).Eval(parameter); }
+};
+
+void Graph::Plot(const Graph::Canvas& canvas, DynamicData& data)
+{
+    DynamicPlot plot(canvas, data);
+    plot.Show();
 }
 
-void Histogram::Show(Base& plot, const float parameter)
+
+class StaticPlot final: public Plot
 {
-    RunQT(std::make_unique < HistogramViewWindow > (&plot, parameter));
+private:
+    const vector<Graph::Data>& data;
+    mutable vector<Graph::Data*> result;
+
+public:
+    StaticPlot(const Graph::Canvas& canvas, const vector<Graph::Data>& d):
+        Plot(canvas, 0.0, 0.0), data(d) { }
+
+    [[nodiscard]] string Title(float parameter) const override
+        { return ""; }
+
+    [[nodiscard]] Graph::DataFrame Get(float) const override
+    {
+        result.clear();
+        for (const Graph::Data& d : data)
+            result.push_back(const_cast<Graph::Data*>(&d));
+        return result;
+    }
+};
+
+void Graph::Plot(const Graph::Canvas& canvas, const vector<Graph::Data>& data)
+{
+    StaticPlot plot(canvas, data);
+    plot.Show();
 }
