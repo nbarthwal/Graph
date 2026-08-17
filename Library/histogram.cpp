@@ -19,9 +19,12 @@ using namespace std;
 
 Histogram::counts Histogram::Data::Counts(const int n) const
 {
-    // TODO: If the value of Values vector is less that n then pad 0.0f to the
-    //       vector and return. If the size is greater than n, return the first
-    //       n elements of the vector.
+    counts result = Values;
+    if (static_cast<int>(result.size()) > n)
+        result.resize(n);
+    else if (static_cast<int>(result.size()) < n)
+        result.resize(n, 0.0f);
+    return result;
 }
 
 
