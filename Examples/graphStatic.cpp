@@ -1,5 +1,5 @@
 #include <graph.h>
-#include "trigonometry.h"
+#include "graphHeader.h"
 
 
 int main()
