@@ -12,6 +12,7 @@
 
 #include <algorithm>
 #include <memory>
+#include <set>
 #include <vector>
 
 using namespace std;
@@ -201,13 +202,16 @@ private:
 
     void DrawLegend(QPainter &painter, const QRect &plot_area) const
     {
-        std::vector<LegendItem> items;
-        for (const auto data : histogram->Get(parameter))
+        set<pair<string, string>> labels;
+        vector<LegendItem> items;
+        for (const auto& bar: histogram->Get(parameter))
         {
-            if (data == nullptr) continue;
-            // TODO: Do uniqe for Legend
-            items.push_back( { data->Label, ParseColor(data->Color),
-                    LegendSwatch::Bar });
+            pair<string, string> p = make_pair(bar->Label, bar->Color);
+            if (labels.count(p) > 0)
+                continue;
+
+            labels.emplace(p);
+            items.push_back({bar->Label, ParseColor(bar->Color), LegendSwatch::Bar});
         }
 
         ::DrawLegend(painter, plot_area, items);
