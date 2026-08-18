@@ -33,7 +33,7 @@ namespace Histogram
         Data(const string& color, const string& label, const counts& values):
             Color(color), Label(label), Values(values) { }
 
-        counts Counts(const int) const;
+        counts Count(const int) const;
     };
 
     typedef vector<Data*>& DataFrame;

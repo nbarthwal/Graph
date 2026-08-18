@@ -17,7 +17,7 @@
 using namespace std;
 
 
-Histogram::counts Histogram::Data::Counts(const int n) const
+Histogram::counts Histogram::Data::Count(const int n) const
 {
     counts result = Values;
     if (static_cast<int>(result.size()) > n)
@@ -30,6 +30,7 @@ Histogram::counts Histogram::Data::Counts(const int n) const
 
 Histogram::DynamicData::~DynamicData() = default;
 
+
 class Plot
 {
 public:
@@ -40,8 +41,8 @@ public:
     const bool Slider;
 
     Plot(const Histogram::Canvas& canvas, const float minP, const float maxP):
-        WindowTitle(canvas.Title), Canvas(canvas), Slider(minP != maxP),
-        MinP(minP), MaxP(maxP) { }
+        WindowTitle(canvas.Title), Canvas(canvas), MinP(minP), MaxP(maxP),
+        Slider(minP != maxP) { }
 
     void Show() const;
     void Show(float) const;
@@ -90,7 +91,7 @@ private:
         { return 0.0f; }
 
     [[nodiscard]] float MaxX() const
-        { int max_bins = histogram->Canvas.Bins; }
+        { return histogram->Canvas.Bins; }
 
     QRect PlotArea() const
     {
@@ -158,33 +159,28 @@ private:
 
     void DrawHistograms(QPainter &painter, const QRect &plot_area) const
     {
-        const std::vector<std::unique_ptr<Histogram::Data>> &data_sets =
-                histogram->DataSets();
-        if (data_sets.empty()) return;
-
-        const std::size_t data_set_count = data_sets.size();
+        const Histogram::DataFrame dataset = histogram->Get(parameter);
+        const int count = static_cast<int>(dataset.size());
+        if (dataset.empty()) return;
         const float baseline_y = ToPixelY(plot_area, histogram->Canvas.MinY);
+        const float countFloat = static_cast<float>(count);
 
-        for (std::size_t data_index = 0; data_index < data_set_count;
-                ++data_index)
+        for (int index = 0; index < count; ++index)
         {
-            const Histogram::Data *data = data_sets[data_index].get();
-            if (data == nullptr || data->Size <= 0) continue;
-
+            const Histogram::Data* data = dataset[index];
+            if (data == nullptr) continue;
             const QColor color = ParseColor(data->Color);
-            const float bin_count = static_cast<float>(data->Size);
+            const float bin_count = histogram->Canvas.Bins;
+            const float bin_countf = static_cast<float>(bin_count);
             const float bin_width = (MaxX() - MinX()) / bin_count;
             const float group_width = bin_width * 0.9f;
-            const float bar_width = group_width
-                    / static_cast<float>(data_set_count);
-            const float group_offset = (static_cast<float>(data_index)
-                    - (static_cast<float>(data_set_count) - 1.0f) / 2.0f)
-                    * bar_width;
-
+            const float bar_width = group_width / countFloat;
+            const float group_offset = (static_cast<float>(index)
+                    - (countFloat - 1.0f) / 2.0f) * bar_width;
             painter.setPen(QPen(color.darker(120), 1.0));
             painter.setBrush(color);
 
-            for (int bin = 0; bin < data->Size; ++bin)
+            for (int bin = 0; bin < bin_count; ++bin)
             {
                 const float center = MinX()
                         + (static_cast<float>(bin) + 0.5f) * bin_width;
@@ -206,10 +202,10 @@ private:
     void DrawLegend(QPainter &painter, const QRect &plot_area) const
     {
         std::vector<LegendItem> items;
-        for (const auto &data : histogram->DataSets())
+        for (const auto data : histogram->Get(parameter))
         {
             if (data == nullptr) continue;
-
+            // TODO: Do uniqe for Legend
             items.push_back( { data->Label, ParseColor(data->Color),
                     LegendSwatch::Bar });
         }
@@ -224,7 +220,7 @@ private:
 class HistogramWindow final : public QWidget
 {
 public:
-    explicit HistogramWindow(const Plot *histogram) : histogram(histogram)
+    explicit HistogramWindow(const Plot *plot) : histogram(plot)
     {
         setWindowTitle(QString::fromStdString(histogram->WindowTitle));
         resize(900, 700);
@@ -301,10 +297,10 @@ private:
 
 
 void Plot::Show() const
-    { RunQT(std::make_unique<PlotWindow>(this)); }
+    { RunQT(std::make_unique<HistogramWindow>(this)); }
 
 void Plot::Show(const float parameter) const
-    { RunQT(std::make_unique <GraphViewWindow>(this, parameter)); }
+    { RunQT(std::make_unique <HistogramViewWindow>(this, parameter)); }
 
 
 class DynamicPlot final: public Plot

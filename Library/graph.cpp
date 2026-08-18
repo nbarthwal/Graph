@@ -213,10 +213,10 @@ private:
 };
 
 
-class PlotWindow final : public QWidget
+class GraphWindow final : public QWidget
 {
 public:
-    explicit PlotWindow(const Plot *g) : graph(g)
+    explicit GraphWindow(const Plot *g) : graph(g)
     {
         setWindowTitle(QString::fromStdString(graph->WindowTitle));
         resize(900, 700);
@@ -288,7 +288,7 @@ private:
 
 
 void Plot::Show() const
-    { RunQT(std::make_unique<PlotWindow>(this)); }
+    { RunQT(std::make_unique<GraphWindow>(this)); }
 
 void Plot::Show(const float parameter) const
     { RunQT(std::make_unique <GraphViewWindow>(this, parameter)); }
