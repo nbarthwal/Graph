@@ -15,8 +15,7 @@ function(add_graph_plot_example target_name)
 endfunction()
 
 
-add_graph_plot_example(histogram_grouped_example histogram_grouped_example.cpp)
-add_graph_plot_example(histogram_slider_example histogram_slider_example.cpp)
-add_graph_plot_example(histogram_view_example histogram_view_example.cpp)
+add_graph_plot_example(histogramStatic histogramStatic.cpp)
+add_graph_plot_example(histogramDynamic histogramDynamic.cpp)
 add_graph_plot_example(graphStatic graphStatic.cpp)
 add_graph_plot_example(graphDynamic graphDynamic.cpp)

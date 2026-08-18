@@ -19,61 +19,54 @@ using namespace std;
 
 namespace Histogram
 {
+    typedef vector<float> counts;
+
+    class Data
+    {
+    private:
+        const counts Values;
+
+    public:
+        const string Color;
+        const string Label;
+
+        Data(const string& color, const string& label, const counts& values):
+            Color(color), Label(label), Values(values) { }
+
+        counts Count(const int) const;
+    };
+
+    typedef vector<Data*>& DataFrame;
+
     struct Canvas
     {
         const string Title;
         const string XLabel;
         const string YLabel;
+        const int Bins;
         const float MinY;
         const float MaxY;
         Canvas(const Canvas&) = default;
 
         Canvas(const string& title, const string& xLabel, const string& yLabel,
-               const float minY, const float maxY):
-            Title(title), XLabel(xLabel), YLabel(yLabel),
+               const int bins, const float minY, const float maxY):
+            Title(title), XLabel(xLabel), YLabel(yLabel), Bins(bins),
             MinY(minY), MaxY(maxY) { }
     };
 
-    class Data
+    class DynamicData
     {
     public:
-        const string Color;
-        const string Label;
-        const int Size;
-
-        Data(string color, string label, int size): Color(std::move(color)),
-                                                    Label(std::move(label)),
-                                                    Size(size) {}
-
-        [[nodiscard]] virtual float Count(float p, int bin) const = 0;
-        virtual ~Data() = default;
-    };
-
-    class Base
-    {
-    public:
-        const bool Slider;
-        const string WindowTitle;
-        const string XLabel;
-        const string YLabel;
         const float MinP;
         const float MaxP;
-        const float MinY;
-        const float MaxY;
 
-        Base(const Canvas& canvas, const bool slider, const float min_p,
-             const float max_p) :
-            Slider(slider), WindowTitle(canvas.Title),
-            XLabel(canvas.XLabel), YLabel(canvas.YLabel),
-            MinP(min_p), MaxP(max_p),
-            MinY(canvas.MinY), MaxY(canvas.MaxY) { }
-
-        [[nodiscard]] virtual const vector<unique_ptr<Data>>& DataSets() const = 0;
+        DynamicData(const float minP, const float maxP):
+            MinP(minP), MaxP(maxP) { }
+        virtual ~DynamicData();
         [[nodiscard]] virtual string Title(float parameter) const = 0;
-        virtual ~Base() = default;
+        [[nodiscard]] virtual DataFrame Eval(float) = 0;
     };
 
-    GRAPH_API void Plot(Base&);
-    GRAPH_API void Show(Base&, float parameter);
-
-}
+    GRAPH_API void Plot(const Canvas&, const vector<Data>&);
+    GRAPH_API void Plot(const Canvas&, DynamicData&);
+};

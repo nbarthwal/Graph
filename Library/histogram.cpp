@@ -12,14 +12,52 @@
 
 #include <algorithm>
 #include <memory>
-#include <utility>
 #include <vector>
+
+using namespace std;
+
+
+Histogram::counts Histogram::Data::Count(const int n) const
+{
+    counts result = Values;
+    if (static_cast<int>(result.size()) > n)
+        result.resize(n);
+    else if (static_cast<int>(result.size()) < n)
+        result.resize(n, 0.0f);
+    return result;
+}
+
+
+Histogram::DynamicData::~DynamicData() = default;
+
+
+class Plot
+{
+public:
+    const string WindowTitle;
+    const Histogram::Canvas Canvas;
+    const float MinP;
+    const float MaxP;
+    const bool Slider;
+
+    Plot(const Histogram::Canvas& canvas, const float minP, const float maxP):
+        WindowTitle(canvas.Title), Canvas(canvas), MinP(minP), MaxP(maxP),
+        Slider(minP != maxP) { }
+
+    void Show() const;
+    void Show(float) const;
+
+    [[nodiscard]] virtual string Title(float parameter) const = 0;
+    [[nodiscard]] virtual Histogram::DataFrame Get(float) const = 0;
+    virtual ~Plot() = default;
+};
+
 
 class HistogramCanvas final : public QWidget
 {
 public:
-    explicit HistogramCanvas(const Histogram::Base *histogram, QWidget *parent =
-            nullptr) : QWidget(parent), histogram_(histogram)
+    explicit HistogramCanvas(const Plot *histogram, QWidget *parent = nullptr):
+        QWidget(parent), histogram(histogram), Bins(histogram->Canvas.Bins)
     {
         setMinimumSize(640, 480);
         setAutoFillBackground(true);
@@ -28,9 +66,9 @@ public:
         setPalette(palette);
     }
 
-    void SetParameter(float parameter)
+    void SetParameter(float param)
     {
-        parameter_ = parameter;
+        parameter = param;
         update();
     }
 
@@ -50,20 +88,10 @@ protected:
 
 private:
     [[nodiscard]] static float MinX()
-    {
-        return 0.0f;
-    }
+        { return 0.0f; }
 
     [[nodiscard]] float MaxX() const
-    {
-        int max_bins = 0;
-        for (const auto &data : histogram_->DataSets())
-        {
-            if (data != nullptr)
-                max_bins = std::max(max_bins, data->Size);
-        }
-        return max_bins > 0 ? static_cast<float>(max_bins) : 1.0f;
-    }
+        { return histogram->Canvas.Bins; }
 
     QRect PlotArea() const
     {
@@ -81,9 +109,9 @@ private:
 
     float ToPixelY(const QRect &plot_area, float y) const
     {
-        const float y_range = histogram_->MaxY - histogram_->MinY;
+        const float y_range = histogram->Canvas.MaxY - histogram->Canvas.MinY;
         const float y_ratio =
-                y_range == 0.0f ? 0.0f : (y - histogram_->MinY) / y_range;
+                y_range == 0.0f ? 0.0f : (y - histogram->Canvas.MinY) / y_range;
         return plot_area.bottom() - y_ratio * plot_area.height();
     }
 
@@ -120,48 +148,43 @@ private:
         const QRect x_label_rect(plot_area.left(), rect().bottom() - 24,
                                  plot_area.width(), 20);
         painter.drawText(x_label_rect, Qt::AlignHCenter | Qt::AlignBottom,
-                         QString::fromStdString(histogram_->XLabel));
+                         QString::fromStdString(histogram->Canvas.XLabel));
         painter.save();
         painter.translate(18, plot_area.center().y());
         painter.rotate(-90);
         painter.drawText(-50, -10, 100, 20, Qt::AlignHCenter | Qt::AlignVCenter,
-                         QString::fromStdString(histogram_->YLabel));
+                         QString::fromStdString(histogram->Canvas.YLabel));
         painter.restore();
     }
 
     void DrawHistograms(QPainter &painter, const QRect &plot_area) const
     {
-        const std::vector<std::unique_ptr<Histogram::Data>> &data_sets =
-                histogram_->DataSets();
-        if (data_sets.empty()) return;
+        const Histogram::DataFrame dataset = histogram->Get(parameter);
+        const int count = static_cast<int>(dataset.size());
+        if (dataset.empty()) return;
+        const float baseline_y = ToPixelY(plot_area, histogram->Canvas.MinY);
+        const float countFloat = static_cast<float>(count);
 
-        const std::size_t data_set_count = data_sets.size();
-        const float baseline_y = ToPixelY(plot_area, histogram_->MinY);
-
-        for (std::size_t data_index = 0; data_index < data_set_count;
-                ++data_index)
+        for (int index = 0; index < count; ++index)
         {
-            const Histogram::Data *data = data_sets[data_index].get();
-            if (data == nullptr || data->Size <= 0) continue;
-
+            const Histogram::Data* data = dataset[index];
+            if (data == nullptr) continue;
             const QColor color = ParseColor(data->Color);
-            const float bin_count = static_cast<float>(data->Size);
+            const float bin_count = static_cast<float>(Bins);
             const float bin_width = (MaxX() - MinX()) / bin_count;
             const float group_width = bin_width * 0.9f;
-            const float bar_width = group_width
-                    / static_cast<float>(data_set_count);
-            const float group_offset = (static_cast<float>(data_index)
-                    - (static_cast<float>(data_set_count) - 1.0f) / 2.0f)
-                    * bar_width;
-
+            const float bar_width = group_width / countFloat;
+            const float group_offset = (static_cast<float>(index)
+                    - (countFloat - 1.0f) / 2.0f) * bar_width;
             painter.setPen(QPen(color.darker(120), 1.0));
             painter.setBrush(color);
 
-            for (int bin = 0; bin < data->Size; ++bin)
+            Histogram::counts counts = data->Count(Bins);
+            for (int bin = 0; bin < Bins; ++bin)
             {
                 const float center = MinX()
                         + (static_cast<float>(bin) + 0.5f) * bin_width;
-                const float count = data->Count(parameter_, bin);
+                const float count = counts[bin];
                 const float left = ToPixelX(plot_area,
                         center + group_offset - bar_width / 2.0f);
                 const float right = ToPixelX(plot_area,
@@ -179,10 +202,10 @@ private:
     void DrawLegend(QPainter &painter, const QRect &plot_area) const
     {
         std::vector<LegendItem> items;
-        for (const auto &data : histogram_->DataSets())
+        for (const auto data : histogram->Get(parameter))
         {
             if (data == nullptr) continue;
-
+            // TODO: Do uniqe for Legend
             items.push_back( { data->Label, ParseColor(data->Color),
                     LegendSwatch::Bar });
         }
@@ -190,93 +213,144 @@ private:
         ::DrawLegend(painter, plot_area, items);
     }
 
-    const Histogram::Base *histogram_;
-    float parameter_ = 0.0f;
+    const Plot *histogram;
+    float parameter = 0.0f;
+    const int Bins;
 };
 
 class HistogramWindow final : public QWidget
 {
 public:
-    explicit HistogramWindow(const Histogram::Base *histogram) : histogram_(histogram)
+    explicit HistogramWindow(const Plot *plot) : histogram(plot)
     {
         setWindowTitle(QString::fromStdString(histogram->WindowTitle));
         resize(900, 700);
 
         auto *layout = new QVBoxLayout(this);
 
-        title_label_ = new QLabel(this);
-        layout->addWidget(title_label_);
+        title_label = new QLabel(this);
+        layout->addWidget(title_label);
 
-        histogram_canvas_ = new HistogramCanvas(histogram_, this);
-        layout->addWidget(histogram_canvas_, 1);
+        histogram_canvas = new HistogramCanvas(histogram, this);
+        layout->addWidget(histogram_canvas, 1);
 
-        slider_ = new QSlider(Qt::Horizontal, this);
-        slider_->setRange(0, kSliderSteps);
-        slider_->setValue(0);
-        layout->addWidget(slider_);
+        slider = new QSlider(Qt::Horizontal, this);
+        slider->setRange(0, kSliderSteps);
+        slider->setValue(0);
+        layout->addWidget(slider);
 
-        slider_->setVisible(histogram_->Slider);
-        if (histogram_->Slider)
+        slider->setVisible(histogram->Slider);
+        if (histogram->Slider)
         {
-            connect(slider_, &QSlider::valueChanged, this, [this](int value)
+            connect(slider, &QSlider::valueChanged, this, [this](int value)
             {    UpdateDisplay(
-                        SliderToParameter(value, histogram_->MinP,
-                                histogram_->MaxP));
+                        SliderToParameter(value, histogram->MinP,
+                                histogram->MaxP));
             });
         }
 
-        UpdateDisplay(histogram_->MinP);
+        UpdateDisplay(histogram->MinP);
     }
 
 private:
     void UpdateDisplay(float parameter)
     {
-        SetTitleLabel(*title_label_,
-                histogram_->Slider ?
-                        histogram_->Title(parameter) : histogram_->WindowTitle);
-        histogram_canvas_->SetParameter(parameter);
+        SetTitleLabel(*title_label,
+                histogram->Slider ?
+                        histogram->Title(parameter) : histogram->WindowTitle);
+        histogram_canvas->SetParameter(parameter);
     }
 
-    const Histogram::Base *histogram_;
-    QLabel *title_label_ = nullptr;
-    HistogramCanvas *histogram_canvas_ = nullptr;
-    QSlider *slider_ = nullptr;
+    const Plot *histogram;
+    QLabel *title_label = nullptr;
+    HistogramCanvas *histogram_canvas = nullptr;
+    QSlider *slider = nullptr;
 };
 
 class HistogramViewWindow final : public QWidget
 {
 public:
-    HistogramViewWindow(const Histogram::Base *histogram, float parameter) : histogram_(
+    HistogramViewWindow(const Plot *histogram, float parameter) : histogram(
             histogram)
     {
-        setWindowTitle(QString::fromStdString(histogram_->WindowTitle));
+        setWindowTitle(QString::fromStdString(histogram->WindowTitle));
         resize(900, 700);
 
         auto *layout = new QVBoxLayout(this);
 
-        title_label_ = new QLabel(this);
-        SetTitleLabel(*title_label_,
-                histogram_->Slider ?
-                        histogram_->Title(parameter) : histogram_->WindowTitle);
-        layout->addWidget(title_label_);
+        title_label = new QLabel(this);
+        SetTitleLabel(*title_label,
+                histogram->Slider ?
+                        histogram->Title(parameter) : histogram->WindowTitle);
+        layout->addWidget(title_label);
 
-        canvas_ = new HistogramCanvas(histogram_, this);
-        layout->addWidget(canvas_, 1);
-        canvas_->SetParameter(parameter);
+        canvas = new HistogramCanvas(histogram, this);
+        layout->addWidget(canvas, 1);
+        canvas->SetParameter(parameter);
     }
 
 private:
-    const Histogram::Base *histogram_;
-    QLabel *title_label_ = nullptr;
-    HistogramCanvas *canvas_ = nullptr;
+    const Plot *histogram;
+    QLabel *title_label = nullptr;
+    HistogramCanvas *canvas = nullptr;
 };
 
-void Histogram::Plot(Base& plot)
+
+
+void Plot::Show() const
+    { RunQT(std::make_unique<HistogramWindow>(this)); }
+
+void Plot::Show(const float parameter) const
+    { RunQT(std::make_unique <HistogramViewWindow>(this, parameter)); }
+
+
+class DynamicPlot final: public Plot
 {
-    RunQT(std::make_unique < HistogramWindow > (&plot));
+private:
+    const Histogram::DynamicData& data;
+
+public:
+    DynamicPlot(const Histogram::Canvas& canvas, Histogram::DynamicData& ptr):
+        Plot(canvas, ptr.MinP, ptr.MaxP), data(ptr) { }
+
+    [[nodiscard]] string Title(float parameter) const override
+        { return data.Title(parameter); }
+
+    [[nodiscard]] Histogram::DataFrame Get(float parameter) const override
+        { return const_cast<Histogram::DynamicData&>(data).Eval(parameter); }
+};
+
+void Histogram::Plot(const Histogram::Canvas& canvas, DynamicData& data)
+{
+    DynamicPlot plot(canvas, data);
+    plot.Show();
 }
 
-void Histogram::Show(Base& plot, const float parameter)
+
+class StaticPlot final: public Plot
 {
-    RunQT(std::make_unique < HistogramViewWindow > (&plot, parameter));
+private:
+    const vector<Histogram::Data>& data;
+    mutable vector<Histogram::Data*> result;
+
+public:
+    StaticPlot(const Histogram::Canvas& canvas, const vector<Histogram::Data>& d):
+        Plot(canvas, 0.0, 0.0), data(d) { }
+
+    [[nodiscard]] string Title(float parameter) const override
+        { return ""; }
+
+    [[nodiscard]] Histogram::DataFrame Get(float) const override
+    {
+        result.clear();
+        for (const Histogram::Data& d : data)
+            result.push_back(const_cast<Histogram::Data*>(&d));
+        return result;
+    }
+};
+
+void Histogram::Plot(const Histogram::Canvas& canvas, const vector<Histogram::Data>& data)
+{
+    StaticPlot plot(canvas, data);
+    plot.Show();
 }

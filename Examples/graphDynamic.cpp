@@ -1,6 +1,6 @@
 #include <graph.h>
 #include <vector>
-#include "trigonometry.h"
+#include "graphHeader.h"
 
 
 class TrigonometryPlot final : public Graph::DynamicData

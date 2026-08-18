@@ -20,6 +20,7 @@
 *.exe
 *.bin
 */build
+install/
 
 # Qt autogen / MOC
 *_autogen/
