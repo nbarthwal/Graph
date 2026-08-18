@@ -5,8 +5,28 @@
 #include <string>
 #include <vector>
 
-
 using namespace std;
+
+
+class GaussianData
+{
+private:
+    Histogram::Data data;
+
+public:
+    GaussianData(const string& Color, const string& Label, const Mean, const Sigma)
+    {
+
+    }
+
+    Histogram::Data* Eval(const float param)
+    {
+
+    }
+};
+
+
+GaussianData(float mean, float sigma, const string& color)
 
 /*
     class Data
@@ -23,6 +43,8 @@ using namespace std;
 
         counts Count(const int) const;
     };
+
+    typedef vector<Data*>& DataFrame;
 
     class DynamicData
     {
