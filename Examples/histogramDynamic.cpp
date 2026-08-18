@@ -1,5 +1,4 @@
 #include <cmath>
-#include <graph.h>
 #include <histogram.h>
 #include <memory>
 #include <string>
@@ -8,125 +7,76 @@
 using namespace std;
 
 
+const int Bins = 10;
+
 class GaussianData
 {
 private:
-    Histogram::Data data;
+    unique_ptr<Histogram::Data> data;
+    vector<float> values;
+    string color;
+    string label;
+    float mean;
+    float sigma;
 
 public:
-    GaussianData(const string& Color, const string& Label, const Mean, const Sigma)
+    GaussianData(string color, string label, float mean, float sigma):
+        color(std::move(color)), label(std::move(label)), mean(mean),
+        sigma(sigma)
     {
-
+        values.resize(Bins);
     }
 
-    Histogram::Data* Eval(const float param)
+    Histogram::Data* Eval(float p)
     {
-
+        for (int bin = 0; bin < Bins; ++bin)
+        {
+            const float x = static_cast<float>(bin) + 0.5f;
+            const float exponent = -((x - mean) * (x - mean))
+                    / (2.0f * sigma * sigma);
+            values[bin] = p * 10.0f * std::exp(exponent);
+        }
+        data = make_unique<Histogram::Data>(color, label, values);
+        return data.get();
     }
 };
 
 
-GaussianData(float mean, float sigma, const string& color)
-
-/*
-    class Data
-    {
-    private:
-        const counts Values;
-
-    public:
-        const string Color;
-        const string Label;
-
-        Data(const string& color, const string& label, const counts& values):
-            Color(color), Label(label), Values(values) { }
-
-        counts Count(const int) const;
-    };
-
-    typedef vector<Data*>& DataFrame;
-
-    class DynamicData
-    {
-    public:
-        const float MinP;
-        const float MaxP;
-
-        DynamicData(const float minP, const float maxP):
-            MinP(minP), MaxP(maxP) { }
-        virtual ~DynamicData();
-        [[nodiscard]] virtual string Title(float parameter) const = 0;
-        [[nodiscard]] virtual DataFrame Eval(float) = 0;
-    };
-*/
-// GaussianHistogramData(float mean, float sigma, std::string color) 
-
-Histogram::Data GaussianData(float mean, float sigma, const string& color)
+class GaussianDynamicData final : public Histogram::DynamicData
 {
-
-}
-
-class GaussianHistogramData final : public Histogram::DynamicData
-{
-public:
-    GaussianHistogramData(float mean, float sigma, std::string color) : Histogram::Data(
-            std::move(color),
-            "N(" + std::to_string(mean) + ", " + std::to_string(sigma) + ")",
-            kSize), mean_(mean), sigma_(sigma)
-    {
-    }
-
-    float Count(float p, int bin) const override
-    {
-        const float x = static_cast<float>(bin) + 0.5f;
-        const float exponent = -((x - mean_) * (x - mean_))
-                / (2.0f * sigma_ * sigma_);
-        return p * 10.0f * std::exp(exponent);
-    }
-
 private:
-    static constexpr int kSize = 12;
+    GaussianData g1;
+    GaussianData g2;
+    GaussianData g3;
+    vector<Histogram::Data*> result = { nullptr, nullptr, nullptr };
 
-    float mean_;
-    float sigma_;
-};
-
-class SliderHistogram final : public Histogram::Base
-{
 public:
-    SliderHistogram() : Histogram::Base(
-            { "Gaussian Mixture", "Bin", "Count", 0.0f, 12.0f },
-            true, 0.5f, 2.0f)
+    GaussianDynamicData() :
+        Histogram::DynamicData(0.5f, 2.0f),
+        g1("blue", "Blue", 4.0f, 1.2f),
+        g2("green", "Green", 7.0f, 1.5f),
+        g3("red", "Red", 2.5f, 0.9f) { }
+
+    [[nodiscard]] string Title(float parameter) const override
     {
-        data_sets_.push_back(
-                std::make_unique < GaussianHistogramData
-                        > (4.0f, 1.2f, "blue"));
-        data_sets_.push_back(
-                std::make_unique < GaussianHistogramData > (7.0f, 1.5f, "red"));
-        data_sets_.push_back(
-                std::make_unique < GaussianHistogramData
-                        > (2.5f, 0.9f, "green"));
+        return "Gaussian Mixture (p = " + to_string(parameter) + ")";
     }
 
-    const std::vector<std::unique_ptr<Histogram::Data>>& DataSets() const
-            override
+    [[nodiscard]] Histogram::DataFrame Eval(float p) override
     {
-        return data_sets_;
+        result[0] = g1.Eval(p);
+        result[1] = g2.Eval(p);
+        result[2] = g3.Eval(p);
+        return result;
     }
-
-    std::string Title(const float parameter) const override
-    {
-        return "Gaussian Mixture (p = " + std::to_string(parameter) + ")";
-    }
-
-private:
-    std::vector<std::unique_ptr<Histogram::Data>> data_sets_;
 };
-*/
+
 
 int main()
 {
-    // SliderHistogram histogram;
-    // Histogram::Plot(histogram);
+    const Histogram::Canvas canvas("Dynamic Histogram", "Bin", "Count", Bins,
+                                   0.0f, 12.0f);
+    GaussianDynamicData data;
+    Histogram::Plot(canvas, data);
     return 0;
 }
