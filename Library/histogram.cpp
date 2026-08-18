@@ -56,8 +56,8 @@ public:
 class HistogramCanvas final : public QWidget
 {
 public:
-    explicit HistogramCanvas(const Plot *histogram, QWidget *parent =
-            nullptr) : QWidget(parent), histogram(histogram)
+    explicit HistogramCanvas(const Plot *histogram, QWidget *parent = nullptr):
+        QWidget(parent), histogram(histogram), Bins(histogram->Canvas.Bins)
     {
         setMinimumSize(640, 480);
         setAutoFillBackground(true);
@@ -170,8 +170,7 @@ private:
             const Histogram::Data* data = dataset[index];
             if (data == nullptr) continue;
             const QColor color = ParseColor(data->Color);
-            const float bin_count = histogram->Canvas.Bins;
-            const float bin_countf = static_cast<float>(bin_count);
+            const float bin_count = static_cast<float>(Bins);
             const float bin_width = (MaxX() - MinX()) / bin_count;
             const float group_width = bin_width * 0.9f;
             const float bar_width = group_width / countFloat;
@@ -180,11 +179,12 @@ private:
             painter.setPen(QPen(color.darker(120), 1.0));
             painter.setBrush(color);
 
-            for (int bin = 0; bin < bin_count; ++bin)
+            Histogram::counts counts = data->Count(Bins);
+            for (int bin = 0; bin < Bins; ++bin)
             {
                 const float center = MinX()
                         + (static_cast<float>(bin) + 0.5f) * bin_width;
-                const float count = data->Count(parameter, bin);
+                const float count = counts[bin];
                 const float left = ToPixelX(plot_area,
                         center + group_offset - bar_width / 2.0f);
                 const float right = ToPixelX(plot_area,
@@ -215,6 +215,7 @@ private:
 
     const Plot *histogram;
     float parameter = 0.0f;
+    const int Bins;
 };
 
 class HistogramWindow final : public QWidget
