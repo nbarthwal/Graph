@@ -5,7 +5,46 @@
 #include <string>
 #include <vector>
 
-class GaussianHistogramData final : public Histogram::Data
+
+using namespace std;
+
+/*
+    class Data
+    {
+    private:
+        const counts Values;
+
+    public:
+        const string Color;
+        const string Label;
+
+        Data(const string& color, const string& label, const counts& values):
+            Color(color), Label(label), Values(values) { }
+
+        counts Count(const int) const;
+    };
+
+    class DynamicData
+    {
+    public:
+        const float MinP;
+        const float MaxP;
+
+        DynamicData(const float minP, const float maxP):
+            MinP(minP), MaxP(maxP) { }
+        virtual ~DynamicData();
+        [[nodiscard]] virtual string Title(float parameter) const = 0;
+        [[nodiscard]] virtual DataFrame Eval(float) = 0;
+    };
+*/
+// GaussianHistogramData(float mean, float sigma, std::string color) 
+
+Histogram::Data GaussianData(float mean, float sigma, const string& color)
+{
+
+}
+
+class GaussianHistogramData final : public Histogram::DynamicData
 {
 public:
     GaussianHistogramData(float mean, float sigma, std::string color) : Histogram::Data(
@@ -34,7 +73,7 @@ class SliderHistogram final : public Histogram::Base
 {
 public:
     SliderHistogram() : Histogram::Base(
-            { "Gaussian Mixture", "bin", "count", 0.0f, 12.0f },
+            { "Gaussian Mixture", "Bin", "Count", 0.0f, 12.0f },
             true, 0.5f, 2.0f)
     {
         data_sets_.push_back(
@@ -61,10 +100,11 @@ public:
 private:
     std::vector<std::unique_ptr<Histogram::Data>> data_sets_;
 };
+*/
 
 int main()
 {
-    SliderHistogram histogram;
-    Histogram::Plot(histogram);
+    // SliderHistogram histogram;
+    // Histogram::Plot(histogram);
     return 0;
 }
