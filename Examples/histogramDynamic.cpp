@@ -7,7 +7,11 @@
 using namespace std;
 
 
-const int Bins = 10;
+const vector<string> Bins = {
+    "Bin0", "Bin1", "Bin2", "Bin3", "Bin4", "Bin5",
+    "Bin6", "Bin7", "Bin8", "Bin9" };
+
+const int BinCount = static_cast<int>(Bins.size());
 
 class GaussianData
 {
@@ -24,12 +28,12 @@ public:
         color(std::move(color)), label(std::move(label)), mean(mean),
         sigma(sigma)
     {
-        values.resize(Bins);
+        values.resize(BinCount);
     }
 
     Histogram::Data* Eval(float p)
     {
-        for (int bin = 0; bin < Bins; ++bin)
+        for (int bin = 0; bin < BinCount; ++bin)
         {
             const float x = static_cast<float>(bin) + 0.5f;
             const float exponent = -((x - mean) * (x - mean))

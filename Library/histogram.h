@@ -43,15 +43,17 @@ namespace Histogram
         const string Title;
         const string XLabel;
         const string YLabel;
-        const int Bins;
+        const vector<string> Bins;
         const float MinY;
         const float MaxY;
+        const int Size;
+
         Canvas(const Canvas&) = default;
 
         Canvas(const string& title, const string& xLabel, const string& yLabel,
-               const int bins, const float minY, const float maxY):
+               const vector<string>& bins, const float minY, const float maxY):
             Title(title), XLabel(xLabel), YLabel(yLabel), Bins(bins),
-            MinY(minY), MaxY(maxY) { }
+            MinY(minY), MaxY(maxY), Size(static_cast<int>(bins.size())) { }
     };
 
     class DynamicData

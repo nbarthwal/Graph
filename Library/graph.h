@@ -29,11 +29,9 @@ namespace Graph
         const string Label;
         const bool Bullet;
         const points Points;
-        virtual ~Data() = default;
 
-    protected:
-        Data(const string& color, const string& label, const points& pts,
-             bool bullet):
+        Data(const string& color, const string& label,
+             const points& pts, const bool bullet):
             Color(color), Label(label), Points(pts), Bullet(bullet) { }
     };
 

@@ -58,7 +58,7 @@ class HistogramCanvas final : public QWidget
 {
 public:
     explicit HistogramCanvas(const Plot *histogram, QWidget *parent = nullptr):
-        QWidget(parent), histogram(histogram), Bins(histogram->Canvas.Bins)
+        QWidget(parent), histogram(histogram), Bins(histogram->Canvas.Size)
     {
         setMinimumSize(640, 480);
         setAutoFillBackground(true);
@@ -92,7 +92,7 @@ private:
         { return 0.0f; }
 
     [[nodiscard]] float MaxX() const
-        { return histogram->Canvas.Bins; }
+        { return static_cast<float>(histogram->Canvas.Size); }
 
     QRect PlotArea() const
     {
@@ -146,6 +146,17 @@ private:
         painter.drawRect(plot_area);
 
         painter.setPen(Qt::black);
+        const float bin_width = (MaxX() - MinX()) / static_cast<float>(Bins);
+        for (int bin = 0; bin < Bins; ++bin)
+        {
+            const float center = MinX()
+                    + (static_cast<float>(bin) + 0.5f) * bin_width;
+            const int x = static_cast<int>(ToPixelX(plot_area, center));
+            const QRect tick_rect(x - 40, plot_area.bottom() + 4, 80, 18);
+            painter.drawText(tick_rect, Qt::AlignHCenter | Qt::AlignTop,
+                             QString::fromStdString(histogram->Canvas.Bins[bin]));
+        }
+
         const QRect x_label_rect(plot_area.left(), rect().bottom() - 24,
                                  plot_area.width(), 20);
         painter.drawText(x_label_rect, Qt::AlignHCenter | Qt::AlignBottom,
