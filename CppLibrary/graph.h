@@ -37,6 +37,20 @@ namespace Graph
 
     typedef vector<Data*>& DataFrame;
 
+    class DynamicData
+    {
+    public:
+        const float MinP;
+        const float MaxP;
+
+        DynamicData(const float minP, const float maxP):
+            MinP(minP), MaxP(maxP) { }
+        virtual ~DynamicData();
+
+        [[nodiscard]] virtual string Title(float parameter) const = 0;
+        [[nodiscard]] virtual DataFrame Eval(float) = 0;
+    };
+
     struct Canvas
     {
         const string Title;
@@ -53,22 +67,8 @@ namespace Graph
                const float minY, const float maxY):
             Title(title), XLabel(xLabel), YLabel(yLabel),
             MinX(minX), MaxX(maxX), MinY(minY), MaxY(maxY) { }
+
+        GRAPH_API void Plot(const vector<Data>&);
+        GRAPH_API void Plot(DynamicData&);
     };
-
-    class DynamicData
-    {
-    public:
-        const float MinP;
-        const float MaxP;
-
-        DynamicData(const float minP, const float maxP):
-            MinP(minP), MaxP(maxP) { }
-        virtual ~DynamicData();
-
-        [[nodiscard]] virtual string Title(float parameter) const = 0;
-        [[nodiscard]] virtual DataFrame Eval(float) = 0;
-    };
-
-    GRAPH_API void Plot(const Canvas*, const vector<Data>&);
-    GRAPH_API void Plot(const Canvas*, DynamicData&);
 };

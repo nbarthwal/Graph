@@ -335,9 +335,9 @@ public:
         { return const_cast<Histogram::DynamicData&>(data).Eval(parameter); }
 };
 
-void Histogram::Plot(const Histogram::Canvas* canvas, DynamicData& data)
+void Histogram::Canvas::Plot(DynamicData& data)
 {
-    DynamicPlot plot(canvas, data);
+    DynamicPlot plot(this, data);
     plot.Show();
 }
 
@@ -364,8 +364,8 @@ public:
     }
 };
 
-void Histogram::Plot(const Histogram::Canvas* canvas, const vector<Histogram::Data>& data)
+void Histogram::Canvas::Plot(const vector<Histogram::Data>& data)
 {
-    StaticPlot plot(canvas, data);
+    StaticPlot plot(this, data);
     plot.Show();
 }

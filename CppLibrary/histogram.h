@@ -38,7 +38,20 @@ namespace Histogram
 
     typedef vector<Data*>& DataFrame;
 
-    struct Canvas
+    class DynamicData
+    {
+    public:
+        const float MinP;
+        const float MaxP;
+
+        DynamicData(const float minP, const float maxP):
+            MinP(minP), MaxP(maxP) { }
+        virtual ~DynamicData();
+        [[nodiscard]] virtual string Title(float parameter) const = 0;
+        [[nodiscard]] virtual DataFrame Eval(float) = 0;
+    };
+
+        struct Canvas
     {
         const string Title;
         const string XLabel;
@@ -54,21 +67,8 @@ namespace Histogram
                const vector<string>& bins, const float minY, const float maxY):
             Title(title), XLabel(xLabel), YLabel(yLabel), Bins(bins),
             MinY(minY), MaxY(maxY), Size(static_cast<int>(bins.size())) { }
+
+        GRAPH_API void Plot(const vector<Data>&);
+        GRAPH_API void Plot(DynamicData&);
     };
-
-    class DynamicData
-    {
-    public:
-        const float MinP;
-        const float MaxP;
-
-        DynamicData(const float minP, const float maxP):
-            MinP(minP), MaxP(maxP) { }
-        virtual ~DynamicData();
-        [[nodiscard]] virtual string Title(float parameter) const = 0;
-        [[nodiscard]] virtual DataFrame Eval(float) = 0;
-    };
-
-    GRAPH_API void Plot(const Canvas*, const vector<Data>&);
-    GRAPH_API void Plot(const Canvas*, DynamicData&);
 };

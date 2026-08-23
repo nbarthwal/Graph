@@ -310,9 +310,9 @@ public:
         { return const_cast<Graph::DynamicData&>(data).Eval(parameter); }
 };
 
-void Graph::Plot(const Graph::Canvas* canvas, DynamicData& data)
+void Graph::Canvas::Plot(DynamicData& data)
 {
-    DynamicPlot plot(canvas, data);
+    DynamicPlot plot(this, data);
     plot.Show();
 }
 
@@ -339,8 +339,8 @@ public:
     }
 };
 
-void Graph::Plot(const Graph::Canvas* canvas, const vector<Graph::Data>& data)
+void Graph::Canvas::Plot(const vector<Graph::Data>& data)
 {
-    StaticPlot plot(canvas, data);
+    StaticPlot plot(this, data);
     plot.Show();
 }
