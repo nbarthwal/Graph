@@ -19,9 +19,9 @@
 *.class
 *.exe
 *.bin
-*/bin/
-*/obj/
-*/build
+**/bin/
+**/obj/
+**/build
 install/
 
 # Qt autogen / MOC

@@ -84,9 +84,15 @@ public sealed class HistogramWindow : Window
         Height = 700;
         avaPlot.MinHeight = 480;
 
-        var layout = new StackPanel { Spacing = 8, Margin = new Avalonia.Thickness(12) };
+        var layout = new Grid
+        {
+            Margin = new Avalonia.Thickness(12),
+            RowDefinitions = new RowDefinitions("Auto,*,Auto"),
+        };
         layout.Children.Add(titleText);
+        Grid.SetRow(titleText, 0);
         layout.Children.Add(avaPlot);
+        Grid.SetRow(avaPlot, 1);
 
         if (dynamicData is not null)
         {
@@ -95,6 +101,7 @@ public sealed class HistogramWindow : Window
                 PlotHelpers.SliderToParameter(slider.Value, dynamicData.MinimumParameter,
                     dynamicData.MaximumParameter));
             layout.Children.Add(slider);
+            Grid.SetRow(slider, 2);
         }
         return layout;
     }
@@ -106,7 +113,6 @@ public sealed class HistogramWindow : Window
     {
         titleText.Text = title;
         avaPlot.Plot.Clear();
-        avaPlot.Plot.Title(title);
         avaPlot.Plot.XLabel(histogram.XLabel);
         avaPlot.Plot.YLabel(histogram.YLabel);
         avaPlot.Plot.Axes.SetLimits(-0.5, histogram.Bins.Count - 0.5,
@@ -130,7 +136,7 @@ public sealed class HistogramWindow : Window
         avaPlot.Plot.Axes.Bottom.TickGenerator = new ScottPlot.TickGenerators.NumericManual(
             histogram.Bins.Select((label, index) => new Tick(index, label)).ToArray());
         if (data.Count > 0)
-            avaPlot.Plot.ShowLegend();
+            avaPlot.Plot.ShowLegend(ScottPlot.Alignment.UpperRight);
         avaPlot.Refresh();
     }
 }

@@ -6,4 +6,3 @@ rm library.ps examples.ps
 cp ../format.py .
 python3 format.py Library/*.h Library/*.cpp Examples/*.cpp
 rm format.py
-

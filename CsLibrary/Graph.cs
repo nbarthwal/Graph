@@ -83,9 +83,15 @@ public sealed class GraphWindow : Window
         Height = 700;
         avaPlot.MinHeight = 480;
 
-        var layout = new StackPanel { Spacing = 8, Margin = new Avalonia.Thickness(12) };
+        var layout = new Grid
+        {
+            Margin = new Avalonia.Thickness(12),
+            RowDefinitions = new RowDefinitions("Auto,*,Auto"),
+        };
         layout.Children.Add(titleText);
+        Grid.SetRow(titleText, 0);
         layout.Children.Add(avaPlot);
+        Grid.SetRow(avaPlot, 1);
 
         if (dynamicData is not null)
         {
@@ -99,6 +105,7 @@ public sealed class GraphWindow : Window
                 PlotHelpers.SliderToParameter(slider.Value, dynamicData.MinimumParameter,
                     dynamicData.MaximumParameter));
             layout.Children.Add(slider);
+            Grid.SetRow(slider, 2);
         }
         return layout;
     }
@@ -110,7 +117,6 @@ public sealed class GraphWindow : Window
     {
         titleText.Text = title;
         avaPlot.Plot.Clear();
-        avaPlot.Plot.Title(title);
         avaPlot.Plot.XLabel(graph.XLabel);
         avaPlot.Plot.YLabel(graph.YLabel);
         avaPlot.Plot.Axes.SetLimits(graph.MinimumX, graph.MaximumX, graph.MinimumY, graph.MaximumY);
@@ -127,7 +133,7 @@ public sealed class GraphWindow : Window
         }
 
         if (data.Count > 0)
-            avaPlot.Plot.ShowLegend();
+            avaPlot.Plot.ShowLegend(ScottPlot.Alignment.UpperRight);
         avaPlot.Refresh();
     }
 }
