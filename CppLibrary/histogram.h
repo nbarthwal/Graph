@@ -17,8 +17,9 @@
 using namespace std;
 
 
-namespace Histogram
+class Histogram
 {
+public:
     typedef vector<float> counts;
 
     class Data
@@ -51,24 +52,21 @@ namespace Histogram
         [[nodiscard]] virtual DataFrame Eval(float) = 0;
     };
 
-    struct Histogram
-    {
-        const string Title;
-        const string XLabel;
-        const string YLabel;
-        const vector<string> Bins;
-        const float MinY;
-        const float MaxY;
-        const int Size;
+    const string Title;
+    const string XLabel;
+    const string YLabel;
+    const vector<string> Bins;
+    const float MinY;
+    const float MaxY;
+    const int Size;
 
-        Histogram(const Histogram&) = default;
+    Histogram(const Histogram&) = default;
 
-        Histogram(const string& title, const string& xLabel, const string& yLabel,
-               const vector<string>& bins, const float minY, const float maxY):
-            Title(title), XLabel(xLabel), YLabel(yLabel), Bins(bins),
-            MinY(minY), MaxY(maxY), Size(static_cast<int>(bins.size())) { }
+    Histogram(const string& title, const string& xLabel, const string& yLabel,
+              const vector<string>& bins, const float minY, const float maxY):
+        Title(title), XLabel(xLabel), YLabel(yLabel), Bins(bins),
+        MinY(minY), MaxY(maxY), Size(static_cast<int>(bins.size())) { }
 
-        GRAPH_API void Plot(const vector<Data>&);
-        GRAPH_API void Plot(DynamicData&);
-    };
+    GRAPH_API void Plot(const vector<Data>&);
+    GRAPH_API void Plot(DynamicData&);
 };

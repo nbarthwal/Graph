@@ -18,8 +18,9 @@
 using namespace std;
 
 
-namespace Graph
+class Graph
 {
+public:
     typedef map<float, float> points;
 
     class Data
@@ -51,24 +52,21 @@ namespace Graph
         [[nodiscard]] virtual DataFrame Eval(float) = 0;
     };
 
-    struct Graph
-    {
-        const string Title;
-        const string XLabel;
-        const string YLabel;
-        const float MinX;
-        const float MaxX;
-        const float MinY;
-        const float MaxY;
-        Graph(const Graph&) = default;
+    const string Title;
+    const string XLabel;
+    const string YLabel;
+    const float MinX;
+    const float MaxX;
+    const float MinY;
+    const float MaxY;
+    Graph(const Graph&) = default;
 
-        Graph(const string& title, const string& xLabel, const string& yLabel,
-               const float minX, const float maxX,
-               const float minY, const float maxY):
-            Title(title), XLabel(xLabel), YLabel(yLabel),
-            MinX(minX), MaxX(maxX), MinY(minY), MaxY(maxY) { }
+    Graph(const string& title, const string& xLabel, const string& yLabel,
+           const float minX, const float maxX,
+           const float minY, const float maxY):
+        Title(title), XLabel(xLabel), YLabel(yLabel),
+        MinX(minX), MaxX(maxX), MinY(minY), MaxY(maxY) { }
 
-        GRAPH_API void Plot(const vector<Data>&);
-        GRAPH_API void Plot(DynamicData&);
-    };
+    GRAPH_API void Plot(const vector<Data>&);
+    GRAPH_API void Plot(DynamicData&);
 };

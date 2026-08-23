@@ -36,12 +36,12 @@ class Plot
 {
 public:
     const string WindowTitle;
-    const Histogram::Histogram* Canvas;
+    const Histogram* Canvas;
     const float MinP;
     const float MaxP;
     const bool Slider;
 
-    Plot(const Histogram::Histogram* canvas, const float minP, const float maxP):
+    Plot(const Histogram* canvas, const float minP, const float maxP):
         WindowTitle(canvas->Title), Canvas(canvas), MinP(minP), MaxP(maxP),
         Slider(minP != maxP) { }
 
@@ -325,7 +325,7 @@ private:
     const Histogram::DynamicData& data;
 
 public:
-    DynamicPlot(const Histogram::Histogram* canvas, Histogram::DynamicData& ptr):
+    DynamicPlot(const Histogram* canvas, Histogram::DynamicData& ptr):
         Plot(canvas, ptr.MinP, ptr.MaxP), data(ptr) { }
 
     [[nodiscard]] string Title(float parameter) const override
@@ -335,7 +335,7 @@ public:
         { return const_cast<Histogram::DynamicData&>(data).Eval(parameter); }
 };
 
-void Histogram::Histogram::Plot(DynamicData& data)
+void Histogram::Plot(DynamicData& data)
 {
     DynamicPlot plot(this, data);
     plot.Show();
@@ -349,7 +349,7 @@ private:
     mutable vector<Histogram::Data*> result;
 
 public:
-    StaticPlot(const Histogram::Histogram* canvas, const vector<Histogram::Data>& d):
+    StaticPlot(const Histogram* canvas, const vector<Histogram::Data>& d):
         Plot(canvas, 0.0, 0.0), data(d) { }
 
     [[nodiscard]] string Title(float parameter) const override
@@ -364,7 +364,7 @@ public:
     }
 };
 
-void Histogram::Histogram::Plot(const vector<::Histogram::Data>& data)
+void Histogram::Plot(const vector<Histogram::Data>& data)
 {
     StaticPlot plot(this, data);
     plot.Show();
