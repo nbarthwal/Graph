@@ -1,0 +1,7 @@
+<Solution>
+  <Project Path="CsLibrary/CsLibrary.csproj" />
+  <Project Path="CsExamples/GraphStatic/GraphStatic.csproj" />
+  <Project Path="CsExamples/GraphDynamic/GraphDynamic.csproj" />
+  <Project Path="CsExamples/HistogramStatic/HistogramStatic.csproj" />
+  <Project Path="CsExamples/HistogramDynamic/HistogramDynamic.csproj" />
+</Solution>

@@ -19,6 +19,8 @@
 *.class
 *.exe
 *.bin
+*/bin/
+*/obj/
 */build
 install/
 
