@@ -28,13 +28,13 @@ class Plot
 {
 public:
     const string WindowTitle;
-    const Graph::Canvas Canvas;
+    const Graph::Canvas* Canvas;
     const float MinP;
     const float MaxP;
     const bool Slider;
 
-    Plot(const Graph::Canvas& canvas, const float minP, const float maxP):
-        WindowTitle(canvas.Title), Canvas(canvas), Slider(minP != maxP),
+    Plot(const Graph::Canvas* canvas, const float minP, const float maxP):
+        WindowTitle(canvas->Title), Canvas(canvas), Slider(minP != maxP),
         MinP(minP), MaxP(maxP) { }
 
     void Show() const;
@@ -90,13 +90,13 @@ private:
 
     [[nodiscard]] QPointF ToPixel(const QRect &plot_area, float x, float y) const
     {
-        const float x_range = graph->Canvas.MaxX - graph->Canvas.MinX;
-        const float y_range = graph->Canvas.MaxY - graph->Canvas.MinY;
+        const float x_range = graph->Canvas->MaxX - graph->Canvas->MinX;
+        const float y_range = graph->Canvas->MaxY - graph->Canvas->MinY;
 
         const float x_ratio =
-                x_range == 0.0f ? 0.0f : (x - graph->Canvas.MinX) / x_range;
+                x_range == 0.0f ? 0.0f : (x - graph->Canvas->MinX) / x_range;
         const float y_ratio =
-                y_range == 0.0f ? 0.0f : (y - graph->Canvas.MinY) / y_range;
+                y_range == 0.0f ? 0.0f : (y - graph->Canvas->MinY) / y_range;
 
         return QPointF(plot_area.left() + x_ratio * plot_area.width(),
                 plot_area.bottom() - y_ratio * plot_area.height());
@@ -135,12 +135,12 @@ private:
         const QRect x_label_rect(plot_area.left(), rect().bottom() - 24,
                                  plot_area.width(), 20);
         painter.drawText(x_label_rect, Qt::AlignHCenter | Qt::AlignBottom,
-                         QString::fromStdString(graph->Canvas.XLabel));
+                         QString::fromStdString(graph->Canvas->XLabel));
         painter.save();
         painter.translate(18, plot_area.center().y());
         painter.rotate(-90);
         painter.drawText(-50, -10, 100, 20, Qt::AlignHCenter | Qt::AlignVCenter,
-                         QString::fromStdString(graph->Canvas.YLabel));
+                         QString::fromStdString(graph->Canvas->YLabel));
         painter.restore();
     }
 
@@ -300,7 +300,7 @@ private:
     const Graph::DynamicData& data;
 
 public:
-    DynamicPlot(const Graph::Canvas& canvas, Graph::DynamicData& ptr):
+    DynamicPlot(const Graph::Canvas* canvas, Graph::DynamicData& ptr):
         Plot(canvas, ptr.MinP, ptr.MaxP), data(ptr) { }
 
     [[nodiscard]] string Title(float parameter) const override
@@ -310,7 +310,7 @@ public:
         { return const_cast<Graph::DynamicData&>(data).Eval(parameter); }
 };
 
-void Graph::Plot(const Graph::Canvas& canvas, DynamicData& data)
+void Graph::Plot(const Graph::Canvas* canvas, DynamicData& data)
 {
     DynamicPlot plot(canvas, data);
     plot.Show();
@@ -324,7 +324,7 @@ private:
     mutable vector<Graph::Data*> result;
 
 public:
-    StaticPlot(const Graph::Canvas& canvas, const vector<Graph::Data>& d):
+    StaticPlot(const Graph::Canvas* canvas, const vector<Graph::Data>& d):
         Plot(canvas, 0.0, 0.0), data(d) { }
 
     [[nodiscard]] string Title(float parameter) const override
@@ -339,7 +339,7 @@ public:
     }
 };
 
-void Graph::Plot(const Graph::Canvas& canvas, const vector<Graph::Data>& data)
+void Graph::Plot(const Graph::Canvas* canvas, const vector<Graph::Data>& data)
 {
     StaticPlot plot(canvas, data);
     plot.Show();

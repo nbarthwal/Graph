@@ -81,6 +81,6 @@ int main()
     const Histogram::Canvas canvas("Dynamic Histogram", "Bin", "Count", Bins,
                                    0.0f, 12.0f);
     GaussianDynamicData data;
-    Histogram::Plot(canvas, data);
+    Histogram::Plot(&canvas, data);
     return 0;
 }

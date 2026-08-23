@@ -69,6 +69,6 @@ namespace Histogram
         [[nodiscard]] virtual DataFrame Eval(float) = 0;
     };
 
-    GRAPH_API void Plot(const Canvas&, const vector<Data>&);
-    GRAPH_API void Plot(const Canvas&, DynamicData&);
+    GRAPH_API void Plot(const Canvas*, const vector<Data>&);
+    GRAPH_API void Plot(const Canvas*, DynamicData&);
 };

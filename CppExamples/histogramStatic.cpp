@@ -12,6 +12,6 @@ Histogram::Data d2("orange", "Series B", { 1.0f, 3.0f, 6.0f, 7.0f });
 
 int main()
 {
-    Histogram::Plot(canvas, {d1, d2});
+    Histogram::Plot(&canvas, {d1, d2});
     return 0;
 }

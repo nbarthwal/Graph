@@ -36,13 +36,13 @@ class Plot
 {
 public:
     const string WindowTitle;
-    const Histogram::Canvas Canvas;
+    const Histogram::Canvas* Canvas;
     const float MinP;
     const float MaxP;
     const bool Slider;
 
-    Plot(const Histogram::Canvas& canvas, const float minP, const float maxP):
-        WindowTitle(canvas.Title), Canvas(canvas), MinP(minP), MaxP(maxP),
+    Plot(const Histogram::Canvas* canvas, const float minP, const float maxP):
+        WindowTitle(canvas->Title), Canvas(canvas), MinP(minP), MaxP(maxP),
         Slider(minP != maxP) { }
 
     void Show() const;
@@ -58,7 +58,7 @@ class HistogramCanvas final : public QWidget
 {
 public:
     explicit HistogramCanvas(const Plot *histogram, QWidget *parent = nullptr):
-        QWidget(parent), histogram(histogram), Bins(histogram->Canvas.Size)
+        QWidget(parent), histogram(histogram), Bins(histogram->Canvas->Size)
     {
         setMinimumSize(640, 480);
         setAutoFillBackground(true);
@@ -92,7 +92,7 @@ private:
         { return 0.0f; }
 
     [[nodiscard]] float MaxX() const
-        { return static_cast<float>(histogram->Canvas.Size); }
+        { return static_cast<float>(histogram->Canvas->Size); }
 
     QRect PlotArea() const
     {
@@ -110,9 +110,9 @@ private:
 
     float ToPixelY(const QRect &plot_area, float y) const
     {
-        const float y_range = histogram->Canvas.MaxY - histogram->Canvas.MinY;
+        const float y_range = histogram->Canvas->MaxY - histogram->Canvas->MinY;
         const float y_ratio =
-                y_range == 0.0f ? 0.0f : (y - histogram->Canvas.MinY) / y_range;
+                y_range == 0.0f ? 0.0f : (y - histogram->Canvas->MinY) / y_range;
         return plot_area.bottom() - y_ratio * plot_area.height();
     }
 
@@ -154,27 +154,27 @@ private:
             const int x = static_cast<int>(ToPixelX(plot_area, center));
             const QRect tick_rect(x - 40, plot_area.bottom() + 4, 80, 18);
             painter.drawText(tick_rect, Qt::AlignHCenter | Qt::AlignTop,
-                             QString::fromStdString(histogram->Canvas.Bins[bin]));
+                             QString::fromStdString(histogram->Canvas->Bins[bin]));
         }
 
         const QRect x_label_rect(plot_area.left(), rect().bottom() - 24,
                                  plot_area.width(), 20);
         painter.drawText(x_label_rect, Qt::AlignHCenter | Qt::AlignBottom,
-                         QString::fromStdString(histogram->Canvas.XLabel));
+                         QString::fromStdString(histogram->Canvas->XLabel));
         painter.save();
         painter.translate(18, plot_area.center().y());
         painter.rotate(-90);
         painter.drawText(-50, -10, 100, 20, Qt::AlignHCenter | Qt::AlignVCenter,
-                         QString::fromStdString(histogram->Canvas.YLabel));
+                         QString::fromStdString(histogram->Canvas->YLabel));
         painter.restore();
     }
 
     void DrawHistograms(QPainter &painter, const QRect &plot_area) const
     {
-        const Histogram::DataFrame dataset = histogram->Get(parameter);
+        Histogram::DataFrame dataset = histogram->Get(parameter);
         const int count = static_cast<int>(dataset.size());
         if (dataset.empty()) return;
-        const float baseline_y = ToPixelY(plot_area, histogram->Canvas.MinY);
+        const float baseline_y = ToPixelY(plot_area, histogram->Canvas->MinY);
         const float countFloat = static_cast<float>(count);
 
         for (int index = 0; index < count; ++index)
@@ -325,7 +325,7 @@ private:
     const Histogram::DynamicData& data;
 
 public:
-    DynamicPlot(const Histogram::Canvas& canvas, Histogram::DynamicData& ptr):
+    DynamicPlot(const Histogram::Canvas* canvas, Histogram::DynamicData& ptr):
         Plot(canvas, ptr.MinP, ptr.MaxP), data(ptr) { }
 
     [[nodiscard]] string Title(float parameter) const override
@@ -335,7 +335,7 @@ public:
         { return const_cast<Histogram::DynamicData&>(data).Eval(parameter); }
 };
 
-void Histogram::Plot(const Histogram::Canvas& canvas, DynamicData& data)
+void Histogram::Plot(const Histogram::Canvas* canvas, DynamicData& data)
 {
     DynamicPlot plot(canvas, data);
     plot.Show();
@@ -349,7 +349,7 @@ private:
     mutable vector<Histogram::Data*> result;
 
 public:
-    StaticPlot(const Histogram::Canvas& canvas, const vector<Histogram::Data>& d):
+    StaticPlot(const Histogram::Canvas* canvas, const vector<Histogram::Data>& d):
         Plot(canvas, 0.0, 0.0), data(d) { }
 
     [[nodiscard]] string Title(float parameter) const override
@@ -364,7 +364,7 @@ public:
     }
 };
 
-void Histogram::Plot(const Histogram::Canvas& canvas, const vector<Histogram::Data>& data)
+void Histogram::Plot(const Histogram::Canvas* canvas, const vector<Histogram::Data>& data)
 {
     StaticPlot plot(canvas, data);
     plot.Show();
