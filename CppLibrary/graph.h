@@ -51,7 +51,7 @@ namespace Graph
         [[nodiscard]] virtual DataFrame Eval(float) = 0;
     };
 
-    struct Canvas
+    struct Graph
     {
         const string Title;
         const string XLabel;
@@ -60,9 +60,9 @@ namespace Graph
         const float MaxX;
         const float MinY;
         const float MaxY;
-        Canvas(const Canvas&) = default;
+        Graph(const Graph&) = default;
 
-        Canvas(const string& title, const string& xLabel, const string& yLabel,
+        Graph(const string& title, const string& xLabel, const string& yLabel,
                const float minX, const float maxX,
                const float minY, const float maxY):
             Title(title), XLabel(xLabel), YLabel(yLabel),

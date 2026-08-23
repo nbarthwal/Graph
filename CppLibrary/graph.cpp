@@ -28,12 +28,12 @@ class Plot
 {
 public:
     const string WindowTitle;
-    const Graph::Canvas* Canvas;
+    const Graph::Graph* Canvas;
     const float MinP;
     const float MaxP;
     const bool Slider;
 
-    Plot(const Graph::Canvas* canvas, const float minP, const float maxP):
+    Plot(const Graph::Graph* canvas, const float minP, const float maxP):
         WindowTitle(canvas->Title), Canvas(canvas), Slider(minP != maxP),
         MinP(minP), MaxP(maxP) { }
 
@@ -300,7 +300,7 @@ private:
     const Graph::DynamicData& data;
 
 public:
-    DynamicPlot(const Graph::Canvas* canvas, Graph::DynamicData& ptr):
+    DynamicPlot(const Graph::Graph* canvas, Graph::DynamicData& ptr):
         Plot(canvas, ptr.MinP, ptr.MaxP), data(ptr) { }
 
     [[nodiscard]] string Title(float parameter) const override
@@ -310,7 +310,7 @@ public:
         { return const_cast<Graph::DynamicData&>(data).Eval(parameter); }
 };
 
-void Graph::Canvas::Plot(DynamicData& data)
+void Graph::Graph::Plot(DynamicData& data)
 {
     DynamicPlot plot(this, data);
     plot.Show();
@@ -324,7 +324,7 @@ private:
     mutable vector<Graph::Data*> result;
 
 public:
-    StaticPlot(const Graph::Canvas* canvas, const vector<Graph::Data>& d):
+    StaticPlot(const Graph::Graph* canvas, const vector<Graph::Data>& d):
         Plot(canvas, 0.0, 0.0), data(d) { }
 
     [[nodiscard]] string Title(float parameter) const override
@@ -339,7 +339,7 @@ public:
     }
 };
 
-void Graph::Canvas::Plot(const vector<Graph::Data>& data)
+void Graph::Graph::Plot(const vector<::Graph::Data>& data)
 {
     StaticPlot plot(this, data);
     plot.Show();

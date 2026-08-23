@@ -30,7 +30,7 @@ public:
 
 int main()
 {
-    Graph::Canvas canvas("Dynamic Graph Example", "Frequency", "Magnitute",
+    Graph::Graph canvas("Dynamic Graph Example", "Frequency", "Magnitute",
                          0.0f, N, -1.0f, 1.0f);
     TrigonometryPlot plot;
     canvas.Plot(plot);

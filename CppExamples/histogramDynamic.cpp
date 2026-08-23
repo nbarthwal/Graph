@@ -78,7 +78,7 @@ public:
 
 int main()
 {
-    Histogram::Canvas canvas("Dynamic Histogram", "Bin", "Count", Bins,
+    Histogram::Histogram canvas("Dynamic Histogram", "Bin", "Count", Bins,
                              0.0f, 12.0f);
     GaussianDynamicData data;
     canvas.Plot(data);
