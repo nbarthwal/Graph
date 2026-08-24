@@ -32,15 +32,12 @@ public static class Histogram
                                 IReadOnlyList<string> Bins,
                                 double MinimumY, double MaximumY);
 
-    public HistogramWindow Plot(IReadOnlyList<Data> data) => new(this, data);
-    public HistogramWindow Plot(DynamicData data) => new(this, data);
-
     public static void Plot(Canvas canvas, IReadOnlyList<Data> data)
     {
         HistogramApp.Update(new HistogramWindow(canvas, data));
         HistogramApp.Plot();
     }
-    public static void Plot(Canvas canvas, Graph.DynamicData data)
+    public static void Plot(Canvas canvas, DynamicData data)
     {
         HistogramApp.Update(new HistogramWindow(canvas, data));
         HistogramApp.Plot();

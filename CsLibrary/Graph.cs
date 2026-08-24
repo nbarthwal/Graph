@@ -32,7 +32,7 @@ public static class Graph
         GraphApp.Update(new GraphWindow(canvas, data));
         GraphApp.Plot();
     }
-    public static void Plot(Canvas canvas, Graph.DynamicData data)
+    public static void Plot(Canvas canvas, DynamicData data)
     {
         GraphApp.Update(new GraphWindow(canvas, data));
         GraphApp.Plot();
