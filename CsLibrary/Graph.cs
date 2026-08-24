@@ -1,7 +1,3 @@
-using Avalonia.Controls;
-using Avalonia.Layout;
-using ScottPlot.Avalonia;
-
 namespace GraphPlot;
 
 public static class Graph

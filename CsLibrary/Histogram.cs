@@ -1,8 +1,3 @@
-using Avalonia.Controls;
-using Avalonia.Layout;
-using ScottPlot;
-using ScottPlot.Avalonia;
-
 namespace GraphPlot;
 
 public static class Histogram

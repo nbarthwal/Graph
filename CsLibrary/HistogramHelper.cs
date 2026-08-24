@@ -1,10 +1,10 @@
-using Avalonia.Controls;
-using Avalonia.Layout;
-using ScottPlot.Avalonia;
-using ScottPlot;
 using Avalonia;
+using Avalonia.Controls;
 using Avalonia.Controls.ApplicationLifetimes;
+using Avalonia.Layout;
 using Avalonia.Themes.Fluent;
+using ScottPlot;
+using ScottPlot.Avalonia;
 
 namespace GraphPlot;
 
@@ -101,7 +101,7 @@ internal sealed class HistogramWindow : Window
 
 public sealed class HistogramApp : Application
 {
-    private static Window window;
+    private static Window? window;
     public override void Initialize() => Styles.Add(new FluentTheme());
 
     public override void OnFrameworkInitializationCompleted()

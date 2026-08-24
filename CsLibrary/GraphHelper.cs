@@ -1,10 +1,9 @@
-using Avalonia.Controls;
-using Avalonia.Layout;
-using ScottPlot.Avalonia;
-using ScottPlot;
 using Avalonia;
+using Avalonia.Controls;
 using Avalonia.Controls.ApplicationLifetimes;
+using Avalonia.Layout;
 using Avalonia.Themes.Fluent;
+using ScottPlot.Avalonia;
 
 
 namespace GraphPlot;
@@ -14,7 +13,6 @@ internal sealed class GraphWindow : Window
     private readonly Graph.Canvas graph;
     private readonly AvaPlot avaPlot = new();
     private readonly Graph.DynamicData? dynamicData;
-    private readonly IReadOnlyList<Graph.Data>? staticData;
     private readonly TextBlock titleText = new()
     {
         FontSize = 20,
@@ -25,7 +23,6 @@ internal sealed class GraphWindow : Window
     internal GraphWindow(Graph.Canvas graph, IReadOnlyList<Graph.Data> data)
     {
         this.graph = graph;
-        staticData = data;
         Content = CreateLayout();
         Refresh(graph.Title, data);
     }
@@ -102,7 +99,7 @@ internal sealed class GraphWindow : Window
 
 internal sealed class GraphApp : Application
 {
-    private static Window window;
+    private static Window? window;
     public override void Initialize() => Styles.Add(new FluentTheme());
 
     public override void OnFrameworkInitializationCompleted()
