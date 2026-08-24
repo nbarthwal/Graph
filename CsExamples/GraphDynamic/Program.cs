@@ -1,6 +1,3 @@
-using Avalonia;
-using Avalonia.Controls.ApplicationLifetimes;
-using Avalonia.Themes.Fluent;
 using GraphPlot;
 
 namespace CsExamples.GraphDynamic;
@@ -29,11 +26,15 @@ public sealed class TrigonometryPlot : Graph.DynamicData
             points[x] = function(x);
         return new Graph.Data(color, label, bullet, points);
     }
+}
 
-    public static void Main(string[] args)
+internal static class Program
+{
+    [STAThread]
+    public static void Main()
     {
-       var canvas = new Graph.Canvas("Dynamic Graph Example", "Frequency", "Magnitude", 0, 500, -1, 1);
+        var canvas = new Graph.Canvas("Dynamic Graph Example", "Frequency", "Magnitude",
+            0, 500, -1, 1);
         Graph.Plot(canvas, new TrigonometryPlot());
     }
-
 }

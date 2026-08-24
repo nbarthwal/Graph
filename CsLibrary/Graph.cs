@@ -23,14 +23,9 @@ public static class Graph
                                 double MinimumX, double MaximumX,
                                 double MinimumY, double MaximumY);
 
-    public static void Plot(Canvas canvas, IReadOnlyList<Data> data)
-    {
-        GraphApp.Update(new GraphWindow(canvas, data));
-        GraphApp.Plot();
-    }
-    public static void Plot(Canvas canvas, DynamicData data)
-    {
-        GraphApp.Update(new GraphWindow(canvas, data));
-        GraphApp.Plot();
-    }
+    public static void Plot(Canvas canvas, IReadOnlyList<Data> data) =>
+        GraphApp.Plot(() => new GraphWindow(canvas, data));
+
+    public static void Plot(Canvas canvas, DynamicData data) =>
+        GraphApp.Plot(() => new GraphWindow(canvas, data));
 }

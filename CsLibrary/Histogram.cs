@@ -27,14 +27,9 @@ public static class Histogram
                                 IReadOnlyList<string> Bins,
                                 double MinimumY, double MaximumY);
 
-    public static void Plot(Canvas canvas, IReadOnlyList<Data> data)
-    {
-        HistogramApp.Update(new HistogramWindow(canvas, data));
-        HistogramApp.Plot();
-    }
-    public static void Plot(Canvas canvas, DynamicData data)
-    {
-        HistogramApp.Update(new HistogramWindow(canvas, data));
-        HistogramApp.Plot();
-    }
+    public static void Plot(Canvas canvas, IReadOnlyList<Data> data) =>
+        HistogramApp.Plot(() => new HistogramWindow(canvas, data));
+
+    public static void Plot(Canvas canvas, DynamicData data) =>
+        HistogramApp.Plot(() => new HistogramWindow(canvas, data));
 }

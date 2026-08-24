@@ -99,23 +99,25 @@ internal sealed class HistogramWindow : Window
     }
 }
 
-public sealed class HistogramApp : Application
+internal sealed class HistogramApp : Application
 {
-    private static Window? window;
+    private static Func<Window>? windowFactory;
+
     public override void Initialize() => Styles.Add(new FluentTheme());
 
     public override void OnFrameworkInitializationCompleted()
     {
         if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
-            desktop.MainWindow = window;
+            desktop.MainWindow = windowFactory?.Invoke();
         base.OnFrameworkInitializationCompleted();
     }
 
-    public static void Update(Window w) => window = w;
-
-    public static void Plot() =>
-        BuildAvaloniaApp().StartWithClassicDesktopLifetime(new string[0]);
-
-    private static AppBuilder BuildAvaloniaApp() =>
-        AppBuilder.Configure<HistogramApp>().UsePlatformDetect().LogToTrace();
+    // The window must be constructed after Avalonia initializes its platform,
+    // so callers hand over a factory rather than a live window.
+    public static void Plot(Func<Window> factory)
+    {
+        windowFactory = factory;
+        AppBuilder.Configure<HistogramApp>().UsePlatformDetect().LogToTrace()
+            .StartWithClassicDesktopLifetime([]);
+    }
 }

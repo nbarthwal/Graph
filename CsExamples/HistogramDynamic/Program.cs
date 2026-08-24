@@ -1,6 +1,3 @@
-using Avalonia;
-using Avalonia.Controls.ApplicationLifetimes;
-using Avalonia.Themes.Fluent;
 using GraphPlot;
 
 namespace CsExamples.HistogramDynamic;
@@ -36,30 +33,14 @@ public sealed class GaussianDynamicData : Histogram.DynamicData
     }
 }
 
-public sealed class App : Application
-{
-    public override void Initialize() => Styles.Add(new FluentTheme());
-
-    public override void OnFrameworkInitializationCompleted()
-    {
-        if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
-        {
-            var histogram = new Histogram("Dynamic Histogram", "Bin", "Count",
-                ["Bin0", "Bin1", "Bin2", "Bin3", "Bin4", "Bin5", "Bin6", "Bin7",
-                 "Bin8", "Bin9"], 0, 12);
-            desktop.MainWindow = histogram.Plot(new GaussianDynamicData());
-        }
-
-        base.OnFrameworkInitializationCompleted();
-    }
-}
-
 internal static class Program
 {
     [STAThread]
-    public static void Main(string[] args) =>
-        BuildAvaloniaApp().StartWithClassicDesktopLifetime(args);
-
-    private static AppBuilder BuildAvaloniaApp() =>
-        AppBuilder.Configure<App>().UsePlatformDetect().LogToTrace();
+    public static void Main()
+    {
+        var canvas = new Histogram.Canvas("Dynamic Histogram", "Bin", "Count",
+            ["Bin0", "Bin1", "Bin2", "Bin3", "Bin4", "Bin5", "Bin6", "Bin7",
+             "Bin8", "Bin9"], 0, 12);
+        Histogram.Plot(canvas, new GaussianDynamicData());
+    }
 }
