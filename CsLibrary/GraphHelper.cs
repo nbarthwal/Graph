@@ -1,12 +1,17 @@
 using Avalonia.Controls;
 using Avalonia.Layout;
 using ScottPlot.Avalonia;
+using ScottPlot;
+using Avalonia;
+using Avalonia.Controls.ApplicationLifetimes;
+using Avalonia.Themes.Fluent;
+
 
 namespace GraphPlot;
 
 internal sealed class GraphWindow : Window
 {
-    private readonly Graph graph;
+    private readonly Graph.Canvas graph;
     private readonly AvaPlot avaPlot = new();
     private readonly Graph.DynamicData? dynamicData;
     private readonly IReadOnlyList<Graph.Data>? staticData;
@@ -17,7 +22,7 @@ internal sealed class GraphWindow : Window
         HorizontalAlignment = Avalonia.Layout.HorizontalAlignment.Center,
     };
 
-    internal GraphWindow(Graph graph, IReadOnlyList<Graph.Data> data)
+    internal GraphWindow(Graph.Canvas graph, IReadOnlyList<Graph.Data> data)
     {
         this.graph = graph;
         staticData = data;
@@ -25,7 +30,7 @@ internal sealed class GraphWindow : Window
         Refresh(graph.Title, data);
     }
 
-    internal GraphWindow(Graph graph, Graph.DynamicData data)
+    internal GraphWindow(Graph.Canvas graph, Graph.DynamicData data)
     {
         this.graph = graph;
         dynamicData = data;
@@ -93,4 +98,25 @@ internal sealed class GraphWindow : Window
             avaPlot.Plot.ShowLegend(ScottPlot.Alignment.UpperRight);
         avaPlot.Refresh();
     }
+}
+
+internal sealed class GraphApp : Application
+{
+    private static Window window;
+    public override void Initialize() => Styles.Add(new FluentTheme());
+
+    public override void OnFrameworkInitializationCompleted()
+    {
+        if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
+            desktop.MainWindow = window;
+        base.OnFrameworkInitializationCompleted();
+    }
+
+    public static void Update(Window w) => window = w;
+
+    public static void Plot() =>
+        BuildAvaloniaApp().StartWithClassicDesktopLifetime(new string[0]);
+
+    private static AppBuilder BuildAvaloniaApp() =>
+        AppBuilder.Configure<GraphApp>().UsePlatformDetect().LogToTrace();
 }

@@ -1,7 +1,10 @@
 using Avalonia.Controls;
 using Avalonia.Layout;
-using ScottPlot;
 using ScottPlot.Avalonia;
+using ScottPlot;
+using Avalonia;
+using Avalonia.Controls.ApplicationLifetimes;
+using Avalonia.Themes.Fluent;
 
 namespace GraphPlot;
 
@@ -94,4 +97,25 @@ internal sealed class HistogramWindow : Window
             avaPlot.Plot.ShowLegend(ScottPlot.Alignment.UpperRight);
         avaPlot.Refresh();
     }
+}
+
+public sealed class HistogramApp : Application
+{
+    private static Window window;
+    public override void Initialize() => Styles.Add(new FluentTheme());
+
+    public override void OnFrameworkInitializationCompleted()
+    {
+        if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
+            desktop.MainWindow = window;
+        base.OnFrameworkInitializationCompleted();
+    }
+
+    public static void Update(Window w) => window = w;
+
+    public static void Plot() =>
+        BuildAvaloniaApp().StartWithClassicDesktopLifetime(new string[0]);
+
+    private static AppBuilder BuildAvaloniaApp() =>
+        AppBuilder.Configure<HistogramApp>().UsePlatformDetect().LogToTrace();
 }

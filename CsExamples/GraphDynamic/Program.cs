@@ -29,31 +29,11 @@ public sealed class TrigonometryPlot : Graph.DynamicData
             points[x] = function(x);
         return new Graph.Data(color, label, bullet, points);
     }
-}
 
-public sealed class App : Application
-{
-    public override void Initialize() => Styles.Add(new FluentTheme());
-
-    public override void OnFrameworkInitializationCompleted()
+    public static void Main(string[] args)
     {
-        if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
-        {
-            var graph = new Graph("Dynamic Graph Example", "Frequency", "Magnitude",
-                0, 500, -1, 1);
-            desktop.MainWindow = graph.Plot(new TrigonometryPlot());
-        }
-
-        base.OnFrameworkInitializationCompleted();
+       var canvas = new Graph.Canvas("Dynamic Graph Example", "Frequency", "Magnitude", 0, 500, -1, 1);
+        Graph.Plot(canvas, new TrigonometryPlot());
     }
-}
 
-internal static class Program
-{
-    [STAThread]
-    public static void Main(string[] args) =>
-        BuildAvaloniaApp().StartWithClassicDesktopLifetime(args);
-
-    private static AppBuilder BuildAvaloniaApp() =>
-        AppBuilder.Configure<App>().UsePlatformDetect().LogToTrace();
 }

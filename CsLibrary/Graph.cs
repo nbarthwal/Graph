@@ -4,7 +4,7 @@ using ScottPlot.Avalonia;
 
 namespace GraphPlot;
 
-public sealed class Graph
+public static class Graph
 {
     public sealed record Data(string Color, string Label, bool Bullet,
         IReadOnlyDictionary<double, double> Points);
@@ -23,26 +23,18 @@ public sealed class Graph
         public abstract IReadOnlyList<Data> Evaluate(double parameter);
     }
 
-    public Graph(string title, string xLabel, string yLabel,
-        double minimumX, double maximumX, double minimumY, double maximumY)
+    public sealed record Canvas(string Title, string XLabel, string YLabel,
+                                double MinimumX, double MaximumX,
+                                double MinimumY, double MaximumY);
+
+    public static void Plot(Canvas canvas, IReadOnlyList<Data> data)
     {
-        Title = title;
-        XLabel = xLabel;
-        YLabel = yLabel;
-        MinimumX = minimumX;
-        MaximumX = maximumX;
-        MinimumY = minimumY;
-        MaximumY = maximumY;
+        GraphApp.Update(new GraphWindow(canvas, data));
+        GraphApp.Plot();
     }
-
-    public string Title { get; }
-    public string XLabel { get; }
-    public string YLabel { get; }
-    public double MinimumX { get; }
-    public double MaximumX { get; }
-    public double MinimumY { get; }
-    public double MaximumY { get; }
-
-    public GraphWindow Plot(IReadOnlyList<Data> data) => new(this, data);
-    public GraphWindow Plot(DynamicData data) => new(this, data);
+    public static void Plot(Canvas canvas, Graph.DynamicData data)
+    {
+        GraphApp.Update(new GraphWindow(canvas, data));
+        GraphApp.Plot();
+    }
 }
