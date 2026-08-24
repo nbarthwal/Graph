@@ -92,7 +92,7 @@ internal sealed class GraphWindow : Window
         }
 
         if (data.Count > 0)
-            avaPlot.Plot.ShowLegend(ScottPlot.Alignment.UpperRight);
+            PlotHelpers.ShowLegend(avaPlot.Plot);
         avaPlot.Refresh();
     }
 }

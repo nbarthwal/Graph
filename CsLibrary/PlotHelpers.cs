@@ -6,6 +6,20 @@ internal static class PlotHelpers
 {
     public const int SliderSteps = 1000;
 
+    // ScottPlot clips legend labels to a box sized from font metrics. On macOS the
+    // default font draws above that box, so padding alone cannot fix top clipping.
+    private const float LegendTopPadding = 14;
+    private const float LegendSymbolHeight = 26;
+
+    public static void ShowLegend(Plot plot)
+    {
+        Legend legend = plot.ShowLegend(Alignment.UpperRight);
+        legend.FontName = "Arial";
+        legend.SymbolHeight = LegendSymbolHeight;
+        legend.Padding = new PixelPadding(legend.Padding.Left, legend.Padding.Right,
+            legend.Padding.Bottom, LegendTopPadding);
+    }
+
     public static double SliderToParameter(double sliderValue, double minimum, double maximum) =>
         minimum + sliderValue / SliderSteps * (maximum - minimum);
 

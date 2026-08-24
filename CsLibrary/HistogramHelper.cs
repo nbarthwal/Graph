@@ -86,7 +86,7 @@ internal sealed class HistogramWindow : Window
                 Value = value,
                 Size = 0.8 / data.Count,
                 FillColor = PlotHelpers.ParseColor(series.Color),
-                Label = series.Label,
+                // Label = series.Label, : Uncomment to add labels to histogram
             }).ToArray());
             bars.LegendText = series.Label;
         }
@@ -94,7 +94,7 @@ internal sealed class HistogramWindow : Window
         avaPlot.Plot.Axes.Bottom.TickGenerator = new ScottPlot.TickGenerators.NumericManual(
             histogram.Bins.Select((label, index) => new Tick(index, label)).ToArray());
         if (data.Count > 0)
-            avaPlot.Plot.ShowLegend(ScottPlot.Alignment.UpperRight);
+            PlotHelpers.ShowLegend(avaPlot.Plot);
         avaPlot.Refresh();
     }
 }
