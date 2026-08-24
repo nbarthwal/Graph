@@ -1,15 +1,18 @@
+using Avalonia;
 using Avalonia.Controls;
+using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Layout;
+using Avalonia.Themes.Fluent;
 using ScottPlot.Avalonia;
+
 
 namespace GraphPlot;
 
 internal sealed class GraphWindow : Window
 {
-    private readonly Graph graph;
+    private readonly Graph.Canvas graph;
     private readonly AvaPlot avaPlot = new();
     private readonly Graph.DynamicData? dynamicData;
-    private readonly IReadOnlyList<Graph.Data>? staticData;
     private readonly TextBlock titleText = new()
     {
         FontSize = 20,
@@ -17,15 +20,14 @@ internal sealed class GraphWindow : Window
         HorizontalAlignment = Avalonia.Layout.HorizontalAlignment.Center,
     };
 
-    internal GraphWindow(Graph graph, IReadOnlyList<Graph.Data> data)
+    internal GraphWindow(Graph.Canvas graph, IReadOnlyList<Graph.Data> data)
     {
         this.graph = graph;
-        staticData = data;
         Content = CreateLayout();
         Refresh(graph.Title, data);
     }
 
-    internal GraphWindow(Graph graph, Graph.DynamicData data)
+    internal GraphWindow(Graph.Canvas graph, Graph.DynamicData data)
     {
         this.graph = graph;
         dynamicData = data;
@@ -92,5 +94,28 @@ internal sealed class GraphWindow : Window
         if (data.Count > 0)
             avaPlot.Plot.ShowLegend(ScottPlot.Alignment.UpperRight);
         avaPlot.Refresh();
+    }
+}
+
+internal sealed class GraphApp : Application
+{
+    private static Func<Window>? windowFactory;
+
+    public override void Initialize() => Styles.Add(new FluentTheme());
+
+    public override void OnFrameworkInitializationCompleted()
+    {
+        if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
+            desktop.MainWindow = windowFactory?.Invoke();
+        base.OnFrameworkInitializationCompleted();
+    }
+
+    // The window must be constructed after Avalonia initializes its platform,
+    // so callers hand over a factory rather than a live window.
+    public static void Plot(Func<Window> factory)
+    {
+        windowFactory = factory;
+        AppBuilder.Configure<GraphApp>().UsePlatformDetect().LogToTrace()
+            .StartWithClassicDesktopLifetime([]);
     }
 }

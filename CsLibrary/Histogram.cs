@@ -1,11 +1,6 @@
-using Avalonia.Controls;
-using Avalonia.Layout;
-using ScottPlot;
-using ScottPlot.Avalonia;
-
 namespace GraphPlot;
 
-public sealed class Histogram
+public static class Histogram
 {
     public sealed record Data(string Color, string Label, IReadOnlyList<double> Values)
     {
@@ -28,24 +23,13 @@ public sealed class Histogram
         public abstract IReadOnlyList<Data> Evaluate(double parameter);
     }
 
-    public Histogram(string title, string xLabel, string yLabel,
-        IReadOnlyList<string> bins, double minimumY, double maximumY)
-    {
-        Title = title;
-        XLabel = xLabel;
-        YLabel = yLabel;
-        Bins = bins;
-        MinimumY = minimumY;
-        MaximumY = maximumY;
-    }
+    public sealed record Canvas(string Title, string XLabel, string YLabel,
+                                IReadOnlyList<string> Bins,
+                                double MinimumY, double MaximumY);
 
-    public string Title { get; }
-    public string XLabel { get; }
-    public string YLabel { get; }
-    public IReadOnlyList<string> Bins { get; }
-    public double MinimumY { get; }
-    public double MaximumY { get; }
+    public static void Plot(Canvas canvas, IReadOnlyList<Data> data) =>
+        HistogramApp.Plot(() => new HistogramWindow(canvas, data));
 
-    public HistogramWindow Plot(IReadOnlyList<Data> data) => new(this, data);
-    public HistogramWindow Plot(DynamicData data) => new(this, data);
+    public static void Plot(Canvas canvas, DynamicData data) =>
+        HistogramApp.Plot(() => new HistogramWindow(canvas, data));
 }

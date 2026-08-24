@@ -7,7 +7,5 @@
   </PropertyGroup>
   <ItemGroup>
     <ProjectReference Include="../../CsLibrary/CsLibrary.csproj" />
-    <PackageReference Include="Avalonia.Desktop" Version="12.*" />
-    <PackageReference Include="Avalonia.Themes.Fluent" Version="12.*" />
   </ItemGroup>
 </Project>

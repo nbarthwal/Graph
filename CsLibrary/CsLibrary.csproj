@@ -8,5 +8,7 @@
   <ItemGroup>
     <PackageReference Include="Avalonia" Version="12.*" />
     <PackageReference Include="ScottPlot.Avalonia" Version="5.*" />
+    <PackageReference Include="Avalonia.Desktop" Version="12.*" />
+    <PackageReference Include="Avalonia.Themes.Fluent" Version="12.*" />
   </ItemGroup>
 </Project>
