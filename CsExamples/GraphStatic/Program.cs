@@ -10,14 +10,14 @@ internal static class Program
     [STAThread]
     public static void Main()
     {
-        var canvas = new Graph.Canvas("Static Graph Example", "Frequency", "Magnitude",
-            0, PointCount, -1, 1);
+        var graph = new Graph("Static Graph Example", "Frequency", "Magnitude",
+                              0, PointCount, -1, 1);
         IReadOnlyList<Graph.Data> data =
         [
             CreateCurve("blue", "Sin(x)", false, x => Math.Sin(Factor * x)),
             CreateCurve("red", "Cos(x)", true, x => Math.Cos(Factor * x)),
         ];
-        Graph.Plot(canvas, data);
+        graph.Plot(data);
     }
 
     private static Graph.Data CreateCurve(string color, string label, bool bullet,

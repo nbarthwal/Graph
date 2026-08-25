@@ -33,8 +33,9 @@ internal static class Program
     [STAThread]
     public static void Main()
     {
-        var canvas = new Graph.Canvas("Dynamic Graph Example", "Frequency", "Magnitude",
-            0, 500, -1, 1);
-        Graph.Plot(canvas, new TrigonometryPlot());
+        var data = new TrigonometryPlot();
+        var graph = new Graph("Dynamic Graph Example", "Frequency", "Magnitude",
+                              0, 500, -1, 1);
+        data.Plot(graph);
     }
 }

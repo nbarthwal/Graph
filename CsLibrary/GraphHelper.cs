@@ -10,7 +10,7 @@ namespace GraphPlot;
 
 internal sealed class GraphWindow : Window
 {
-    private readonly Graph.Canvas graph;
+    private readonly Graph graph;
     private readonly AvaPlot avaPlot = new();
     private readonly Graph.DynamicData? dynamicData;
     private readonly TextBlock titleText = new()
@@ -20,14 +20,14 @@ internal sealed class GraphWindow : Window
         HorizontalAlignment = Avalonia.Layout.HorizontalAlignment.Center,
     };
 
-    internal GraphWindow(Graph.Canvas graph, IReadOnlyList<Graph.Data> data)
+    internal GraphWindow(Graph graph, IReadOnlyList<Graph.Data> data)
     {
         this.graph = graph;
         Content = CreateLayout();
         Refresh(graph.Title, data);
     }
 
-    internal GraphWindow(Graph.Canvas graph, Graph.DynamicData data)
+    internal GraphWindow(Graph graph, Graph.DynamicData data)
     {
         this.graph = graph;
         dynamicData = data;
