@@ -10,7 +10,7 @@ namespace GraphPlot;
 
 internal sealed class HistogramWindow : Window
 {
-    private readonly Histogram.Canvas histogram;
+    private readonly Histogram histogram;
     private readonly AvaPlot avaPlot = new();
     private readonly Histogram.DynamicData? dynamicData;
     private readonly TextBlock titleText = new()
@@ -20,14 +20,14 @@ internal sealed class HistogramWindow : Window
         HorizontalAlignment = Avalonia.Layout.HorizontalAlignment.Center,
     };
 
-    internal HistogramWindow(Histogram.Canvas histogram, IReadOnlyList<Histogram.Data> data)
+    internal HistogramWindow(Histogram histogram, IReadOnlyList<Histogram.Data> data)
     {
         this.histogram = histogram;
         Content = CreateLayout();
         Refresh(histogram.Title, data);
     }
 
-    internal HistogramWindow(Histogram.Canvas histogram, Histogram.DynamicData data)
+    internal HistogramWindow(Histogram histogram, Histogram.DynamicData data)
     {
         this.histogram = histogram;
         dynamicData = data;

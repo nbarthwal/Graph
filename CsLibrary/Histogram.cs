@@ -1,6 +1,6 @@
 namespace GraphPlot;
 
-public static class Histogram
+public class Histogram
 {
     public sealed record Data(string Color, string Label, IReadOnlyList<double> Values)
     {
@@ -21,15 +21,31 @@ public static class Histogram
         public double MaximumParameter { get; }
         public abstract string Title(double parameter);
         public abstract IReadOnlyList<Data> Evaluate(double parameter);
+
+        public void Plot(Histogram canvas) => canvas.Plot(this);
     }
 
-    public sealed record Canvas(string Title, string XLabel, string YLabel,
-                                IReadOnlyList<string> Bins,
-                                double MinimumY, double MaximumY);
+    public Histogram(string title, string xLabel, string yLabel,
+                     IReadOnlyList<string> bins, double minimumY, double maximumY)
+    {
+        Title = title;
+        XLabel = xLabel;
+        YLabel = yLabel;
+        Bins = bins;
+        MinimumY = minimumY;
+        MaximumY = maximumY;
+    }
 
-    public static void Plot(Canvas canvas, IReadOnlyList<Data> data) =>
-        HistogramApp.Plot(() => new HistogramWindow(canvas, data));
+    public string Title { get; }
+    public string XLabel { get; }
+    public string YLabel { get; }
+    public IReadOnlyList<string> Bins { get; }
+    public double MinimumY { get; }
+    public double MaximumY { get; }
 
-    public static void Plot(Canvas canvas, DynamicData data) =>
-        HistogramApp.Plot(() => new HistogramWindow(canvas, data));
+    public void Plot(IReadOnlyList<Data> data) =>
+        HistogramApp.Plot(() => new HistogramWindow(this, data));
+
+    public void Plot(DynamicData data) =>
+        HistogramApp.Plot(() => new HistogramWindow(this, data));
 }

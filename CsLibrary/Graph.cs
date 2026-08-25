@@ -22,7 +22,7 @@ public class Graph
     }
 
     public Graph(string title, string xLabel, string yLabel,
-        double minimumX, double maximumX, double minimumY, double maximumY)
+                 double minimumX, double maximumX, double minimumY, double maximumY)
     {
         Title = title;
         XLabel = xLabel;

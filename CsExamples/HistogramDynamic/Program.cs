@@ -38,9 +38,10 @@ internal static class Program
     [STAThread]
     public static void Main()
     {
-        var canvas = new Histogram.Canvas("Dynamic Histogram", "Bin", "Count",
+        var data = new GaussianDynamicData();
+        var histogram = new Histogram("Dynamic Histogram", "Bin", "Count",
             ["Bin0", "Bin1", "Bin2", "Bin3", "Bin4", "Bin5", "Bin6", "Bin7",
              "Bin8", "Bin9"], 0, 12);
-        Histogram.Plot(canvas, new GaussianDynamicData());
+        data.Plot(histogram);
     }
 }
